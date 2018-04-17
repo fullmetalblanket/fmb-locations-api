@@ -11,7 +11,7 @@ var pjson = require('../package.json');
 var environment = process.env.NODE_ENV || 'development';
 
 var config = {
-  useHelmet: true
+  useHelmet: false
 };
 
 var app = express();
@@ -58,11 +58,11 @@ app.use(forceSSL());
 
 // https://helmetjs.github.io/docs/
 
-app.use(function (req, res, next) {
-  res.locals.nonce = uuid.v4();
-  // console.log('\nNONCE:', res.locals.nonce);
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.locals.nonce = uuid.v4();
+//   // console.log('\nNONCE:', res.locals.nonce);
+//   next();
+// });
 
 // function generateNonce(req, res, next) {
 //   const rhyphen = /-/g;
@@ -93,7 +93,7 @@ app.use(function (req, res, next) {
 if (config.useHelmet) {
   app.use(helmet.contentSecurityPolicy({
     directives: {
-      defaultSrc: ["'self'"],
+      defaultSrc: ["'self'", 'app.matchmaker420.com', 'localhost:4200'],
       scriptSrc: [
         "'self'",
         "'unsafe-eval'", // TODO: need this to use google analytics but seems unsafe??
@@ -203,14 +203,14 @@ if (config.useHelmet) {
 // cors
 //
 //CORS middleware
-// var allowCrossDomain = function(req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-//   res.header('Access-Control-Allow-Headers', 'charset, authorization, content-type');
-//
-//   next();
-// };
-// app.use(allowCrossDomain);
+var allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'charset, authorization, content-type');
+
+  next();
+};
+app.use(allowCrossDomain);
 
 
 console.log('process.env.npm_package_version:', process.env.npm_package_version);

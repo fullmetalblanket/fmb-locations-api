@@ -55,12 +55,16 @@ module.exports = function(app) {
 
   console.log('* * * * api-routes locked and loaded');
 
-  // app.use(function (err, req, res, next) {
-  //   if (err.name === 'UnauthorizedError') {
-  //     // res.status(401).send('invalid token...');
-  //     console.log('redirecting invalid token to',path.join(__dirname,'/../../dist/index.html'));
-  //     res.sendFile(path.join(__dirname,'/../../dist/index.html'));
-  //   }
-  // });
+  app.use(function (err, req, res, next) {
+    if (err.name === 'UnauthorizedError') {
+      // res.status(401).send('invalid token...');
+      console.log('redirecting invalid token to',path.join(__dirname,'/../../dist/index.html'));
+      res.sendFile(path.join(__dirname,'/../../dist/index.html'));
+    }
+  });
+
+  app.use(function(req, res) {
+      res.status(404).send({url: req.originalUrl + ' not found'})
+  });
 
 };
