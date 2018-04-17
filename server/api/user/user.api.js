@@ -17,7 +17,7 @@ var clientOptions = { method: 'POST',
   body: '{"client_id":"TOpofvXDFMLICINeW95YzSGqDvJDpl48","client_secret":"meitZbs-zvMRz_FL09VbcpGJ3sSFLu3rPlmh3Ut5vnrEIcl6w4WRuMRXJXRov6wm","audience":"https://matchmaker420.auth0.com/api/v2/","grant_type":"client_credentials"}',
 };
 
-const populateOptions = [
+var populateOptions = [
   {
     path: 'role',
     model: 'UserType'
@@ -25,7 +25,7 @@ const populateOptions = [
 ];
 
 function userRequestOptions(id, params, body) {
-  const options = {
+  var options = {
     url: userApi + id,
     headers: {
       'Content-Type': 'application/json',

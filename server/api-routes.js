@@ -58,8 +58,9 @@ module.exports = function(app) {
   app.use(function (err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
       // res.status(401).send('invalid token...');
-      console.log('redirecting invalid token to',path.join(__dirname,'/../../dist/index.html'));
-      res.sendFile(path.join(__dirname,'/../../dist/index.html'));
+      // console.log('redirecting invalid token to',path.join(__dirname,'/../../dist/index.html'));
+      // res.sendFile(path.join(__dirname,'/../../dist/index.html'));
+        console.log('x x x x unauthorized error');
     }
   });
 

@@ -93,7 +93,7 @@ app.use(forceSSL());
 if (config.useHelmet) {
   app.use(helmet.contentSecurityPolicy({
     directives: {
-      defaultSrc: ["'self'", 'app.matchmaker420.com', 'localhost:4200'],
+      defaultSrc: ["'self'"],
       scriptSrc: [
         "'self'",
         "'unsafe-eval'", // TODO: need this to use google analytics but seems unsafe??
