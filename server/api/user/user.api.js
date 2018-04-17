@@ -40,7 +40,6 @@ function userRequestOptions(id, params, body) {
 }
 
 
-// we need to use something other than "user" as not to conflict with client side routes
 module.exports = function(app) {
 
   // APIs

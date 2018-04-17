@@ -60,8 +60,12 @@ module.exports = function(app) {
       // res.status(401).send('invalid token...');
       // console.log('redirecting invalid token to',path.join(__dirname,'/../../dist/index.html'));
       // res.sendFile(path.join(__dirname,'/../../dist/index.html'));
-        console.log('x x x x unauthorized error');
+      console.log('x x x x unauthorized error');
     }
+  });
+
+  app.use(function(req, res) {
+      console.log('req headers',req)
   });
 
   app.use(function(req, res) {
