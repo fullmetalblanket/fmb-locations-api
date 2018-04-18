@@ -8,24 +8,6 @@ var env = require('./environments/environment');
 
 module.exports = function(app) {
 
-  var checkCredentials = function(req, res, next) {
-    var clients = config.apiPairs;
-    var auth = req.header('Authorization').replace('Basic ', '').split(':');
-    console.log('clients',clients);
-    console.log('auth',auth);
-    if (clients[auth[0]] === auth[1]) {
-      console.log('+ + + + + Authorized + + + + +');
-      next();
-    } else {
-      console.log('- - - - - Unauthorized - - - - -');
-      // res.status(404).send({url: req.originalUrl + ' not found'})
-      res.status(200).send({error: 'Not Authorized'})
-    }
-
-  };
-
-  app.use(checkCredentials);
-
   // data routes
   require('./api/certification-type/certification-type.api')(app);
   require('./api/concentrate-type/concentrate-type.api')(app);
@@ -57,30 +39,16 @@ module.exports = function(app) {
     res.send("User-agent: *\nDisallow: /");
   });
 
-  // service worker if env === dev
-  // if (!env.production) {
-  //   app.get('/service-worker.js', function(req, res) {
-  //     res.sendFile(path.resolve(__dirname, '..', 'dist', 'service-worker.js'));
-  //   });
-  // }
-
-  // all other routes are handled by Angular
-  // app.get('/*', function(req, res) {
-  //   // console.log('\nreq',req);
-  //   console.log('redirecting non-api urls to',path.join(__dirname,'/../../dist/index.html'));
-  //   res.sendFile(path.join(__dirname,'/../../dist/index.html'));
-  // });
-
   console.log('* * * * api-routes locked and loaded');
 
-  app.use(function (err, req, res, next) {
-    if (err.name === 'UnauthorizedError') {
-      // res.status(401).send('invalid token...');
-      // console.log('redirecting invalid token to',path.join(__dirname,'/../../dist/index.html'));
-      // res.sendFile(path.join(__dirname,'/../../dist/index.html'));
-      console.log('x x x x unauthorized error');
-    }
-  });
+  // app.use(function (err, req, res, next) {
+  //   if (err.name === 'UnauthorizedError') {
+  //     // res.status(401).send('invalid token...');
+  //     // console.log('redirecting invalid token to',path.join(__dirname,'/../../dist/index.html'));
+  //     // res.sendFile(path.join(__dirname,'/../../dist/index.html'));
+  //     console.log('x x x x unauthorized error');
+  //   }
+  // });
 
   app.use(function(req, res) {
       res.status(404).send({url: req.originalUrl + ' not found'})
