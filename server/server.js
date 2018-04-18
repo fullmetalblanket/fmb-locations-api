@@ -212,6 +212,15 @@ var allowCrossDomain = function(req, res, next) {
 };
 app.use(allowCrossDomain);
 
+// var checkCredentials = function(req, res, next) {
+//   if (req) {
+//     console.log('req.headers',req.header('Authorization'));
+//   }
+//   next();
+// };
+//
+// app.use(checkCredentials);
+
 
 console.log('process.env.npm_package_version:', process.env.npm_package_version);
 

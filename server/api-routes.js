@@ -8,6 +8,24 @@ var env = require('./environments/environment');
 
 module.exports = function(app) {
 
+  var checkCredentials = function(req, res, next) {
+    var clients = config.apiPairs;
+    var auth = req.header('Authorization').replace('Basic ', '').split(':');
+    console.log('clients',clients);
+    console.log('auth',auth);
+    if (clients[auth[0]] === auth[1]) {
+      console.log('+ + + + + Authorized + + + + +');
+      next();
+    } else {
+      console.log('- - - - - Unauthorized - - - - -');
+      // res.status(404).send({url: req.originalUrl + ' not found'})
+      res.status(200).send({error: 'Not Authorized'})
+    }
+
+  };
+
+  app.use(checkCredentials);
+
   // data routes
   require('./api/certification-type/certification-type.api')(app);
   require('./api/concentrate-type/concentrate-type.api')(app);
@@ -62,10 +80,6 @@ module.exports = function(app) {
       // res.sendFile(path.join(__dirname,'/../../dist/index.html'));
       console.log('x x x x unauthorized error');
     }
-  });
-
-  app.use(function(req, res) {
-      console.log('req headers',req)
   });
 
   app.use(function(req, res) {

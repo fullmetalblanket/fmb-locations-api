@@ -39,9 +39,8 @@ config.mongoExpressConfig = {
   username: 'admin',
 };
 
-// config.allowedDevices = [
-//   'iphone',
-//   'ipad'
-// ];
+config.apiPairs = {
+  '1234567890':'0987654321'
+};
 
 module.exports = config;
