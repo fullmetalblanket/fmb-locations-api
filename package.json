@@ -10,7 +10,7 @@
     "ship-patch": "npm version patch --force -m \"version %s\" && npm run deploy",
     "ship-minor": "npm version minor --force -m \"version %s\" && npm run deploy",
     "ship-major": "npm version major --force -m \"version %s\" && npm run deploy",
-    "deploy-stage": "git push heroku-stage staging:mastere",
+    "deploy-stage": "git push heroku-stage staging:master",
     "deploy-stage-force": "git push heroku-stage staging:master -f",
     "stage": "git push heroku-stage $1:master",
     "dev": "concurrently \"mongod --dbpath ${PWD}/data/db\" \"nodemon server/server.js\"",
