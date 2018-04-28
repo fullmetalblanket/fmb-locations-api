@@ -98,7 +98,7 @@ var checkCredentials = function(req, res, next) {
     var expired = duration.asSeconds() > 25;
   
     if (authorized && !expired) {
-      isAuthrorized();
+      isAuthorized();
     } else {
       notAuthorized();
     }
