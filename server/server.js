@@ -60,20 +60,39 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 
 
+var moment = require('moment');
+var tz = require('moment-timezone');
 // api authorization middleware
 var checkCredentials = function(req, res, next) {
     var clients = config.apiPairs;
     var auth = req.header('Authorization').replace('Basic ', '').split(':');
-    if (clients[auth[0]] === auth[1]) {
-        console.log('+ + + + + Authorized + + + + +');
+
+    var rTime = '';
+    for (var c = 2; c < auth.length; c++) {
+        rTime += c > 2 ? ':' + auth[c] : auth[c];
+    }
+    console.log('rTime', rTime);
+
+    var requestedTime = moment(rTime);
+    var nowTZ = moment.tz(moment(), 'America/Los_Angeles');
+    console.log('\nrequestedTime.format()', requestedTime.format());
+    console.log('nowTZ.format()', nowTZ.format());
+
+    var duration = moment.duration(nowTZ.diff(requestedTime));
+    console.log('\nduration.asSeconds()', duration.asSeconds());
+
+    var authorized = clients[auth[0]] === auth[1];
+    var expired = duration.asSeconds() > 25;
+
+    if (authorized && !expired) {
+        console.log('\n+ + + + + Authorized + + + + +\n');
         next();
     } else {
-        console.log('- - - - - Unauthorized - - - - -');
-        res.send({error: 'Not Authorized'})
+        console.log('\n- - - - - Unauthorized or Expired - - - - -\n');
+        res.send({error: 'Not Authorized or Expired'})
     }
 
 };
-
 app.use(checkCredentials);
 
 

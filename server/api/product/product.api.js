@@ -10,7 +10,7 @@ var ExtractionMethod = require('../extraction-method/extraction-method.model');
 var UserType = require('../user-type/user-type.model');
 var authCheck = require('../../config/config').authCheck;
 
-const populateOptions = [
+var populateOptions = [
   {
     path: 'product_class',
     model: 'ProductClass'

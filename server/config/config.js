@@ -40,7 +40,11 @@ config.mongoExpressConfig = {
 };
 
 config.apiPairs = {
-  '1234567890':'0987654321'
+  '1234567890':'0987654321' // matchmaker420 app
+};
+
+config.apiUsers = {
+
 };
 
 module.exports = config;

@@ -136,6 +136,9 @@ var orderSchema = mongoose.Schema({
     total: Number
   }
 
+},
+{
+  usePushEach: true
 });
 
 var Order = mongoose.model('Order', orderSchema);

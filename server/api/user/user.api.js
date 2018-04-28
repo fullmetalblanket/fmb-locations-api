@@ -91,37 +91,81 @@ module.exports = function(app) {
     })
   });
 
-  // login by email
-  app.post('/user_login', function(req, res) {
-    User.findOne({email: req.body.email}, function(err, user) {
-      if (err) return console.error('login error', err);
-      if (!user) {
-        return res.status(403).json({
-          message: 'login failed'
+    // login by email
+    app.post('/user_login', function(req, res) {
+      console.log('user_login req.body.email', req.body.email);
+      User.findOne({email: req.body.email}, function(err, user) {
+        if (err) {
+          console.error('login err',err);
+          return console.error('login error', err);
+        }
+        if (!user) {
+          console.error('login no user found');
+          return res.status(200).json({
+            error: 'User not found'
+          });
+        }
+        // check password
+        if (!bcrypt.compareSync(req.body.password, user.password)) {
+          console.error('login or password incorrect');
+          return res.status(200).json({
+            error: 'Password is incorrect'
+          });
+        }
+        // create token
+        var token = jwt.sign({user: user}, config.tokenSecret, {
+          expiresIn: config.sessionExpiresIn
         });
-      }
-      // check password
-      if (!bcrypt.compareSync(req.body.password, user.password)) {
-        return res.status(403).json({
-          message: 'login or password are incorrect'
-        });
-      }
-      // create token
-      var token = jwt.sign({user: user}, config.tokenSecret, {
-        expiresIn: config.sessionExpiresIn
-      });
 
-      User.populate(user, populateOptions, function (err, user) {
-        if(err) { return handleError(res, err); }
-        res.status(200).json({
-          message: 'Successfully logged in',
-          token: token,
-          user: user,
-          userId: user._id
+        User.populate(user, populateOptions, function (err, user) {
+          if(err) { return handleError(res, err); }
+          res.status(200).json({
+            message: 'Successfully logged in',
+            token: token,
+            user: user,
+            userId: user._id
+          });
         });
-      });
-    })
-  });
+      })
+    });
+
+    // login by email 2
+    app.post('/user_login_2', function(req, res) {
+      console.log('user_login req.body.email', req.body.email);
+      User.findOne({email: req.body.email}, function(err, user) {
+        if (err) {
+          console.error('login err',err);
+          return console.error('login error', err);
+        }
+        if (!user) {
+          console.error('login no user found');
+          return res.status(200).json({
+            error: 'User not found'
+          });
+        }
+        // check password
+        if (!bcrypt.compareSync(req.body.password, user.password)) {
+          console.error('login or password incorrect');
+          return res.status(200).json({
+            error: 'Password is incorrect'
+          });
+        }
+        // create token
+        var token = jwt.sign({user: user}, config.tokenSecret, {
+          expiresIn: config.sessionExpiresIn
+        });
+
+        User.populate(user, populateOptions, function (err, user) {
+          if(err) { return handleError(res, err); }
+          res.status(200).json({
+            message: 'Successfully logged in',
+            token: token,
+            user: user,
+            userId: user._id
+          });
+        });
+      })
+    });
 
   // find by id
   app.get('/users_data/:id', function(req, res) {
@@ -140,6 +184,7 @@ module.exports = function(app) {
 
   // find user by id populated
   app.get('/user_data_populated/:id', function(req, res) {
+    console.log('user_data_populated id');
     User.findOne({_id: req.params.id}, function(err, obj) {
       if(err) return console.error(err);
       User.populate(obj, populateOptions, function (err, docs) {
@@ -226,7 +271,7 @@ module.exports = function(app) {
 
   // add new address
   app.put('/add_address/:user/:address', function(req, res) {
-    // console.log('user api: add_address', req.params);
+    console.log('user api: add_address', req.params);
     User.findById(req.params.user, function (err, user) {
       user.addresses.push(req.body);
       user.save(function(err, obj) {

@@ -12,7 +12,7 @@ module.exports = function(app) {
         console.log('but I failed', err);
         return console.error(err);
       }
-      // console.log('and I got something', docs);
+      console.log('and I got something', docs);
       res.json(docs);
     });
   });

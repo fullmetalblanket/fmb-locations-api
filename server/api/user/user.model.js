@@ -130,6 +130,9 @@ var userSchema = mongoose.Schema({
   // this is for a "soft user delete" | not sure what the impact of a hard delete would be
   deleted: Boolean
 
+},
+{
+  usePushEach: true
 });
 
 var User = mongoose.model('User', userSchema);

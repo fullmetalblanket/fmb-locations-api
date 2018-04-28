@@ -201,6 +201,9 @@ var productSchema = mongoose.Schema({
   // this is for a "soft delete", they can always be brought back from the dead
   deleted: Boolean
 
+},
+{
+  usePushEach: true
 });
 
 var Product = mongoose.model('Product', productSchema);
