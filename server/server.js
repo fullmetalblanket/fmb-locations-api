@@ -139,7 +139,7 @@ db.once('open', function() {
   app.listen(app.get('port'), function() {
 
     console.log('* * * * App Version: ' + pjson.version);
-    console.log('* * * * Matchmaker420 API is running on port ' + app.get('port') + ' in ' + environment + ' mode * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * \n');
+    console.log('* * * * Matchmaker420 API is running on port ' + app.get('port') + ' in ' + environment + ' mode * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * \n');
     // console.log('* * * * Matchmaker420 initialized * * * *\n');
   });
 

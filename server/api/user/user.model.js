@@ -23,7 +23,6 @@ var userSchema = mongoose.Schema({
   email: String,
   password: String,
 
-
   images: {
     profile: ''
   },
