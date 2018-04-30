@@ -106,7 +106,7 @@ module.exports = function(app) {
     })
   });
 
-  // by user type
+  // by user type => role.name
   // select all by metadata.user_type populated
   app.get('/products_data_by_user_type_populated/:type', function(req, res) {
     console.log('\ntryna get products by metadata.user_type', req.params.type);
@@ -165,17 +165,22 @@ module.exports = function(app) {
         }
       }
 
+      // if (req.params.restrictions.indexOf('licensed') > -1) {
+      //   obj['metadata.licensed'] = {$exists: true};
+      // }
+
       // if not showing licensed only, show unlicensed only
       if (req.params.restrictions.indexOf('licensed') === -1) {
         // obj['metadata.licensed'] = [ {$exists: false}, {$exists: true, $in: ""} ];
-        obj['metadata.licensed'] = {$exists: false};
+        obj['metadata.licensed'] = {$in: [null, false]};
       }
 
     }
-    console.log('special obj', obj);
+    console.log('\nspecial obj', obj);
 
     Product.find(obj, function(err, objs) {
       if(err) return console.error(err);
+      console.log('\nspecial objs.length', objs.length);
       Product.populate(objs, populateOptions, function (err, docs) {
         if(err) { return handleError(res, err); }
         res.status(200).json(docs);
