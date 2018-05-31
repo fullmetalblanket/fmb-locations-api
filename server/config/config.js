@@ -40,7 +40,9 @@ config.mongoExpressConfig = {
 };
 
 config.apiPairs = {
-  '1234567890':'0987654321' // matchmaker420 app
+  'appTemplate':'appTemplate',
+  '1234567890':'0987654321', // matchmaker420 app
+  '0987654321':'1234567890' // cb labs
 };
 
 config.apiUsers = {
