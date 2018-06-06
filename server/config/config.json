@@ -1,0 +1,29 @@
+{
+  "app": {
+    "subDomain": "api",
+    "domain": "matchmaker420",
+    "extension": "com",
+    "email": "admin@matchmaker420.com",
+    "siteName": "Matchmaker420 API",
+    "url": "api.matchmaker420.com"
+  },
+  "apiPairs": {
+    "appTemplate":"appTemplate",
+    "1234567890":"0987654321",
+    "0987654321":"1234567890"
+  },
+  "apiUsers": {
+    "matchmaker420": {
+      
+    }
+  },
+  "AWSConfig": {
+    "accessKeyId": "AKIAI5T4NH77FNNFVTUQ",
+    "bucketKey": "AKIAJPU3NGP7PUK6XTNA",
+    "secretAccessKey": "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",
+    "acl": "public-read-write",
+    "AWSAccountID": "6631-8908-0904",
+    "CanonicalUserID": "3f69f68fd6d919a58e6aa3cb6108e280e9c848103becf0910013b7fa39c4cd8c",
+    "region": "us-west-2"
+  }
+}
