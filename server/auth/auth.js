@@ -1,5 +1,6 @@
 var moment = require('moment');
 var tz = require('moment-timezone');
+var config = require('../config/config');
 
 var checkCredentials = function(req, res, next) {
   var authorization = req.header('Authorization');
@@ -15,7 +16,8 @@ var checkCredentials = function(req, res, next) {
   }
 
   if (authorization) {
-    var clients = config.apiPairs;
+    // var clients = config.apiPairs;
+    var clients = config.apiClients;
     var auth = req.header('Authorization').replace('Basic ', '').split(':');
   
     var rTime = '';
@@ -32,7 +34,9 @@ var checkCredentials = function(req, res, next) {
     var duration = moment.duration(nowTZ.diff(requestedTime));
     console.log('\nduration.asSeconds()', duration.asSeconds());
   
-    var authorized = clients[auth[0]] === auth[1];
+    // var authorized = clients[auth[0]] === auth[1];
+    var authorized = clients.find(c => c.key === auth[0] && c.secret === auth[1])
+    console.log('authorized',authorized.name)
     var expired = duration.asSeconds() > 25;
   
     if (authorized && !expired) {

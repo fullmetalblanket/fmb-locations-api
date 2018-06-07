@@ -12,11 +12,23 @@
     "1234567890":"0987654321",
     "0987654321":"1234567890"
   },
-  "apiUsers": {
-    "matchmaker420": {
-      
+  "apiClients": [
+    {
+      "name": "matchmaker420",
+      "key":"1234567890",
+      "secret":"0987654321"
+    },
+    {
+      "name": "cblabs",
+      "key":"0987654321",
+      "secret":"1234567890"
+    },
+    {
+      "name": "sandbox",
+      "key":"mm420-sandbox",
+      "secret":"mm420-sandbox"
     }
-  },
+  ],
   "AWSConfig": {
     "accessKeyId": "AKIAI5T4NH77FNNFVTUQ",
     "bucketKey": "AKIAJPU3NGP7PUK6XTNA",

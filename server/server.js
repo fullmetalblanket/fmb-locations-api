@@ -59,60 +59,20 @@ var allowCrossDomain = function(req, res, next) {
 };
 app.use(allowCrossDomain);
 
+// check api user credentials
+var auth = require('./auth/auth')
+app.use(auth.checkCredentials);
 
-// var moment = require('moment');
-// var tz = require('moment-timezone');
-// api authorization middleware
-// var checkCredentials = function(req, res, next) {
-//   var authorization = req.header('Authorization');
 
-//   function isAuthorized() {
-//     console.log('\n+ + + + + Authorized + + + + +\n');
-//     next();
-//   }
-
-//   function notAuthorized() {
-//     console.log('\n- - - - - Unauthorized or Expired - - - - -\n');
-//     res.send({error: 'Not Authorized or Expired'})
-//   }
-
-//   if (authorization) {
-//     var clients = config.apiPairs;
-//     var auth = req.header('Authorization').replace('Basic ', '').split(':');
-  
-//     var rTime = '';
-//     for (var c = 2; c < auth.length; c++) {
-//         rTime += c > 2 ? ':' + auth[c] : auth[c];
-//     }
-//     console.log('rTime', rTime);
-  
-//     var requestedTime = moment(rTime);
-//     var nowTZ = moment.tz(moment(), 'America/Los_Angeles');
-//     console.log('\nrequestedTime.format()', requestedTime.format());
-//     console.log('nowTZ.format()', nowTZ.format());
-  
-//     var duration = moment.duration(nowTZ.diff(requestedTime));
-//     console.log('\nduration.asSeconds()', duration.asSeconds());
-  
-//     var authorized = clients[auth[0]] === auth[1];
-//     var expired = duration.asSeconds() > 25;
-  
-//     if (authorized && !expired) {
-//       isAuthorized();
-//     } else {
-//       notAuthorized();
-//     }
-//   } else {
-//     notAuthorized();
-//   }
-
-// };
-var checkCredentials = require('./auth/auth').checkCredentials
-app.use(checkCredentials);
+// run xlims cronjob
+var xlims = require('./jobs/xlims/fetch-xlims')
+// require('./jobs/fetch-xlims')
+if (environment === 'production') {
+  xlims.startJob()
+}
 
 
 console.log('process.env.npm_package_version:', process.env.npm_package_version);
-
 
 //
 // database
