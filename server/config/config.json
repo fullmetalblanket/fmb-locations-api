@@ -1,14 +1,12 @@
 {
   "app": {
-     "subDomain": "api",
-     "domain": "matchmaker420",
-     "extension": "com",
-     "email": "admin@matchmaker420.com",
-     "siteName": "Matchmaker 420 API",
-     "url": "api.matchmaker420.com"
+    "subDomain": "api",
+    "domain": "matchmaker420",
+    "extension": "com",
+    "email": "admin@matchmaker420.com",
+    "siteName": "Matchmaker420 API",
+    "url": "api.matchmaker420.com"
   },
-  "tokenSecret": "1 w1ll n07 f34r. f34r 15 7h3 m1ndk1ll3r.",
-  "sessionExpiresIn": 72000,
   "AWSConfig": {
     "accessKeyId": "AKIAI5T4NH77FNNFVTUQ",
     "bucketKey": "AKIAJPU3NGP7PUK6XTNA",
@@ -17,6 +15,22 @@
     "AWSAccountID": "6631-8908-0904",
     "CanonicalUserID": "3f69f68fd6d919a58e6aa3cb6108e280e9c848103becf0910013b7fa39c4cd8c",
     "region": "us-west-2"
-  }
-
+  },
+  "apiClients": [
+    {
+      "name": "matchmaker420",
+      "key":"1234567890",
+      "secret":"0987654321"
+    },
+    {
+      "name": "cblabs",
+      "key":"0987654321",
+      "secret":"1234567890"
+    },
+    {
+      "name": "sandbox",
+      "key":"mm420-sandbox",
+      "secret":"mm420-sandbox"
+    }
+  ]
 }

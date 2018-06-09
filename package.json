@@ -21,7 +21,8 @@
     "preversion": "",
     "version": "",
     "postversion": "",
-    "stop": "killall mongod && node server.stop.js"
+    "stop_O": "killall mongod && node server/server.stop.js",
+    "stop": "node server/server.stop.js"
   },
   "private": true,
   "dependencies": {
@@ -43,12 +44,15 @@
     "moment-timezone": "^0.5.16",
     "mongoose": "^4.8.6",
     "morgan": "^1.8.1",
+    "node-cron": "^1.2.1",
     "node-localstorage": "^1.3.0",
     "node-uuid": "^1.4.8",
     "nodemailer": "^4.0.1",
     "nodemailer-ses-transport": "^1.5.1",
     "request": "^2.81.0",
     "serve-favicon": "^2.4.2",
+    "soap": "^0.24.0",
+    "socket.io-client": "^2.1.1",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {

@@ -1,9 +1,12 @@
 const io = require('socket.io-client');
-const socketClient = io.connect('http://localhost'); // Specify port if your express server is not using default port 80
+const config = require('./config/config');
+const socketClient = io.connect('http://localhost:'+config.app.port);
 
 socketClient.on('connect', () => {
-  socketClient.emit('npmStop');
-  setTimeout(() => {
-    process.exit(0);
-  }, 1000);
+  socketClient.emit('Hello Dolly');
+  // socketClient.emit('npmStop');
+  // setTimeout(() => {
+  //   console.log('Don\'t forget to ctrl + c')
+  //   process.exit(0);
+  // }, 1000);
 });
