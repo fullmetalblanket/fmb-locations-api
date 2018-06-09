@@ -1,3 +1,6 @@
+var config = require('./config.json');
+module.exports = config;
+
 var jwt = require('express-jwt');
 
 var config = {};

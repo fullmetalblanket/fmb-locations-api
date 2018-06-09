@@ -20,7 +20,8 @@
     "localdb": "concurrently \"npm run mongo-express-global\" \"open http://localhost:8081/db/matchmaker420-api/\"",
     "preversion": "",
     "version": "",
-    "postversion": ""
+    "postversion": "",
+    "stop": "killall mongod && node server.stop.js"
   },
   "private": true,
   "dependencies": {
