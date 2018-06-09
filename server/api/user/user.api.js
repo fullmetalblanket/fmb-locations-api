@@ -223,6 +223,7 @@ module.exports = function(app) {
       reset_password_token: token,
       reset_password_token_expires: Date.now() + 3600000 //1hr
     };
+    console.log('set_reset_password_token req.params',req.params)
     User.findOneAndUpdate({email: req.params.email}, update, {new: true}, function(err, obj) {
       if(err) return console.error(err);
       console.log('obj', obj);
@@ -262,6 +263,8 @@ module.exports = function(app) {
       reset_password_token: '',
       reset_password_token_expires: null
     };
+    console.log('reset password req.body',req.body);
+    console.log('reset password update',update);
     User.findOneAndUpdate({email: req.body.email}, update, {new: true}, function(err, obj) {
       if(err) return console.error(err);
       console.log('obj', obj);
