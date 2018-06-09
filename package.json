@@ -21,8 +21,7 @@
     "preversion": "",
     "version": "",
     "postversion": "",
-    "stop_O": "killall mongod && node server/server.stop.js",
-    "stop": "node server/server.stop.js"
+    "stop": "killall mongod"
   },
   "private": true,
   "dependencies": {
@@ -52,7 +51,6 @@
     "request": "^2.81.0",
     "serve-favicon": "^2.4.2",
     "soap": "^0.24.0",
-    "socket.io-client": "^2.1.1",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {
