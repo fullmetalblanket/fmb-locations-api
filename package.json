@@ -6,11 +6,6 @@
     "ng": "ng",
     "start": "node server/server.js",
     "postinstall": "",
-    "ship": "git push origin master && git push bitbucket master && git push heroku master",
-    "ship-patch": "npm version patch --force -m \"version %s\" && npm run ship",
-    "ship-minor": "npm version minor --force -m \"version %s\" && npm run ship",
-    "ship-major": "npm version major --force -m \"version %s\" && npm run ship",
-    "stage": "git push heroku-stage -f",
     "ship-staging": "git push heroku-stage staging:master",
     "ship-staging-force": "git push heroku-stage staging:master -f",
     "dev": "concurrently \"mongod --dbpath ${PWD}/data/db\" \"nodemon server/server.js\"",
@@ -22,7 +17,14 @@
     "version": "",
     "postversion": "",
     "stop": "killall mongod",
-    "cert": "node server/scripts/createCertificate.js"
+    "stage": "git push heroku-stage -f",
+    "ship": "git push origin master && git push bitbucket master && git push heroku master",
+    "ship:patch": "yarn version:patch && yarn ship",
+    "ship:minor": "yarn version:minor && yarn ship",
+    "ship:major": "yarn version:major && yarn ship",
+    "version:patch": "npm version patch --force -m \"version %s\"",
+    "version:minor": "npm version minor --force -m \"version %s\"",
+    "version:major": "npm version major --force -m \"version %s\" "
   },
   "private": true,
   "engines": {
