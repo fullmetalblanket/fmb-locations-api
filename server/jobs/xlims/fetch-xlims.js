@@ -2,7 +2,6 @@ const cron = require('node-cron');
 const soap = require('soap');
 const request = require('request');
 const QRCode = require('qrcode');
-const base64Img = require('base64-img');
 
 const mm420Api = require('../../api/mm420-api');
 // const config = require('../../config/config');
