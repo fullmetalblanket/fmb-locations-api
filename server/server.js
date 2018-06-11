@@ -66,10 +66,9 @@ app.use(auth.checkCredentials);
 
 // run xlims cronjob
 var xlims = require('./jobs/xlims/fetch-xlims')
-// require('./jobs/fetch-xlims')
-if (environment === 'production') {
-  xlims.startJob()
-}
+// if (environment === 'production') {
+  // xlims.startJob()
+// }
 
 
 console.log('process.env.npm_package_version:', process.env.npm_package_version);

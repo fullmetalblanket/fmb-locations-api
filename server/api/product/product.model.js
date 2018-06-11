@@ -4,6 +4,8 @@ var ObjectId  = Schema.Types.ObjectId;
 
 var productSchema = mongoose.Schema({
 
+  xlimsid: String, // link each product to the lab data id
+
   // a new product-listing can only be created by a cultivator (origin).
   // All other user types essentially just re-list a purchased product, changing Basic Information.
   // All re-listed products are linked back to origin via the tracking object.
@@ -76,7 +78,6 @@ var productSchema = mongoose.Schema({
   active: Boolean, // product is listed: true or false
 
 
-  //
   // Laboratory
   // editable by Laboratory and Admin
   lab: {
@@ -85,6 +86,11 @@ var productSchema = mongoose.Schema({
     date_tested: Date, // date testing complete
     web_link: String,
     data: {
+      date: String,
+      client: String,
+      sampleid: String,
+      samplename: String,
+      sampletype: String,
       thc: String,
       cbd: String,
       cbn: String,

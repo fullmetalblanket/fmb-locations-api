@@ -6,7 +6,7 @@
 //
 // var fs = require('fs');
 
-// var AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 //
 // AWS.config.update({
 //   accessKeyId: Config.accessKey,
@@ -16,6 +16,7 @@
 // var s3 = new AWS.S3();
 
 module.exports = function(app) {
+
 
   // upload policy for Amazon AWS
   app.post('/get_upload_policy', function(req, res) {

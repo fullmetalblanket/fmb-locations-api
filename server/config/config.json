@@ -8,6 +8,7 @@
     "url": "api.matchmaker420.com"
   },
   "AWSConfig": {
+    "accessKeyIdOld": "AKIAI5T4NH77FNNFVTUQ",
     "accessKeyId": "AKIAI5T4NH77FNNFVTUQ",
     "bucketKey": "AKIAJPU3NGP7PUK6XTNA",
     "secretAccessKey": "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",
@@ -32,5 +33,9 @@
       "key":"mm420-sandbox",
       "secret":"mm420-sandbox"
     }
-  ]
+  ],
+  "mm420Api": {
+    "apiKey": "1234567890",
+    "apiSecret": "0987654321"
+ }
 }
