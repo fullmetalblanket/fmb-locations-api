@@ -86,7 +86,7 @@ module.exports = function(app) {
       // set activation token
       obj.save(function(err, newUser) {
         if(err) return console.error(err);
-        res.status(201).json(newUser);
+        res.status(200).json(newUser);
       });
     })
   });
