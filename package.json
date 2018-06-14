@@ -24,7 +24,7 @@
     "ship:major": "yarn version:major && yarn ship",
     "version:patch": "npm version patch --force -m \"version %s\"",
     "version:minor": "npm version minor --force -m \"version %s\"",
-    "version:major": "npm version major --force -m \"version %s\" "
+    "version:major": "npm version major --force -m \"version %s\""
   },
   "private": true,
   "engines": {

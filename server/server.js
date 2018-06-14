@@ -65,7 +65,7 @@ app.use(auth.checkCredentials);
 
 
 // run xlims cronjob
-var xlims = require('./jobs/xlims/fetch-xlims')
+// var xlims = require('./jobs/xlims/fetch-xlims')
 // if (environment === 'production') {
   // xlims.startJob()
 // }
