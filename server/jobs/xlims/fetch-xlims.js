@@ -8,7 +8,9 @@ const mm420Api = require('../../api/mm420-api');
 const certificate = require('../../scripts/certificate');
 const aws = require('../../scripts/aws');
 
+const processRawLabData = require('./processRawLabData')
 const tempLabData = require('./lab.json');
+const exampleLabData = require('./MM420exampleWithSampleAttributes.json')
 const stateEmail = 'bcc@dca.ca.gov';
 
 function startJob() {
@@ -28,22 +30,22 @@ function startJob() {
           let processedData = {};
           processData(thisData)
             .then(data => processedData = data)
-            // create and upload qr code
-            .then(() => createQRCode(processedData))
-            .then(image => {
-              processedData.qrcodeDataURL = image
-              return uploadQRCode(image, processedData)
-            })
-            .then(aws => processedData.qrcodeURL = aws.Location)
-            .then(() => createCertificate(processedData))
-            .then(pdf => uploadCertificate(pdf, processedData))
-            // // save to database
-            // .then(aws => emailCertificate(aws, processedData))         
-            .then(data => {
-              console.log(`job ${i} finished`)
-              console.log('data')
-              // console.log(`data ${JSON.stringify(data)}\n`)
-            })
+            // // create and upload qr code
+            // .then(() => createQRCode(processedData))
+            // .then(image => {
+            //   processedData.qrcodeDataURL = image
+            //   return uploadQRCode(image, processedData)
+            // })
+            // .then(aws => processedData.qrcodeURL = aws.Location)
+            // .then(() => createCertificate(processedData))
+            // .then(pdf => uploadCertificate(pdf, processedData))
+            // // // save to database
+            // // .then(aws => emailCertificate(aws, processedData))         
+            // .then(data => {
+            //   console.log(`job ${i} finished`)
+            //   console.log('data')
+            //   // console.log(`data ${JSON.stringify(data)}\n`)
+            // })
             .catch(error => {
               console.log('job error B',error)
             });
@@ -86,9 +88,10 @@ function queryforData() {
 
 function processData(rawLabData) {
   // console.info('fetch-xlims rawLabData = tempLabData', tempLabData);
-  const processedData = rawLabData;
+  // const processedData = rawLabData;
   return new Promise((resolve,reject) => {
-    resolve(processedData)
+    const processedData = processRawLabData(exampleLabData);
+    resolve(rawLabData)
   })
 }
 
