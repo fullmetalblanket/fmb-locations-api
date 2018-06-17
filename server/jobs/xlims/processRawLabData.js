@@ -1,3 +1,6 @@
+const apiLabDataModel = require('./api_lab_data_model');
+
+console.log('\napi model lab data',JSON.stringify(apiLabDataModel));
 
 const matrixMap = {
   'Flower': '',
@@ -38,7 +41,7 @@ const sampleTypeMap = {
 }
 
 function sanitized(key) {
-  console.log('\nsanitized key raw', key);
+  // console.log('\nsanitized key raw', key);
   // let sanitizedKey = key;
   let sanitizedKey = key.replace('(-)-', '');
   sanitizedKey = sanitizedKey.replace(' %', '');
@@ -47,32 +50,25 @@ function sanitized(key) {
   sanitizedKey = sanitizedKey.replace(/^-/, '');
   sanitizedKey = sanitizedKey.replace(/-/g, '_');
   sanitizedKey = sanitizedKey.replace(/ /g, '_');
+  sanitizedKey = sanitizedKey.replace(/\./g, '');
   sanitizedKey = sanitizedKey.toLowerCase();
-  console.log('sanitized', sanitizedKey);
+  // console.log('sanitized', sanitizedKey);
   return sanitizedKey;
 }
 
 function normalizeSample(sample) {
   // console.log('\nnormalizeSample',sample)
   const { ReceivedDate, Results } = sample
-  console.log('\nResults.length',Results.length)
   const normSample = {
     date_aquired: ReceivedDate,
     date_tested: Results[0].AnalysisDate,
-    data: []
+    data: {}
   }
-  for (let i; i < Results.length; i++) {
+  for (let i = 0; i < Results.length; i++) {
     const thisResult = Results[i]
-    console.log('\nthisResult',thisResult)
-    // const { ResultName, ResultValue } = thisResult
-    // console.log('ResultName',ResultName)
-    // console.log('ResultValue',ResultValue)
-    // const key = sanitized(ResultName)
-    // console.log('i',i)
-    // console.log('key',key)
-    // normSample.data.push({
-    //   [key]: ResultValue || ''
-    // })
+    const { ResultName, ResultValue } = thisResult
+    const key = sanitized(ResultName)
+    normSample.data[key] = ResultValue || 'String'
   }
   return normSample
 }
@@ -89,7 +85,7 @@ module.exports = function (rawData) {
     processedData.push(labData)
   }
 
-  console.log('\nprocessedData',JSON.stringify(processedData[0]))
+  // console.log('\nprocessedData',JSON.stringify(processedData[0]))
 
 }
 
