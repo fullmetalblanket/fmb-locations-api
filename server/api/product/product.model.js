@@ -4,8 +4,6 @@ var ObjectId  = Schema.Types.ObjectId;
 
 var productSchema = mongoose.Schema({
 
-  xlimsid: String, // link each product to the lab data id
-
   // a new product-listing can only be created by a cultivator (origin).
   // All other user types essentially just re-list a purchased product, changing Basic Information.
   // All re-listed products are linked back to origin via the tracking object.
@@ -79,75 +77,26 @@ var productSchema = mongoose.Schema({
 
 
   // Laboratory
-  // editable by Laboratory and Admin
   lab: {
     _id: { type: ObjectId, ref: 'User' },
-    date_acquired: Date, // date sample received by lab
-    date_tested: Date, // date testing complete
-    web_link: String,
-    data: {
-      acetone: String,
-      aerobic_count: String,
-      alpha_bisabolol: String,
-      alpha_humulene: String,
-      alpha_pinene: String,
-      alpha_terpinene: String,
-      beta_caryophyllene: String,
-      beta_myrcene: String,
-      beta_pinene: String,
-      butanol: String,
-      butanone: String,
-      camphene: String,
-      carbamates: String,
-      cbc: String,
-      cbd: String,
-      cbd_decarbed_total: String,
-      cbda: String,
-      cbg: String,
-      cbga: String,
-      cbn: String,
-      d_limonene: String,
-      delta_3_carene: String,
-      e_coli: String,
-      enterobacteria: String,
-      ethanol: String,
-      ether: String,
-      ethyl_acetate: String,
-      ethyl_formate: String,
-      fecal_coliforms: String,
-      gamma_terpinene: String,
-      geraniol: String,
-      guaiol: String,
-      isobutyl_acetate: String,
-      isopropyl_acetate: String,
-      isopulegol: String,
-      linalool: String,
-      methyl_1_butanol: String,
-      methyl_1_propanol: String,
-      methyl_2_pentanone: String,
-      methyl_acetate: String,
-      n_butane: String,
-      n_heptane: String,
-      n_pentane: String,
-      nerolidol_1: String,
-      nerolidol_2: String,
-      ocimene: String,
-      organophosphates: String,
-      p_cymene: String,
-      pentanol: String,
-      propanol: String,
-      terpinolene: String,
-      tert_butyl_methyl_ether: String,
-      thc: String,
-      thc_decarbed_total: String,
-      thca: String,
-      thcv: String,
-      total_cannabinoids: String,
-      total_cbd: String,
-      total_terpenes: String,
-      total_thc: String,
-      yeast_and_mold: String
-    }
+    SampleNumber: String,
+    SampleName: String,
+    Client: String,
+    Matrix: String,
+    SampleType: String,
+    SampleTemplateName: String,
+    SampledDate: Date,
+    SampledBy: String,
+    ReceivedDate: Date,
+    ReceivedBy: String,
+    Results: [
+      {
+        ResultName: String,
+        ResultValue: String,
+        Units: String,
+        AnalysisDate: Date
+      }
+    ]
   },
 
 

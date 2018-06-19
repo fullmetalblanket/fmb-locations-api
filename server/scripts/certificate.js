@@ -2,6 +2,10 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const blobStream  = require('blob-stream');
 const path = require('path');
+const moment = require('moment');
+const aws = require('./aws');
+const request = require('request');
+const mm420Api = require('../api/mm420-api');
 
 function percent(thing) {
   // console.log('\npercent: thing', thing);
@@ -22,8 +26,8 @@ function total(args) {
   return percent(total);
 }
 
-// function create(filename, data) {
 function create(data) {
+
   const b = {
     col1: 40,
     col2: 315,
@@ -32,118 +36,116 @@ function create(data) {
     columnWidth: 255
   }
 
-  return new Promise((resolve,reject) => {
-    const doc = new PDFDocument;
 
-    const logo = path.join(__dirname,'../../assets/images/cblabs-logo-blue.png');
-    // const qrCode = data.qrcodeURL;
-    const qrCode = data.qrcodeDataURL;
+  const doc = new PDFDocument;
 
-    doc
-      .lineWidth(.5);
+  const logo = path.join(__dirname,'../../assets/images/cblabs-logo-blue.png');
+  const qrCode = data.qrcodeDataURL;
+  const certData = data.certificateData;
 
-    doc.image(logo, b.col1, 40, {fit: [90, 90]})
-      .fontSize(14)
-      .text('Tomorrow\'s Standard for Medical Testing', 140, 70, {width: 140});
-    
-    doc.fontSize(10)
-      .text('Sample Name: '+data.samplename, 250, 42, {width: 320, align: 'right'})
-      .text('Sample ID: '+data.sampleid, 250, 61, {width: 320, align: 'right'})
-      .text('Sample Type: '+data.sampletype, 251, 80, {width: 320, align: 'right'})
-      .text('Tested For: '+data.client, 250, 99, {width: 320, align: 'right'})
-      .text('Date Tested: '+data.date, 250, 118, {width: 320, align: 'right'});
+  doc
+    .lineWidth(.5);
 
-    doc.fontSize(32)
-      .text('Certificate of Analysis', 0, 160, {width: 610, align: 'center'});
+  doc.image(logo, b.col1, 40, {fit: [90, 90]})
+    .fontSize(14)
+    .text('Tomorrow\'s Standard for Medical Testing', 140, 70, {width: 140});
+  
+  doc.fontSize(10)
+    .text('Sample Name: '+data.SampleName, 250, 42, {width: 320, align: 'right'})
+    .text('Sample ID: '+data.SampleNumber, 250, 61, {width: 320, align: 'right'})
+    .text('Sample Type: '+data.SampleType, 251, 80, {width: 320, align: 'right'})
+    .text('Tested For: '+data.Client, 250, 99, {width: 320, align: 'right'})
+    .text('Date Tested: '+moment(data.Results[0].AnalysisDate).format('M/D/YYYY'), 250, 118, {width: 320, align: 'right'});
 
-    // potency
-    doc.fontSize(12)
-      .text('Potency Test Results', b.col1, 220)
+  doc.fontSize(32)
+    .text('Certificate of Analysis', 0, 160, {width: 610, align: 'center'});
 
-      .stroke('#777')
-      .moveTo(b.col1, 235)
-      .lineTo(295, 235)
+  // potency
+  doc.fontSize(12)
+    .text('Potency Test Results', b.col1, 220)
 
-      .fontSize(10)
-      .fillColor('#777')
-      .text('mg/g', b.col1 + 120, 238)
-      .text('%', b.col1 + 220, 239)
+    .stroke('#777')
+    .moveTo(b.col1, 235)
+    .lineTo(295, 235)
 
-      .moveTo(b.col1, 250)
-      .lineTo(295, 250)
-      .stroke()
-      .fillColor('#000')
+    .fontSize(10)
+    .fillColor('#777')
+    .text('mg/g', b.col1 + 120, 238)
+    .text('%', b.col1 + 220, 239)
 
-      // row
-      .text('Total THC', b.col1, 260)
-      .text(total([data.thc,data.thca,data.thcv]), b.col1 + 220, 260)
+    .moveTo(b.col1, 250)
+    .lineTo(295, 250)
+    .stroke()
+    .fillColor('#000')
 
-      // row
-      .text('THC', b.col1, 272)
-      .text('-', b.col1 + 120, 272)
-      .text(percent(data.thc), b.col1 + 220, 272)
+    .text('Total THC', b.col1, 260)
+    .text(total([certData.thc,certData.thca,certData.thcv]), b.col1 + 220, 260)
 
-      .text('THCa', b.col1, 284)
-      .text('-', b.col1 + 120, 284)
-      .text(percent(data.thca), b.col1 + 220, 284)
+    .text('THC', b.col1, 272)
+    .text('-', b.col1 + 120, 272)
+    .text(percent(certData.thc), b.col1 + 220, 272)
 
-      .text('THCv', b.col1, 296)
-      .text('-', b.col1 + 120, 296)
-      .text(percent(data.thcv), b.col1 + 220, 296)
+    .text('THCa', b.col1, 284)
+    .text('-', b.col1 + 120, 284)
+    .text(percent(certData.thca), b.col1 + 220, 284)
 
-      .text('Total CBD', b.col1, 308)
-      .text('-', b.col1 + 120, 308)
-      .text(total([data.cbd,data.cbda]), b.col1 + 220, 308)
+    .text('THCv', b.col1, 296)
+    .text('-', b.col1 + 120, 296)
+    .text(percent(certData.thcv), b.col1 + 220, 296)
 
-      .text('CBD', b.col1, 320)
-      .text('-', b.col1 + 120, 320)
-      .text(percent(data.cbd), b.col1 + 220, 320)
+    .text('Total CBD', b.col1, 308)
+    .text('-', b.col1 + 120, 308)
+    .text(total([certData.cbd,certData.cbda]), b.col1 + 220, 308)
 
-      .text('CBDa', b.col1, 332)
-      .text('-', b.col1 + 120, 332)
-      .text(percent(data.cbda), b.col1 + 220, 332)
+    .text('CBD', b.col1, 320)
+    .text('-', b.col1 + 120, 320)
+    .text(percent(certData.cbd), b.col1 + 220, 320)
 
-      .text('CBN', b.col1, 344)
-      .text('-', b.col1 + 120, 344)
-      .text(percent(data.cbn), b.col1 + 220, 344)
+    .text('CBDa', b.col1, 332)
+    .text('-', b.col1 + 120, 332)
+    .text(percent(certData.cbda), b.col1 + 220, 332)
 
-      .text('CBG', b.col1, 356)
-      .text('-', b.col1 + 120, 356)
-      .text(percent(data.cbg), b.col1 + 220, 356)
+    .text('CBN', b.col1, 344)
+    .text('-', b.col1 + 120, 344)
+    .text(percent(certData.cbn), b.col1 + 220, 344)
 
-      .text('CBGa', b.col1, 368)
-      .text('-', b.col1 + 120, 368)
-      .text(percent(data.cbga), b.col1 + 220, 368)
+    .text('CBG', b.col1, 356)
+    .text('-', b.col1 + 120, 356)
+    .text(percent(certData.cbg), b.col1 + 220, 356)
 
-      .text('CBC', b.col1, 380)
-      .text('-', b.col1 + 120, 380)
-      .text(percent(data.cbc), b.col1 + 220, 380);
+    .text('CBGa', b.col1, 368)
+    .text('-', b.col1 + 120, 368)
+    .text(percent(certData.cbga), b.col1 + 220, 368)
 
-    // terpine
-    doc.fontSize(12)
-      .fillColor('#000')
-      .text('Terpine Test Results', b.col2, 220)
-      .text('Terpine scent', b.col2 + 150, 220, {width: 105, align: 'right'})
+    .text('CBC', b.col1, 380)
+    .text('-', b.col1 + 120, 380)
+    .text(percent(certData.cbc), b.col1 + 220, 380);
 
-      .stroke('#777')
-      .moveTo(b.col2, 235)
-      .lineTo(b.right, 235)
+  // terpine
+  doc.fontSize(12)
+    .fillColor('#000')
+    .text('Terpine Test Results', b.col2, 220)
+    .text('Terpine scent', b.col2 + 150, 220, {width: 105, align: 'right'})
 
-      .fontSize(10)
-      .fillColor('#777')
-      .text('mg/g', b.col2, 238, {width: b.columnWidth - 15, align: 'right'})
+    .stroke('#777')
+    .moveTo(b.col2, 235)
+    .lineTo(b.right, 235)
 
-      .moveTo(b.col2, 250)
-      .lineTo(b.right, 250)
-      .stroke()
+    .fontSize(10)
+    .fillColor('#777')
+    .text('mg/g', b.col2, 238, {width: b.columnWidth - 15, align: 'right'})
 
-      .fontSize(10)
-      .fillColor('#000')
-      .text('Terpinolene', b.col1, 445)
-    ;
+    .moveTo(b.col2, 250)
+    .lineTo(b.right, 250)
+    .stroke()
 
-    // pesticide
-    doc.fontSize(12)
+    .fontSize(10)
+    .fillColor('#000')
+    .text('Terpinolene', b.col2, 260)
+  ;
+
+  // pesticide
+  doc.fontSize(12)
     .text('Pesticide Test Results', b.col1, 420)
     .text('Threshold Limits', b.col1 + 167, 420)
 
@@ -162,35 +164,77 @@ function create(data) {
   ;
 
 
-    // solvents
+  // solvents
 
 
-    // microbiological
+  // microbiological
 
 
-    // qr code and seal image
-    doc
-      .image(qrCode, 325, 610, {fit: [90, 90]})
-      .fontSize(7)
-      .text('Scan to verify at CBLabs.us', 326, 700);
+  // qr code and seal image
+  doc
+    .image(qrCode, 325, 610, {fit: [90, 90]})
+    .fontSize(7)
+    .text('Scan to verify at CBLabs.us', 326, 700);
 
 
-    // legend
-    // N/A - NOT TESTED, ND - NOT DETECTED, ppm - PARTS PER MILLION, cfu - COLONY FORMING UNITS
+  // legend
+  // N/A - NOT TESTED, ND - NOT DETECTED, ppm - PARTS PER MILLION, cfu - COLONY FORMING UNITS
 
 
-    // doc.rect(doc.x, 40, 320, doc.y).stroke()
+  // doc.rect(doc.x, 40, 320, doc.y).stroke()
 
-    // Finalize PDF file
-    doc.end();
+  // Finalize PDF file
+  doc.end();
 
-    // console.log('\nAAA filename',filename)
-    // console.log('AAA doc',doc)
-    // console.log('resolve data',data.client)
-    // resolve({doc, data})
+
+  return new Promise((resolve,reject) => {
     resolve(doc);
   });
 
 }
 
-module.exports.create = create;
+
+function upload(certificate, id) {
+  const params = {
+    ACL: 'public-read',
+    Bucket: 'matchmaker420',
+    Body: certificate,
+    ContentType: 'application/pdf',
+    Key: `certificates/certificate-${id}.pdf`
+  }
+  return aws.upload(params)
+    .then((aws) => {
+      return aws
+    })
+    .catch(error => error)
+}
+
+
+function email(email, name, number, certUrl) {
+  const payload = {
+    from: 'admin@matchmaker420.com',
+    to: email, // TODO we don't have the client email
+    subject: `Certificate for ${name} - ${number}`,
+    attachments: [
+      {
+        filename: `certificate-${number}`,
+        path: certURL,
+        cid: `certificate-${number}`
+      }
+    ]
+  }
+  return new Promise((resolve, reject) => {
+    request.post(mm420Api.requestOptions({url:'/email-pdf'}, payload), function(error, response, data) {
+      if (!error && response.statusCode == 200) {
+        resolve(data)
+      }
+      reject(error)
+    });
+  });
+}
+
+module.exports = {
+  create,
+  upload,
+  email
+}
