@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const queryForData = require('../../scripts/soapRequest');
+const soapRequest = require('../../scripts/soapRequest');
 const processSample = require('../../scripts/processSample');
 const qrCode = require('../../scripts/qrCode');
 const certificate = require('../../scripts/certificate');
@@ -17,9 +17,10 @@ function startJob() {
   // var cronJob = cron.schedule(oneMinute, function(){
     console.info('\nfetch-xlims startJob cronJob');
 
-    queryForData()
+    soapRequest()
       .then(data => {
         const samples = data.XLIMSExport.SampleInfo;
+        const processed = 0;
         // for (let i = 0; i < samples.length; i++) {
         for (let i = 0; i < 1; i++) {
           const rawSample = samples[i];
@@ -27,17 +28,17 @@ function startJob() {
           let sample = {};
           processSample(rawSample)
             .then(data => sample = data)
-            .then(() => sample.qrcodePageURL = `${testURLPrefix}${sampleName(sample.SampleName)}-${sample.SampleNumber}`)
-            .then(() => qrCode.create(sample.qrcodePageURL))
-            .then(image => sample.qrcodeDataURL = image)
-            .then(() => qrCode.upload(sample.qrcodeDataURL))
-            .then(aws => sample.qrcodeURL = aws.Location)
-            .then(() => certificate.create(sample))
-            .then(pdf => sample.certificatePDF = pdf)
-            .then(() => certificate.upload(sample.certificatePDF, sample.SampleNumber))
-            .then(aws => sample.certificateURL = aws.Location)
+            // .then(() => sample.qrcodePageURL = `${testURLPrefix}${sampleName(sample.SampleName)}-${sample.SampleNumber}`)
+            // .then(() => qrCode.create(sample.qrcodePageURL))
+            // .then(image => sample.qrcodeDataURL = image)
+            // .then(() => qrCode.upload(sample.qrcodeDataURL))
+            // .then(aws => sample.qrcodeURL = aws.Location)
+            // .then(() => certificate.create(sample))
+            // .then(pdf => sample.certificatePDF = pdf)
+            // .then(() => certificate.upload(sample.certificatePDF, sample.SampleNumber))
+            // .then(aws => sample.certificateURL = aws.Location)
 
-            .then(() => saveData(sample))
+            // .then(() => saveData(sample))
 
             // .then(aws => certificate.email(stateEmail, sampleName(sample.SampleName), sample.SampleNumber, sample.certificateURL))  
             // .then(aws => certificate.email(clientEmail, sampleName(sample.SampleName), sample.SampleNumber, sample.certificateURL))    
@@ -45,7 +46,7 @@ function startJob() {
             .then(data => {
               // console.log(`job ${i} finished`)
               console.log('\ndata',data);
-              // console.log('sample',sample)
+              console.log('\nsample',sample)
               // console.log(`data ${JSON.stringify(data)}\n`)
             })
             .catch(error => {

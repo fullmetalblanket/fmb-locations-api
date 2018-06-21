@@ -69,7 +69,7 @@ var xlims = require('./jobs/xlims/fetch-xlims')
 if (environment === 'production') {
   xlims.startJob()
 } else {
-  // var t = setTimeout(() => xlims.startJob(), 3000)
+  var t = setTimeout(() => xlims.startJob(), 3000)
 }
 
 
