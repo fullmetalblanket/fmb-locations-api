@@ -24,24 +24,25 @@ var checkCredentials = function(req, res, next) {
     for (var c = 2; c < auth.length; c++) {
         rTime += c > 2 ? ':' + auth[c] : auth[c];
     }
-    console.log('rTime', rTime);
+    // console.log('rTime', rTime);
   
     var requestedTime = moment(rTime);
     var nowTZ = moment.tz(moment(), 'America/Los_Angeles');
-    console.log('\nrequestedTime.format()', requestedTime.format());
-    console.log('nowTZ.format()', nowTZ.format());
+    // console.log('\nrequestedTime.format()', requestedTime.format());
+    // console.log('nowTZ.format()', nowTZ.format());
   
     var duration = moment.duration(nowTZ.diff(requestedTime));
-    console.log('\nduration.asSeconds()', duration.asSeconds());
+    // console.log('\nduration.asSeconds()', duration.asSeconds());
   
     // var authorized = clients[auth[0]] === auth[1];
     var authorized = clients.find(c => c.key === auth[0] && c.secret === auth[1])
-    console.log('authorized',authorized.name)
     var expired = duration.asSeconds() > 25;
   
     if (authorized && !expired) {
+      console.log('authorized',authorized.name)
       isAuthorized();
     } else {
+      console.log('unauthorized',auth)
       notAuthorized();
     }
   } else {
