@@ -2112,6 +2112,17 @@ http-signature@~1.2.0:
     jsprim "^1.2.2"
     sshpk "^1.7.0"
 
+httpntlm@^1.5.0:
+  version "1.7.6"
+  resolved "https://registry.yarnpkg.com/httpntlm/-/httpntlm-1.7.6.tgz#6991e8352836007d67101b83db8ed0f915f906d0"
+  dependencies:
+    httpreq ">=0.4.22"
+    underscore "~1.7.0"
+
+httpreq@>=0.4.22:
+  version "0.4.24"
+  resolved "https://registry.yarnpkg.com/httpreq/-/httpreq-0.4.24.tgz#4335ffd82cd969668a39465c929ac61d6393627f"
+
 https-proxy-agent@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/https-proxy-agent/-/https-proxy-agent-1.0.0.tgz#35f7da6c48ce4ddbfa264891ac593ee5ff8671e6"
@@ -2758,6 +2769,10 @@ lodash@^4.0.0, lodash@^4.0.1, lodash@^4.14.0, lodash@^4.5.1, lodash@^4.8.0, loda
 lodash@^4.17.5:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
+
+lodash@~2.4.1:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-2.4.2.tgz#fadd834b9683073da179b3eae6d9c0d15053f73e"
 
 longest@^1.0.1:
   version "1.0.1"
@@ -4224,6 +4239,16 @@ sntp@2.x.x:
   dependencies:
     hoek "4.x.x"
 
+soap-ntlm@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/soap-ntlm/-/soap-ntlm-0.6.3.tgz#77028dea52bf785bc2b57a7036c1db20556b033d"
+  dependencies:
+    httpntlm "^1.5.0"
+    lodash "~2.4.1"
+    request ">=2.9.0"
+    sax ">=0.6"
+    strip-bom "~0.3.1"
+
 soap@^0.24.0:
   version "0.24.0"
   resolved "https://registry.yarnpkg.com/soap/-/soap-0.24.0.tgz#8a101e63ae0763afc45e876b2761091665abaed8"
@@ -4671,6 +4696,10 @@ undefsafe@^2.0.2:
   resolved "https://registry.yarnpkg.com/undefsafe/-/undefsafe-2.0.2.tgz#225f6b9e0337663e0d8e7cfd686fc2836ccace76"
   dependencies:
     debug "^2.2.0"
+
+underscore@~1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.7.0.tgz#6bbaf0877500d36be34ecaa584e0db9fef035209"
 
 unicode-properties@^1.0.0:
   version "1.1.0"

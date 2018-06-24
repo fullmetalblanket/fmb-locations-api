@@ -3,6 +3,7 @@ const soapRequest = require('../../scripts/soapRequest');
 const processSample = require('../../scripts/processSample');
 const qrCode = require('../../scripts/qrCode');
 const certificate = require('../../scripts/certificate');
+const path = require('path');
 
 const stateEmail = 'bcc@dca.ca.gov';
 
@@ -14,12 +15,48 @@ function startJob() {
   var tenMinutes = "* */10 * * * *";
   var testURLPrefix = 'http://cblabs.us/test-results/';
 
+  var url ='https://cblabs.xlims.net/xlimsapi.asmx?WSDL';
+  // var url ='https://cblabs.xlims.net/xlimsapi.asmx';
+  // var url = path.join(__dirname, 'xlimsapi.wsdl');
+  // var wsdlPath = path.join(__dirname, 'xlimsapi.wsdl');
+  // var username = 'APP01USEAST\\CBLabs';
+  var username = 'CBLabs';
+  var password = 'CbL&bs!7';
+  var soapOptions = {
+    url,
+    username,
+    password,
+    domain: 'APP01USEAST',
+    args: {
+      Parameters:''
+    }
+  }
+
+  var requestOptions = Object.assign(soapOptions, {
+    args: {
+      TaskGuid: 'D274EB3A-CD9B-436C-91B3-86EC5043B84C',
+      ...soapOptions.args
+    }
+  });
+
+  // console.log('\nrequestOptions',requestOptions)
+
+  // var requestOptions = {
+  //   url: 'https://cblabs.xlims.net/XLIMSAPI.asmx',
+  //   args: {
+  //     TaskGuid: 'D274EB3A-CD9B-436C-91B3-86EC5043B84C',
+  //     Parameters: ''
+  //   }
+  // }
+
   // var cronJob = cron.schedule(oneMinute, function(){
     console.info('\nfetch-xlims startJob cronJob');
 
-    soapRequest()
+    soapRequest(requestOptions)
       .then(data => {
-        const samples = data.XLIMSExport.SampleInfo;
+        console.log('soapRequest data',data)
+        // const samples = data.XLIMSExport.SampleInfo;
+        const samples = [];
         const processed = 0;
         // for (let i = 0; i < samples.length; i++) {
         for (let i = 0; i < 1; i++) {
@@ -79,7 +116,7 @@ function saveData(sample) {
 
 function handleError(error) {
   // log errors
-  console.log('xlims cron job error',error);
+  console.log('xlims cron job halted',error);
 }
 
 module.exports.startJob = startJob;

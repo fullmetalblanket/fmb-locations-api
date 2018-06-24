@@ -64,6 +64,7 @@
     "request": "^2.87.0",
     "serve-favicon": "^2.4.2",
     "soap": "^0.24.0",
+    "soap-ntlm": "^0.6.3",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {

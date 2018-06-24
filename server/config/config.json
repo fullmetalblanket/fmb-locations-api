@@ -20,22 +20,22 @@
   "apiClients": [
     {
       "name": "matchmaker420",
-      "key":"1234567890",
-      "secret":"0987654321"
+      "key":"ny>sg8qHu3",
+      "secret":"P2viZ3A(Gj"
     },
     {
       "name": "cblabs",
-      "key":"0987654321",
-      "secret":"1234567890"
+      "key":"9G3xmzJsw(",
+      "secret":"Zs;tUfh43b"
     },
     {
-      "name": "sandbox",
-      "key":"mm420-sandbox",
-      "secret":"mm420-sandbox"
+      "name": "admin",
+      "key":"7xjb}3ndEv",
+      "secret":"W2E6xrma$u"
     }
   ],
   "mm420Api": {
-    "apiKey": "1234567890",
-    "apiSecret": "0987654321"
+    "apiKey": "7xjb}3ndEv",
+    "apiSecret": "W2E6xrma$u"
  }
 }
