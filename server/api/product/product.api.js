@@ -8,6 +8,7 @@ var ConcentrateType = require('../concentrate-type/concentrate-type.model');
 var CultivationEnvironment = require('../cultivation-environment/cultivation-environment.model');
 var ExtractionMethod = require('../extraction-method/extraction-method.model');
 var TestType = require('../test-type/test-type.model');
+var User = require('../user/user.model');
 var UserType = require('../user-type/user-type.model');
 var authCheck = require('../../config/config').authCheck;
 
@@ -47,10 +48,33 @@ var populateOptions = [
   {
     path: 'payment_types',
     model: 'PaymentType'
+  }
+];
+
+var populateSampleOptions = [
+  {
+    path: 'product_class',
+    model: 'ProductClass'
+  },
+  {
+    path: 'product_type',
+    model: 'ProductType'
+  },
+  {
+    path: 'lab.location',
+    model: 'User'
   },
   {
     path: 'lab.tests.type',
     model: 'TestType'
+  },
+  {
+    path: 'tracking.user',
+    model: 'User'
+  },
+  {
+    path: 'tracking.secondary',
+    model: 'User'
   }
 ];
 
@@ -76,6 +100,7 @@ module.exports = function(app) {
       });
     });
   });
+
 
   // get single product populated
   app.get('/product_data_populated/:id', function(req, res) {
@@ -110,6 +135,47 @@ module.exports = function(app) {
       });
     })
   });
+
+
+
+
+  // select samples by user id populated - all labs
+  app.get('/samples_data/:id', function(req, res) {
+    console.log('\ntryna get samples by user id', req.params.id);
+    Product.find({'tracking.user': req.params.id}, function(err, objs) {
+      if(err) return console.error(err);
+      Product.populate(objs, populateSampleOptions, function (err, docs) {
+        if(err) { return handleError(res, err); }
+        res.status(200).json(docs);
+      });
+    })
+  });
+
+  // get all samples by lab id
+  app.get('/samples_data_lab/:labId', function(req, res) {
+    Product.find({'lab.location': req.params.labId}, function(err, docs) {
+      if(err) return console.error(err);
+      Product.populate(docs, populateSampleOptions, function (err, docs) {
+        if(err) { return handleError(res, err); }
+        res.status(200).json(docs);
+      });
+    });
+  });
+
+  // select samples by user id populated for specific lab use
+  app.get('/samples_data_client_lab/:clientId/:labId', function(req, res) {
+    console.log('\ntryna get samples by clientId', req.params.clientId);
+    console.log('tryna get samples for labId', req.params.labId);
+    Product.find({'tracking.user': req.params.clientId, 'lab.location': req.params.labId}, function(err, objs) {
+      if(err) return console.error(err);
+      Product.populate(objs, populateSampleOptions, function (err, docs) {
+        if(err) { return handleError(res, err); }
+        console.log('docs', docs.length);
+        res.status(200).json(docs);
+      });
+    })
+  });
+
 
   // by user type => role.name
   // select all by metadata.user_type populated
