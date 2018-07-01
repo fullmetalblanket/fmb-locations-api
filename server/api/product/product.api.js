@@ -7,6 +7,7 @@ var CertificationType = require('../certification-type/certification-type.model'
 var ConcentrateType = require('../concentrate-type/concentrate-type.model');
 var CultivationEnvironment = require('../cultivation-environment/cultivation-environment.model');
 var ExtractionMethod = require('../extraction-method/extraction-method.model');
+var TestType = require('../test-type/test-type.model');
 var UserType = require('../user-type/user-type.model');
 var authCheck = require('../../config/config').authCheck;
 
@@ -46,6 +47,10 @@ var populateOptions = [
   {
     path: 'payment_types',
     model: 'PaymentType'
+  },
+  {
+    path: 'lab.tests.type',
+    model: 'TestType'
   }
 ];
 

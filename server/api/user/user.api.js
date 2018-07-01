@@ -248,6 +248,33 @@ module.exports = function(app) {
     })
   });
 
+  // find by partial email
+  app.get('/users_data_by_partial_email/:email', function(req, res) {
+    User.find({email: { $regex: req.params.email } }, function(err, obj) {
+      if(err) return console.error(err);
+      res.json(obj);
+    })
+  });
+
+  // query for user
+  app.get('/query_for_user/:query', function(req, res) {
+    var queryRegex = new RegExp(req.params.query.toLowerCase(), "i");
+    var searchQuery = {$or: [{email: { $regex: req.params.query, $options: 'i' }}, {'business.business_name': { $regex: req.params.query, $options: 'i' }}]}
+    // User.createIndex({$or:[{email:'text'}, {'business.business_name':'text'}]})
+    // User.index({email:'text'})
+    // User.createIndex({email: 1, 'business.business_name': 1}, {unique: true});
+    // var textQuery = {
+    //   $text: {
+    //     $search: req.params.query,
+    //     $caseSensitive: false,
+    //   }
+    // }
+    User.find(searchQuery, function(err, obj) {
+      if(err) return console.error(err);
+      res.json(obj);
+    })
+  });
+
   // find by license
   app.get('/users_data_by_license/:license', function(req, res) {
     User.findOne({'credentials.license': req.params.license}, function(err, obj) {

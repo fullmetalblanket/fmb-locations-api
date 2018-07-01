@@ -31,6 +31,7 @@ var productSchema = mongoose.Schema({
   description: String,
   images: [
     {
+      _id : false,
       primary: Boolean,
       url: String
     }
@@ -78,26 +79,122 @@ var productSchema = mongoose.Schema({
 
   // Laboratory
   lab: {
-    _id: { type: ObjectId, ref: 'User' },
-    SampleNumber: String,
-    SampleName: String,
-    Client: String,
-    Matrix: String,
-    SampleType: String,
-    SampleTemplateName: String,
-    SampledDate: Date,
-    SampledBy: String,
-    ReceivedDate: Date,
-    ReceivedBy: String,
-    Results: [
+    location: { type: ObjectId, ref: 'User' }, // Novato or Santa Ana (sales@cblabs.us or sasales@cblabs.us)
+    date_acquired: Date, // date sample received by lab
+    date_tested: Date, // date testing complete
+    date_due: Date, // date test is due
+    web_link: String,
+    tests: [
       {
-        ResultName: String,
-        ResultValue: String,
-        Units: String,
-        AnalysisDate: Date
+        _id : false,
+        type: { type: ObjectId, ref: 'TestType' },
+        selected: Boolean,
+        data: [{
+          name: String,
+          value: String
+        }]
       }
-    ]
+    ],
+    data: {
+      thc: String,
+      cbd: String,
+      cbn: String,
+      acetone: String,
+      aerobic_count: String,
+      alpha_bisabolol: String,
+      alpha_humulene: String,
+      alpha_pinene: String,
+      alpha_terpinene: String,
+      avermectins: String,
+      beta_caryophyllene: String,
+      beta_myrcene: String,
+      beta_pinene: String,
+      butanol: String,
+      butanone: String,
+      butyl_acetate: String,
+      camphene: String,
+      carbamates: String,
+      cbc: String,
+      cbc_output: String,
+      cbd_output: String,
+      cbda: String,
+      cbda_output: String,
+      cbg: String,
+      cbg_output: String,
+      cbga: String,
+      cbga_output: String,
+      cbn_output: String,
+      cis_beta_ocimene: String,
+      client: String,
+      d_limonene: String,
+      date: String,
+      delta_3_carene: String,
+      e_coli_count: String,
+      enterobacteriae: String,
+      ethanol: String,
+      ether: String,
+      ethyl_acetate: String,
+      ethyl_formate: String,
+      gamma_terpinene: String,
+      geraniol: String,
+      guaiol: String,
+      heavy_metals: String,
+      isobutyl_acetate: String,
+      isopropyl_acetate: String,
+      isopulegol: String,
+      linalool: String,
+      methyl_1_butanol: String,
+      methyl_1_propanol: String,
+      methyl_2_pentanone: String,
+      methyl_acetate: String,
+      n_butane: String,
+      n_heptane: String,
+      n_pentane: String,
+      nerolidol_1: String,
+      nerolidol_2: String,
+      ocimene: String,
+      organochlorinates: String,
+      organophosphates: String,
+      p_cymene: String,
+      pentanol: String,
+      propanol: String,
+      pyrethroids: String,
+      sampleid: String,
+      samplename: String,
+      sampletype: String,
+      terpinolene: String,
+      tert_butyl_methyl_ether: String,
+      thc_output: String,
+      thca: String,
+      thca_output: String,
+      thcv: String,
+      thcv_output: String,
+      total_coliforms: String,
+      unitweight: String,
+      yeast_and_mold: String
+    }
   },
+  // lab: {
+  //   _id: { type: ObjectId, ref: 'User' },
+  //   SampleNumber: String,
+  //   SampleName: String,
+  //   Client: String,
+  //   Matrix: String,
+  //   SampleType: String,
+  //   SampleTemplateName: String,
+  //   SampledDate: Date,
+  //   SampledBy: String,
+  //   ReceivedDate: Date,
+  //   ReceivedBy: String,
+  //   Results: [
+  //     {
+  //       ResultName: String,
+  //       ResultValue: String,
+  //       Units: String,
+  //       AnalysisDate: Date
+  //     }
+  //   ]
+  // },
 
 
   //
