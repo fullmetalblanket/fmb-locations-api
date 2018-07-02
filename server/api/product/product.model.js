@@ -91,6 +91,7 @@ var productSchema = mongoose.Schema({
         type: { type: ObjectId, ref: 'TestType' },
         selected: Boolean,
         data: [{
+          _id : false,
           name: String,
           value: String
         }]
