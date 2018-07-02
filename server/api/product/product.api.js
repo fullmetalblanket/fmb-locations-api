@@ -345,6 +345,17 @@ module.exports = function(app) {
     })
   });
 
+  // update by id and return populated product
+  app.put('/edit_products_data_populated/:id', function(req, res) {
+    Product.findOneAndUpdate({_id: req.params.id}, req.body, {new: true}, function(err, product) {
+      if(err) { return handleError(res, err); }
+      Product.populate(product, populateOptions, function (err, populatedProduct) {
+        if(err) { return handleError(res, err); }
+        res.status(200).json(populatedProduct);
+      });
+    })
+  });
+
   // add new and return populated product
   app.post('/add_products_data_populated', function(req, res) {
     var obj = new Product(req.body);
@@ -359,17 +370,6 @@ module.exports = function(app) {
         res.status(200).json(populatedProduct);
       });
     });
-  });
-
-  // update by id and return populated product
-  app.put('/edit_products_data_populated/:id', function(req, res) {
-    Product.findOneAndUpdate({_id: req.params.id}, req.body, {new: true}, function(err, product) {
-      if(err) { return handleError(res, err); }
-      Product.populate(product, populateOptions, function (err, populatedProduct) {
-        if(err) { return handleError(res, err); }
-        res.status(200).json(populatedProduct);
-      });
-    })
   });
 
   // delete by id

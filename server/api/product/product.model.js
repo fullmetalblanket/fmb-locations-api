@@ -96,6 +96,7 @@ var productSchema = mongoose.Schema({
         }]
       }
     ],
+    sample_weight: Number,
     web_link: String,
     data: {
       thc: String,
