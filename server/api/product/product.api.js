@@ -430,7 +430,7 @@ module.exports = function(app) {
 
   // update product lab data by product id
   app.put('/update_lab_data/:id', function(req, res) {
-    Product.findById(req.params.id, function(error, product) {
+    Product.findById(req.params.id, function(error, product) { 
 
       // if you want to overwrite
       // product.lab = req.body.lab;
