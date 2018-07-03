@@ -92,8 +92,9 @@ var productSchema = mongoose.Schema({
         selected: Boolean,
         data: [{
           _id : false,
-          name: String,
-          value: String
+          name: String, 
+          value: String,
+          type: String, // for microbio ['fungus', 'bacteria']
         }]
       }
     ],
