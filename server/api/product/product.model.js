@@ -80,6 +80,7 @@ var productSchema = mongoose.Schema({
   // Laboratory
   lab: {
     location: { type: ObjectId, ref: 'User' }, // Novato or Santa Ana (sales@cblabs.us or sasales@cblabs.us)
+    sample_id: String, // mongo id's are too long for lab personnel to manually type, so we're generating our own
     date_acquired: Date, // date sample received by lab
     date_tested: Date, // date testing complete
     date_due: Date, // date test is due
@@ -94,7 +95,7 @@ var productSchema = mongoose.Schema({
           _id : false,
           name: String, 
           value: String,
-          type: String, // for microbio ['fungus', 'bacteria']
+          type: {type: String, default: ''} // for microbio ['b', 'f'] (b = 'bacteria', f = 'fungus')
         }]
       }
     ],
