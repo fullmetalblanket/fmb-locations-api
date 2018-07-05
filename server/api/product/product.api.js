@@ -11,6 +11,10 @@ var TestType = require('../test-type/test-type.model');
 var User = require('../user/user.model');
 var UserType = require('../user-type/user-type.model');
 var authCheck = require('../../config/config').authCheck;
+const certificate = require('../../scripts/certificate');
+const qrCode = require('../../scripts/qrCode');
+const request = require('request');
+const mm420Api = require('../mm420-api');
 
 var populateOptions = [
   {
@@ -78,9 +82,49 @@ var populateSampleOptions = [
   }
 ];
 
+function sampleName(string) {
+  return string.replace(' ', '-').toLowerCase();
+}
+
 module.exports = function(app) {
 
-  // APIs
+  // generate_certificate
+  app.post('/generate_certificate', function(req, res) {
+    const product = req.body
+    const lab = product.lab
+    const testURLPrefix = 'http://cblabs.us/test-results/';
+    const qrcodePageURL = `${testURLPrefix}${sampleName(product.name)}-${product._id}`
+    let qrcodeDataURL = ''
+    let certificatePDF = ''
+
+    qrCode.create(qrcodePageURL)
+      .then(image => qrcodeDataURL = image)
+      .then(() => qrCode.upload(qrcodeDataURL, product._id))
+      .then(aws => lab.qr_code = aws.Location)
+      .then(() => certificate.create(product))
+      .then(pdf => certificatePDF = pdf)
+      .then(() => certificate.upload(certificatePDF, product._id))
+      .then(aws => lab.certificate = aws.Location)
+      .then(() => {
+        request.put(mm420Api.requestOptions({url:'/update_lab_data/'+product._id}, product), function(error, response, data) {
+          if (error) {console.log('update_lab_data error', error)}
+          if (!error && response.statusCode == 200) {
+            console.log('update_lab_data data',data);
+            res.status(200).send(data)
+          }
+        })
+      })
+      .catch(error => {
+        console.log('generate certificate error')
+      })
+  });
+
+  // app.post('/email_certificate', function(req, res) {
+  //   const sample = req.body
+  //   certificate.create(sample),
+  //     .then(pdf => certificate.upload(pdf, sample.SampleNumber))
+  //     .then(aws => )
+  // });
 
   // select all
   app.get('/products_data', function(req, res) {
@@ -485,6 +529,6 @@ module.exports = function(app) {
       });
     });
 
-  });
+  });  
 
 };

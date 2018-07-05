@@ -26,7 +26,13 @@ function total(args) {
   return percent(total);
 }
 
-function create(data) {
+function create(product) {
+  console.log('certificate.create product',product)
+  const logo = path.join(__dirname,'../../assets/images/cblabs-logo-blue.png');
+  const { _id, name, product_type, lab, tracking } = product;
+  const { qr_code, tests } = lab;
+  const { user } = tracking
+  const business_name = user.business && user.business.business_name || user.email
 
   const b = {
     col1: 40,
@@ -36,12 +42,7 @@ function create(data) {
     columnWidth: 255
   }
 
-
   const doc = new PDFDocument;
-
-  const logo = path.join(__dirname,'../../assets/images/cblabs-logo-blue.png');
-  const qrCode = data.qrcodeDataURL;
-  const certData = data.certificateData;
 
   doc
     .lineWidth(.5);
@@ -51,130 +52,130 @@ function create(data) {
     .text('Tomorrow\'s Standard for Medical Testing', 140, 70, {width: 140});
   
   doc.fontSize(10)
-    .text('Sample Name: '+data.SampleName, 250, 42, {width: 320, align: 'right'})
-    .text('Sample ID: '+data.SampleNumber, 250, 61, {width: 320, align: 'right'})
-    .text('Sample Type: '+data.SampleType, 251, 80, {width: 320, align: 'right'})
-    .text('Tested For: '+data.Client, 250, 99, {width: 320, align: 'right'})
-    .text('Date Tested: '+moment(data.Results[0].AnalysisDate).format('M/D/YYYY'), 250, 118, {width: 320, align: 'right'});
+    .text('Sample Name: '+name, 250, 42, {width: 320, align: 'right'})
+    .text('Sample ID: '+_id, 250, 61, {width: 320, align: 'right'})
+    .text('Sample Type: '+product_type.name, 251, 80, {width: 320, align: 'right'})
+    .text('Tested For: '+business_name, 250, 99, {width: 320, align: 'right'})
+    .text('Date Tested: '+moment(lab.date_tested).format('M/D/YYYY'), 250, 118, {width: 320, align: 'right'});
 
   doc.fontSize(32)
     .text('Certificate of Analysis', 0, 160, {width: 610, align: 'center'});
 
-  // potency
-  doc.fontSize(12)
-    .text('Potency Test Results', b.col1, 220)
+  // // potency
+  // doc.fontSize(12)
+  //   .text('Potency Test Results', b.col1, 220)
 
-    .stroke('#777')
-    .moveTo(b.col1, 235)
-    .lineTo(295, 235)
+  //   .stroke('#777')
+  //   .moveTo(b.col1, 235)
+  //   .lineTo(295, 235)
 
-    .fontSize(10)
-    .fillColor('#777')
-    .text('mg/g', b.col1 + 120, 238)
-    .text('%', b.col1 + 220, 239)
+  //   .fontSize(10)
+  //   .fillColor('#777')
+  //   .text('mg/g', b.col1 + 120, 238)
+  //   .text('%', b.col1 + 220, 239)
 
-    .moveTo(b.col1, 250)
-    .lineTo(295, 250)
-    .stroke()
-    .fillColor('#000')
+  //   .moveTo(b.col1, 250)
+  //   .lineTo(295, 250)
+  //   .stroke()
+  //   .fillColor('#000')
 
-    .text('Total THC', b.col1, 260)
-    .text(total([certData.thc,certData.thca,certData.thcv]), b.col1 + 220, 260)
+  //   .text('Total THC', b.col1, 260)
+  //   .text(total([certData.thc,certData.thca,certData.thcv]), b.col1 + 220, 260)
 
-    .text('THC', b.col1, 272)
-    .text('-', b.col1 + 120, 272)
-    .text(percent(certData.thc), b.col1 + 220, 272)
+  //   .text('THC', b.col1, 272)
+  //   .text('-', b.col1 + 120, 272)
+  //   .text(percent(certData.thc), b.col1 + 220, 272)
 
-    .text('THCa', b.col1, 284)
-    .text('-', b.col1 + 120, 284)
-    .text(percent(certData.thca), b.col1 + 220, 284)
+  //   .text('THCa', b.col1, 284)
+  //   .text('-', b.col1 + 120, 284)
+  //   .text(percent(certData.thca), b.col1 + 220, 284)
 
-    .text('THCv', b.col1, 296)
-    .text('-', b.col1 + 120, 296)
-    .text(percent(certData.thcv), b.col1 + 220, 296)
+  //   .text('THCv', b.col1, 296)
+  //   .text('-', b.col1 + 120, 296)
+  //   .text(percent(certData.thcv), b.col1 + 220, 296)
 
-    .text('Total CBD', b.col1, 308)
-    .text('-', b.col1 + 120, 308)
-    .text(total([certData.cbd,certData.cbda]), b.col1 + 220, 308)
+  //   .text('Total CBD', b.col1, 308)
+  //   .text('-', b.col1 + 120, 308)
+  //   .text(total([certData.cbd,certData.cbda]), b.col1 + 220, 308)
 
-    .text('CBD', b.col1, 320)
-    .text('-', b.col1 + 120, 320)
-    .text(percent(certData.cbd), b.col1 + 220, 320)
+  //   .text('CBD', b.col1, 320)
+  //   .text('-', b.col1 + 120, 320)
+  //   .text(percent(certData.cbd), b.col1 + 220, 320)
 
-    .text('CBDa', b.col1, 332)
-    .text('-', b.col1 + 120, 332)
-    .text(percent(certData.cbda), b.col1 + 220, 332)
+  //   .text('CBDa', b.col1, 332)
+  //   .text('-', b.col1 + 120, 332)
+  //   .text(percent(certData.cbda), b.col1 + 220, 332)
 
-    .text('CBN', b.col1, 344)
-    .text('-', b.col1 + 120, 344)
-    .text(percent(certData.cbn), b.col1 + 220, 344)
+  //   .text('CBN', b.col1, 344)
+  //   .text('-', b.col1 + 120, 344)
+  //   .text(percent(certData.cbn), b.col1 + 220, 344)
 
-    .text('CBG', b.col1, 356)
-    .text('-', b.col1 + 120, 356)
-    .text(percent(certData.cbg), b.col1 + 220, 356)
+  //   .text('CBG', b.col1, 356)
+  //   .text('-', b.col1 + 120, 356)
+  //   .text(percent(certData.cbg), b.col1 + 220, 356)
 
-    .text('CBGa', b.col1, 368)
-    .text('-', b.col1 + 120, 368)
-    .text(percent(certData.cbga), b.col1 + 220, 368)
+  //   .text('CBGa', b.col1, 368)
+  //   .text('-', b.col1 + 120, 368)
+  //   .text(percent(certData.cbga), b.col1 + 220, 368)
 
-    .text('CBC', b.col1, 380)
-    .text('-', b.col1 + 120, 380)
-    .text(percent(certData.cbc), b.col1 + 220, 380);
+  //   .text('CBC', b.col1, 380)
+  //   .text('-', b.col1 + 120, 380)
+  //   .text(percent(certData.cbc), b.col1 + 220, 380);
 
-  // terpine
-  doc.fontSize(12)
-    .fillColor('#000')
-    .text('Terpine Test Results', b.col2, 220)
-    .text('Terpine scent', b.col2 + 150, 220, {width: 105, align: 'right'})
+  // // terpine
+  // doc.fontSize(12)
+  //   .fillColor('#000')
+  //   .text('Terpine Test Results', b.col2, 220)
+  //   .text('Terpine scent', b.col2 + 150, 220, {width: 105, align: 'right'})
 
-    .stroke('#777')
-    .moveTo(b.col2, 235)
-    .lineTo(b.right, 235)
+  //   .stroke('#777')
+  //   .moveTo(b.col2, 235)
+  //   .lineTo(b.right, 235)
 
-    .fontSize(10)
-    .fillColor('#777')
-    .text('mg/g', b.col2, 238, {width: b.columnWidth - 15, align: 'right'})
+  //   .fontSize(10)
+  //   .fillColor('#777')
+  //   .text('mg/g', b.col2, 238, {width: b.columnWidth - 15, align: 'right'})
 
-    .moveTo(b.col2, 250)
-    .lineTo(b.right, 250)
-    .stroke()
+  //   .moveTo(b.col2, 250)
+  //   .lineTo(b.right, 250)
+  //   .stroke()
 
-    .fontSize(10)
-    .fillColor('#000')
-    .text('Terpinolene', b.col2, 260)
-  ;
+  //   .fontSize(10)
+  //   .fillColor('#000')
+  //   .text('Terpinolene', b.col2, 260)
+  // ;
 
-  // pesticide
-  doc.fontSize(12)
-    .text('Pesticide Test Results', b.col1, 420)
-    .text('Threshold Limits', b.col1 + 167, 420)
+  // // pesticide
+  // doc.fontSize(12)
+  //   .text('Pesticide Test Results', b.col1, 420)
+  //   .text('Threshold Limits', b.col1 + 167, 420)
 
-    .moveTo(b.col1, 435)
-    .lineTo(295, 435)
-    .stroke('#777')
+  //   .moveTo(b.col1, 435)
+  //   .lineTo(295, 435)
+  //   .stroke('#777')
 
-    .fontSize(10)
-    .fillColor('#000')
-    .text('Carbamates', b.col1, 445)
-    .text('Heavy Metals', b.col1, 457)
-    .text('Organophosphates', b.col1, 469)
-    .text('Avermectins', b.col1, 481)
-    .text('Organochlorinates', b.col1, 493)
-    .text('Pyrethroids', b.col1, 505)
-  ;
-
-
-  // solvents
+  //   .fontSize(10)
+  //   .fillColor('#000')
+  //   .text('Carbamates', b.col1, 445)
+  //   .text('Heavy Metals', b.col1, 457)
+  //   .text('Organophosphates', b.col1, 469)
+  //   .text('Avermectins', b.col1, 481)
+  //   .text('Organochlorinates', b.col1, 493)
+  //   .text('Pyrethroids', b.col1, 505)
+  // ;
 
 
-  // microbiological
+  // // solvents
 
 
-  // qr code and seal image
-  doc
-    .image(qrCode, 325, 610, {fit: [90, 90]})
-    .fontSize(7)
-    .text('Scan to verify at CBLabs.us', 326, 700);
+  // // microbiological
+
+
+  // // qr code and seal image
+  // doc
+  //   .image(qrCode, 325, 610, {fit: [90, 90]})
+  //   .fontSize(7)
+  //   .text('Scan to verify at CBLabs.us', 326, 700);
 
 
   // legend
@@ -189,7 +190,8 @@ function create(data) {
 
   return new Promise((resolve,reject) => {
     resolve(doc);
-  });
+  })
+  .catch(error => console.log(error));
 
 }
 
