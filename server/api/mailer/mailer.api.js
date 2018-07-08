@@ -38,8 +38,15 @@ const transporter = nodemailer.createTransport(ses({
 }));
 
 function sendEmail(email, options) {
-  const html = mailGenerator.generate(email);
-  const text = mailGenerator.generatePlaintext(email);
+  let generator = options.params ? new Mailgen({
+    theme: 'default',
+    product: {
+      name: options.params.siteName,
+      link: options.params.link
+    }
+  }) : mailGenerator;
+  const html = generator.generate(email);
+  const text = generator.generatePlaintext(email);
   const sendMailOptions = {
     ...mailHeaders,
     ...options,
@@ -58,14 +65,14 @@ module.exports = function(app) {
   // APIs
   
   // email pdf to single recipient
-  // welcome email after signing up
-  app.post('/email-pdf', function(req, res) {
-    const { from, to, subject, attachments } = req.body
+  app.post('/email-pdf', function(req, res, next) {
+    const { from, to, subject, attachments, params } = req.body
+    let intro = params && params.intro ? params.intro : 'Please find the attached pdf Certificate'
     const email = {
       ...mailOptions,
       body: {
         // name: name,
-        intro: 'Please find the attached pdf Certificate',
+        intro,
         // action: {
         //   instructions: 'Click the LOGIN button below to manage your account',
         //   button: {
@@ -80,13 +87,15 @@ module.exports = function(app) {
       from,
       to,
       subject,
-      attachments
+      attachments,
+      params
       // attachments: [{
       //   filename: 'mm420-logo-white-solid.jpg',
       //   path: 'https://s3-us-west-1.amazonaws.com/matchmaker420/default/mm420-logo-white-solid.jpg',
       //   cid: 'logo@matchmaker420.com'
       // }]
     }
+    console.log('\nemail-pdf sendMailOptions');
     sendEmail(email, sendMailOptions)
       .then(success => res.json(success))
       .catch(error => next(error));

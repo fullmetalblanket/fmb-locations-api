@@ -112,13 +112,17 @@ module.exports = function(app) {
             error: 'Password is incorrect'
           });
         }
-        // create token
-        var token = jwt.sign({user: user}, config.tokenSecret, {
-          expiresIn: config.sessionExpiresIn
-        });
 
         User.populate(user, populateOptions, function (err, user) {
           if(err) { return handleError(res, err); }
+
+          // create token
+          const role = user.role.name;
+          const { sessionExpiresIn } = config;
+          const expiresIn = role === 'admin' || role === 'laboratory' ? sessionExpiresIn.admin : sessionExpiresIn.user;
+          console.log('\nlogin: role', role);
+          var token = jwt.sign({user: user}, config.tokenSecret, {expiresIn});
+
           res.status(200).json({
             message: 'Successfully logged in',
             token: token,
@@ -151,8 +155,11 @@ module.exports = function(app) {
           });
         }
         // create token
+        const role = user.role.name;
+        const { sessionExpiresIn } = config
+        const expiresIn = role === 'admin' || role === 'laboratory' ? sessionExpiresIn.admin : sessionExpiresIn.user;
         var token = jwt.sign({user: user}, config.tokenSecret, {
-          expiresIn: config.sessionExpiresIn
+          expiresIn: sessionExpiresIn
         });
 
         User.populate(user, populateOptions, function (err, user) {

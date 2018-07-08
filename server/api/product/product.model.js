@@ -87,15 +87,32 @@ var productSchema = mongoose.Schema({
     date_due: Date, // date test is due
     qr_code: String,
     certificate: String,
+    email_sent: {
+      client: false,
+      state: false
+    },
     tests: [
       {
         _id : false,
-        type: { type: ObjectId, ref: 'TestType' },
         selected: Boolean,
+        type: { type: ObjectId, ref: 'TestType' },
+        name: String,
+        machine: String,
+        headers: {
+          mg: Boolean,
+          ppm: Boolean,
+          percent: Boolean,
+          type: Boolean
+        },
         data: [{
           _id : false,
           name: String, 
           value: String,
+          pass: Boolean,          
+          mg: String,
+          ppm: String,
+          percent: String,
+          limit: String,
           type: {type: String, default: ''} // for microbio ['b', 'f'] (b = 'bacteria', f = 'fungus')
         }]
       }

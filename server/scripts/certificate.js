@@ -7,11 +7,71 @@ const aws = require('./aws');
 const request = require('request');
 const mm420Api = require('../api/mm420-api');
 
+function sortArray(array, property, direction) {
+  direction = direction || 1;
+  array.sort(function compare(a, b) {
+      let comparison = 0;
+      if (a[property] > b[property]) {
+          comparison = 1 * direction;
+      } else if (a[property] < b[property]) {
+          comparison = -1 * direction;
+      }
+      return comparison;
+  });
+  return array; // Chainable
+}
+
+function sortTests(tests) {
+  const solvents = tests.find(test => test.type.name === 'solvents');
+  const solventsIndex = tests.findIndex(test => test.type.name === 'solvents');
+  if (solvents) {
+    tests.splice(solventsIndex, 1);
+    tests.unshift(solvents);
+  }
+
+  const terpenes = tests.find(test => test.type.name === 'terpenes');
+  const terpenesIndex = tests.findIndex(test => test.type.name === 'terpenes');
+  if (terpenes) {
+    tests.splice(terpenesIndex, 1);
+    tests.unshift(terpenes);
+  }
+
+  const moisture = tests.find(test => test.type.name === 'moisture');
+  const moistureIndex = tests.findIndex(test => test.type.name === 'moisture');
+  if (moisture) {
+    tests.splice(moistureIndex, 1);
+    tests.unshift(moisture);
+  }
+
+  const potency = tests.find(test => test.type.name === 'potency');
+  const potencyIndex = tests.findIndex(test => test.type.name === 'potency');
+  if (potency) {
+    tests.splice(potencyIndex, 1);
+    tests.unshift(potency);
+  }
+
+  const microbio = tests.find(test => test.type.name === 'microbio');
+  if (microbio) {
+    const { data } = microbio;
+    let f = data.filter(d => d.type === 'fungus')
+    console.log('f',f)
+    f = sortArray(f, 'name')
+    let b = data.filter(d => d.type === 'bacteria')
+    b = sortArray(b, 'name')
+    microbio.data = b.concat(f)
+  }
+
+  return tests;
+}
+
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function(txt){
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
+
 function percent(thing) {
-  // console.log('\npercent: thing', thing);
   const num = thing.toString();
-  // console.log('percent: num', num);
-  // console.log('percent: return', isNaN(thing) ? '-' : parseFloat(num).toFixed(2));
   return isNaN(thing) ? '-' : parseFloat(num).toFixed(2);
 }
 
@@ -26,175 +86,448 @@ function total(args) {
   return percent(total);
 }
 
-function create(product) {
-  console.log('certificate.create product',product)
-  const logo = path.join(__dirname,'../../assets/images/cblabs-logo-blue.png');
-  const { _id, name, product_type, lab, tracking } = product;
-  const { qr_code, tests } = lab;
-  const { user } = tracking
-  const business_name = user.business && user.business.business_name || user.email
-
-  const b = {
-    col1: 40,
-    col2: 315,
-    right: 570,
-    width: 610,
-    columnWidth: 255
-  }
-
-  const doc = new PDFDocument;
-
-  doc
-    .lineWidth(.5);
-
-  doc.image(logo, b.col1, 40, {fit: [90, 90]})
-    .fontSize(14)
-    .text('Tomorrow\'s Standard for Medical Testing', 140, 70, {width: 140});
-  
-  doc.fontSize(10)
-    .text('Sample Name: '+name, 250, 42, {width: 320, align: 'right'})
-    .text('Sample ID: '+_id, 250, 61, {width: 320, align: 'right'})
-    .text('Sample Type: '+product_type.name, 251, 80, {width: 320, align: 'right'})
-    .text('Tested For: '+business_name, 250, 99, {width: 320, align: 'right'})
-    .text('Date Tested: '+moment(lab.date_tested).format('M/D/YYYY'), 250, 118, {width: 320, align: 'right'});
-
-  doc.fontSize(32)
-    .text('Certificate of Analysis', 0, 160, {width: 610, align: 'center'});
-
-  // // potency
-  // doc.fontSize(12)
-  //   .text('Potency Test Results', b.col1, 220)
-
-  //   .stroke('#777')
-  //   .moveTo(b.col1, 235)
-  //   .lineTo(295, 235)
-
-  //   .fontSize(10)
-  //   .fillColor('#777')
-  //   .text('mg/g', b.col1 + 120, 238)
-  //   .text('%', b.col1 + 220, 239)
-
-  //   .moveTo(b.col1, 250)
-  //   .lineTo(295, 250)
-  //   .stroke()
-  //   .fillColor('#000')
-
-  //   .text('Total THC', b.col1, 260)
-  //   .text(total([certData.thc,certData.thca,certData.thcv]), b.col1 + 220, 260)
-
-  //   .text('THC', b.col1, 272)
-  //   .text('-', b.col1 + 120, 272)
-  //   .text(percent(certData.thc), b.col1 + 220, 272)
-
-  //   .text('THCa', b.col1, 284)
-  //   .text('-', b.col1 + 120, 284)
-  //   .text(percent(certData.thca), b.col1 + 220, 284)
-
-  //   .text('THCv', b.col1, 296)
-  //   .text('-', b.col1 + 120, 296)
-  //   .text(percent(certData.thcv), b.col1 + 220, 296)
-
-  //   .text('Total CBD', b.col1, 308)
-  //   .text('-', b.col1 + 120, 308)
-  //   .text(total([certData.cbd,certData.cbda]), b.col1 + 220, 308)
-
-  //   .text('CBD', b.col1, 320)
-  //   .text('-', b.col1 + 120, 320)
-  //   .text(percent(certData.cbd), b.col1 + 220, 320)
-
-  //   .text('CBDa', b.col1, 332)
-  //   .text('-', b.col1 + 120, 332)
-  //   .text(percent(certData.cbda), b.col1 + 220, 332)
-
-  //   .text('CBN', b.col1, 344)
-  //   .text('-', b.col1 + 120, 344)
-  //   .text(percent(certData.cbn), b.col1 + 220, 344)
-
-  //   .text('CBG', b.col1, 356)
-  //   .text('-', b.col1 + 120, 356)
-  //   .text(percent(certData.cbg), b.col1 + 220, 356)
-
-  //   .text('CBGa', b.col1, 368)
-  //   .text('-', b.col1 + 120, 368)
-  //   .text(percent(certData.cbga), b.col1 + 220, 368)
-
-  //   .text('CBC', b.col1, 380)
-  //   .text('-', b.col1 + 120, 380)
-  //   .text(percent(certData.cbc), b.col1 + 220, 380);
-
-  // // terpine
-  // doc.fontSize(12)
-  //   .fillColor('#000')
-  //   .text('Terpine Test Results', b.col2, 220)
-  //   .text('Terpine scent', b.col2 + 150, 220, {width: 105, align: 'right'})
-
-  //   .stroke('#777')
-  //   .moveTo(b.col2, 235)
-  //   .lineTo(b.right, 235)
-
-  //   .fontSize(10)
-  //   .fillColor('#777')
-  //   .text('mg/g', b.col2, 238, {width: b.columnWidth - 15, align: 'right'})
-
-  //   .moveTo(b.col2, 250)
-  //   .lineTo(b.right, 250)
-  //   .stroke()
-
-  //   .fontSize(10)
-  //   .fillColor('#000')
-  //   .text('Terpinolene', b.col2, 260)
-  // ;
-
-  // // pesticide
-  // doc.fontSize(12)
-  //   .text('Pesticide Test Results', b.col1, 420)
-  //   .text('Threshold Limits', b.col1 + 167, 420)
-
-  //   .moveTo(b.col1, 435)
-  //   .lineTo(295, 435)
-  //   .stroke('#777')
-
-  //   .fontSize(10)
-  //   .fillColor('#000')
-  //   .text('Carbamates', b.col1, 445)
-  //   .text('Heavy Metals', b.col1, 457)
-  //   .text('Organophosphates', b.col1, 469)
-  //   .text('Avermectins', b.col1, 481)
-  //   .text('Organochlorinates', b.col1, 493)
-  //   .text('Pyrethroids', b.col1, 505)
-  // ;
 
 
-  // // solvents
-
-
-  // // microbiological
-
-
-  // // qr code and seal image
-  // doc
-  //   .image(qrCode, 325, 610, {fit: [90, 90]})
-  //   .fontSize(7)
-  //   .text('Scan to verify at CBLabs.us', 326, 700);
-
-
-  // legend
-  // N/A - NOT TESTED, ND - NOT DETECTED, ppm - PARTS PER MILLION, cfu - COLONY FORMING UNITS
-
-
-  // doc.rect(doc.x, 40, 320, doc.y).stroke()
-
-  // Finalize PDF file
-  doc.end();
-
+function create(sample) {
 
   return new Promise((resolve,reject) => {
+    // console.log('certificate.create sample',sample)
+    const logo = path.join(__dirname,'../../assets/images/cblabs-logo-blue.png');
+    const signature = path.join(__dirname,'../../assets/images/clarence-signature.png');
+    const { _id, name, product_type, lab, tracking } = sample;
+    const { user: primaryUser, secondary: secondaryUser } = tracking
+    const { qrcodeDataURL, tests, location: labUser, date_tested } = lab;
+    const selectedTests = sortTests(tests.filter(test => test.selected));
+    const completeDate = moment(date_tested).format('M/D/YYYY');
+
+    const docWidth = 612;
+    // const docHeight = 792;
+    const docHeight = 828;
+    // const docHeight = 864;
+    const doc = new PDFDocument({
+      size: [docWidth, docHeight],
+      margins: {top: 36, bottom: 18, left: 36, right: 36},
+      layout: 'portrait',
+      bufferPages: true,
+      info: {
+        Title: 'Certificate of Analysis', 
+        Author: 'CB Labs', // the name of the author
+        Subject: 'Laboratory Testing', // the subject of the document
+        // Keywords: 'pdf;javascript' // keywords associated with the document
+        // CreationDate: 'DD/MM/YYYY', // the date the document was created (added automatically by PDFKit)
+        // ModDate: 'DD/MM/YYYY' // the date the document was last modified
+    }
+    });
+
+    // boundaries
+    const b = {
+      width: 540, // minus padding
+      // height: 720,
+      // documentHeight: 738,
+      height: 756,
+      documentHeight: 774,
+      currentPage: 1,
+      // columnWidth: 257,
+      // col1: 36,
+      // col1right: 293,
+      // col2: 319,
+      // right: 576,
+      columnWidth: 260,
+      col1: 30,
+      col1right: 290,
+      col2: 322,
+      right: 582,
+      col1savedRow: 1,
+      col1savedPage: 1,
+      col2savedRow: 1,
+      col2savedPage: 1,
+      currentColumn: 1,
+      largeRowSize: 18,
+      rowSize: 12,
+      smallRowSize: 6,
+      currentRow: 36, // current row value
+      changePage: page => {
+        b.currentPage = page;
+        doc.switchToPage(page -1);
+      },
+      changeColumn: newCol => {
+        if (newCol === 1) {
+          b.col2savedPage = b.currentPage;
+          b.col2savedRow = b.currentRow;
+          b.currentRow = b.col1savedRow;
+        } else {
+          b.col1savedPage = b.currentPage;
+          b.col1savedRow = b.currentRow;
+          b.currentRow = b.col2savedRow;
+        }
+        b.currentColumn = newCol;
+      },
+      setCurrentRow: (row) => {
+        b.currentRow = row;
+        b.col1savedRow = row;
+        b.col2savedRow = row;
+      },
+      newRow: (size) => {
+        let pts = b.rowSize;
+        let range = doc.bufferedPageRange();
+        if (b.currentRow > b.documentHeight) {
+          const nextPage = b.currentPage + 1;
+          const col = `col${b.currentColumn}savedPage`
+          b[col] === nextPage
+          if (nextPage > range.count) {
+            doc.addPage();
+            b.currentPage = nextPage;
+            b.currentRow = pts;
+          } else {
+            b.changePage(nextPage)
+          }
+        } else {
+          if (size) {
+            const rowSize = size === 'large' ? b.largeRowSize : b.smallRowSize;
+            pts = rowSize;
+          }
+        }
+        b.currentRow = b.currentRow + pts;
+        b[`col${b.currentColumn}savedRow`] = b.currentRow;
+        return b.currentRow;
+      },
+    }
+
+
+
+    // 
+    // NEW
+    // 
+    console.log('\n');
+    let currentPage = 0;
+    let currentCol = 0;
+
+    const testStartingRow = 188;
+
+    const page = [{
+      name: 0,
+      col: [
+        {row: testStartingRow},
+        {row: testStartingRow}
+      ]
+    }];
+
+    const addPage = () => {
+      console.log('\naddPage');
+      page.push({
+        name: page.length,
+        col: [
+          {row: 36},
+          {row: 36}
+        ]
+      })
+      doc.addPage();
+      console.log('page',JSON.stringify(page));
+    }
+
+    const newRow = (size) => {
+      console.log('newRow');
+      let rowSize = b.rowSize;
+      if (size) {
+        rowSize = size === 'large' ? b.largeRowSize : b.smallRowSize;
+      }
+      page[currentPage].col[currentCol].row = page[currentPage].col[currentCol].row + rowSize;
+      return page[currentPage].col[currentCol].row;
+    }
+
+    const getTestHeight = test => {
+      let height = b.rowSize * 2;
+      height += b.rowSize - 2;
+      for (let i = 0; i < test.data.length; i++) {
+        const result = test.data[i];
+        height += i === 0 ? b.smallRowSize : b.rowSize;
+      }
+      height += b.largeRowSize;
+      return height;
+    }
+
+
+    const mgCol = 110;
+    const mgWidth = 30;
+    const percentCol = 170;
+    const percentWidth = 30;
+    const resultWidth = 30;
+
+    const renderTestHeader = (test, leftEdge, rightEdge) => {
+      const { headers } = test;    
+
+      let lineRow = newRow();     
+      doc.moveTo(leftEdge, lineRow)
+        .lineTo(rightEdge, lineRow)
+        .fillAndStroke('#000', '#aaa');
+
+      const headersRow = newRow('small') - 3;
+      doc.fontSize(7);
+      if (headers) {
+        if (headers.mg) {
+          doc.text('mg/g', leftEdge + mgCol, headersRow, {width: mgWidth, align: 'right'});
+        }
+        if (headers.percent) {
+          doc.text('%', leftEdge + percentCol, headersRow, {width: percentWidth, align: 'right'});
+        }
+        if (headers.type) {
+          doc.text('type', leftEdge + percentCol, headersRow, {width: percentWidth, align: 'right'});
+        }
+      }
+      doc.text('result', rightEdge - resultWidth, headersRow, {width: resultWidth, align: 'right'});
+      
+      lineRow = newRow('small');
+      doc.moveTo(leftEdge, lineRow)
+        .lineTo(rightEdge, lineRow)
+        .fillAndStroke('#000', '#aaa');
+    }
+
+    const renderTestData = (test, leftEdge, rightEdge) => {
+      const { data } = test;
+      for (let r = 0; r < data.length; r++) {
+        let result = data[r];
+        console.log('name',result.name);
+        let resultRow = r === 0 ? newRow('small') : newRow();
+
+        doc.fontSize(8);
+        doc.text(result.name, leftEdge, resultRow);
+
+        if (result.mg) {
+          doc.text(result.mg, leftEdge + mgCol, resultRow, {width: mgWidth, align: 'right'});
+        }
+        if (result.percent) {
+          doc.text(result.percent, leftEdge + percentCol, resultRow, {width: percentWidth, align: 'right'});
+        }
+        if (result.type) {
+          const typeAbbr = result.type === 'fungus' ? 'f' : 'b'
+          doc.text(typeAbbr, leftEdge + percentCol, resultRow, {width: percentWidth, align: 'right'});
+        }
+
+
+        let pass = result.pass ? 'PASS' : 'FAIL';
+        if (test.name === 'moisture') {
+          pass = result.value
+        }
+        doc.text(pass, rightEdge - resultWidth, resultRow, {width: resultWidth, align: 'right'});
+      }
+    }
+
+    const renderFooters = () => {
+      for (let i = 0; i < page.length; i++) {
+        doc.switchToPage(i);
+        renderFooter(b.col1, b.right, b.documentHeight, i+1, page.length);
+      }
+    }
+
+    const renderFooter = (left, right, startRow, pageNum, pageLength) => {
+      b.currentRow = startRow;
+      let lineRow = startRow
+      doc.moveTo(left, lineRow)
+      .lineTo(right, lineRow)
+      .fillAndStroke('#000', '#aaa');
+
+      const imageRow = b.newRow('small');
+      const textRow = imageRow + 14;
+
+      doc.text(`${pageNum}/${pageLength}`, b.col1right - 30, textRow, {width: 94, align: 'center'})
+      .image(qrcodeDataURL, right - 32, imageRow, {fit: [34, 34]});
+    }
+
+    const renderSignatureAndQRCode = () => {
+      // b.currentRow = getNextAvailableRow();
+      selectPageAndRow(120, true)
+      // console.log('NEW ROW',b.currentRow)
+      const leftEdge = currentCol === 0 ? b.col1 : b.col2;
+      const rightEdge = currentCol === 0 ? b.col1right : b.right;
+      newRow('large');
+      newRow('large');
+      newRow('large');
+      newRow('large');
+      newRow('large');
+      lineRow = newRow();
+      console.log('lineRow',lineRow)
+      doc.moveTo(leftEdge, lineRow)
+        .lineTo(rightEdge, lineRow)
+        .dash(5, {space: 10})
+        .strokeColor('#aaa')
+        .stroke()
+        .undash();
+      const signatureLine = newRow();
+      doc.image(signature, leftEdge, signatureLine - 70, {width: 160});
+      doc.text('Scientific Director, Clarence Gillett Ph. D.', leftEdge, signatureLine);
+      
+      // qr code
+      b.currentRow = signatureLine - 92;
+      const codeLine = b.currentRow;
+      doc.image(qrcodeDataURL, rightEdge - 82, codeLine, {fit: [90, 90]});
+      doc.text('verify at cblabs.us', rightEdge - 76, codeLine + 91, {width: 76, align: 'center'});
+    }
+
+    const selectPageAndRow = (thing, lastPage) => {
+      let thingHeight = null;
+      if (thing.data) {
+        thingHeight = getTestHeight(thing);
+      } else {
+        thingHeight = thing;
+      }
+      const footerHeight = 40;
+      const start = lastPage ? page.length - 1 : 0
+      console.log('\nstart',start);
+      for (let p = start; p < page.length; p++) {
+        const thisPage = page[p];
+        let mostSpace = 0;
+        let colToUse = 0;
+        for (let c = 0; c < thisPage.col.length; c++) {
+          const thisCol = thisPage.col[c];
+          const thisColEnd = thisCol.row;
+          const remainingSpace = b.documentHeight - thisColEnd;
+          if (remainingSpace > mostSpace) {
+            mostSpace = remainingSpace;
+            colToUse = c;
+          }
+        }
+        if (mostSpace >= thingHeight + footerHeight) {
+          if (p !== currentPage) {
+            doc.switchToPage(p);
+          }
+          currentPage = p;
+          currentCol = colToUse;
+          return
+        } 
+      }
+      console.log('!spaceFound');
+      addPage();
+      selectPageAndRow(thing);
+    }
+
+    const getNextAvailableRow = () => {
+      console.log('\ngetNextAvailableRow page ',JSON.stringify(page))
+      let row = 0;
+      for (let c = 0; c < page[page.length - 1].col.length; c++) {
+        const thisRow = page[page.length - 1].col[c].row;
+        console.log('thisRow',thisRow);
+        row = thisRow > row ? thisRow : row;
+      }
+      console.log('row',row)
+      if (row > b.documentHeight - 120) {
+        console.log('\ngetNextAvailableRow: not enough space')
+        addPage();
+        return getNextAvailableRow();
+      }
+      return row;
+    }
+
+
+    doc.lineWidth(.25);
+
+    // logo
+    doc.image(logo, b.col1, b.currentRow, {fit: [60, 60]});
+
+    // cb labs biz info
+    const labBiz = labUser.business;
+    b.currentRow = 26;
+    const logoRight = 100;
+    const logoTextWidth = b.columnWidth - logoRight;
+    doc.fontSize(10)
+      .text('CB Labs, Inc', logoRight, b.newRow(), {width: logoTextWidth})
+      .text(`License # ${labUser.credentials.license}`, logoRight, b.newRow(), {width: logoTextWidth})
+      .text(`${labBiz.address_line_1} ${labBiz.address_line_2}`, logoRight, b.newRow(), {width: logoTextWidth})
+      .text(`${labBiz.city}, ${labUser.business.state } ${labBiz.zip}`, logoRight, b.newRow(), {width: logoTextWidth})
+      .text(labBiz.business_phone, logoRight, b.newRow(), {width: logoTextWidth});
+    
+    // client biz info
+    const primeBiz = primaryUser.business;
+    const primeUserName = primeBiz && primeBiz.business_name || primaryUser.email;
+    const secUserName = secondaryUser && secondaryUser.business && ` / ${secondaryUser.business.business_name}` || '';
+    b.currentRow = 26;
+    doc.fontSize(10)
+      .text(`${primeUserName}${secUserName}`, b.col2, b.newRow(), {width: b.columnWidth, align: 'right'})
+      .text(`License # ${primaryUser.credentials.license || 'pending'}`, b.col2, b.newRow(), {width: b.columnWidth, align: 'right'})
+      .text(`${primeBiz.address_line_1} ${primeBiz.address_line_2}`, b.col2, b.newRow(), {width: b.columnWidth, align: 'right'})
+      .text(`${primeBiz.city}, ${primeBiz.state } ${primeBiz.zip}`, b.col2, b.newRow(), {width: b.columnWidth, align: 'right'})
+      .text(`${primeBiz.business_phone}`, b.col2, b.newRow(), {width: b.columnWidth, align: 'right'});
+
+    // title
+    doc.fontSize(20)
+      .text('Certificate of Analysis', 0, 110, {width: 610, align: 'center'});
+
+    let lineRow = 136;     
+    doc.moveTo(b.col1, lineRow)
+      .lineTo(b.right, lineRow)
+      .fillAndStroke('#000', '#aaa');
+
+    doc.fontSize(12)
+      .text(`Name: ${name}`, b.col1, 148)
+      .text(`Matrix: ${toTitleCase(product_type.name)}`, b.col2, 148, {width: b.columnWidth, align: 'right'});
+
+    doc.fontSize(10)
+      .text(`ID: ${sample._id}`, b.col1, 166)
+      .text(`Date Tested: ${completeDate}`, b.col2, 166, {width: b.columnWidth, align: 'right'});
+
+    // sample name and matrix
+    // doc.fontSize(14)
+    //   .text(`${name}, ${toTitleCase(product_type.name)}`, 0, 134, {width: 610, align: 'center'});
+
+
+    //
+    // tests
+    //
+    doc.fontSize(10);
+
+    for (let i = 0; i < selectedTests.length; i++) {
+      const test = selectedTests[i];
+      console.log('\ntest ',test.name);
+
+      selectPageAndRow(test);
+
+      const leftEdge = currentCol === 0 ? b.col1 : b.col2;
+      const rightEdge = currentCol === 0 ? b.col1right : b.right;
+
+      const titleRow = newRow();
+
+      doc.fontSize(11)
+        .text(toTitleCase(test.name), leftEdge, (titleRow - 2));
+
+      if (test.machine) {
+        doc.fontSize(8)
+          .text(test.machine, leftEdge, (titleRow + 1), {width: b.columnWidth, align: 'right'});
+      }
+
+      renderTestHeader(test, leftEdge, rightEdge);
+
+      //
+      // test data
+      //
+      renderTestData(test, leftEdge, rightEdge)
+      // const { data } = test;
+      // for (let r = 0; r < data.length; r++) {
+      //   let result = data[r];
+      //   console.log('name',result.name);
+      //   let resultRow = r === 0 ? newRow('small') : newRow();
+      //   doc.fontSize(8)
+      //     .text(result.name, leftEdge + 120, resultRow)
+      //     .text(result.value, leftEdge + 180, resultRow, {width: b.columnWidth, align: 'right'});
+      // }
+
+      newRow('large');
+    }
+
+
+    renderSignatureAndQRCode();
+
+    renderFooters();
+
+    console.log('certificate created ')
+    doc.end();
+
     resolve(doc);
   })
-  .catch(error => console.log(error));
+  .catch(error => {
+    console.log(error)
+    reject(error)
+  });
 
 }
-
 
 function upload(certificate, id) {
   const params = {
@@ -212,10 +545,11 @@ function upload(certificate, id) {
 }
 
 
-function email(email, name, number, certUrl) {
+function email(email, name, number, certURL, params) {
+  const from = params && params.from ? params.from : 'admin@matchmaker420.com'
   const payload = {
-    from: 'admin@matchmaker420.com',
-    to: email, // TODO we don't have the client email
+    from,
+    to: email,
     subject: `Certificate for ${name} - ${number}`,
     attachments: [
       {
@@ -223,8 +557,10 @@ function email(email, name, number, certUrl) {
         path: certURL,
         cid: `certificate-${number}`
       }
-    ]
+    ],
+    params
   }
+  console.log('certificate.email payload',payload);
   return new Promise((resolve, reject) => {
     request.post(mm420Api.requestOptions({url:'/email-pdf'}, payload), function(error, response, data) {
       if (!error && response.statusCode == 200) {

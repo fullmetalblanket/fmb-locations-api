@@ -82,49 +82,130 @@ var populateSampleOptions = [
   }
 ];
 
-function sampleName(string) {
-  return string.replace(' ', '-').toLowerCase();
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function(txt){
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
 }
+
+function sampleName(string) {
+  // return string.replace(' ', '-').toLowerCase();
+  return toTitleCase(string.replace(/-/, ' '));
+}
+
+// const stateEmail = 'bcc@dca.ca.gov';
+const stateEmail = 'tyhummel+state@gmail.com';
 
 module.exports = function(app) {
 
+  function updateLabData(update) {
+    return new Promise((resolve,reject) => {
+      request.put(mm420Api.requestOptions({url:'/update_lab_data_sample/'+update._id}, update), function(error, response, data) {
+        if (error) {
+          console.log('update_lab_data_sample error ', error)
+          reject(error)
+        }
+        if (!error && response.statusCode == 200) {
+          // console.log('update_lab_data_sample data',data);
+          resolve(data)
+        }
+      })
+    })
+    .catch(error => {
+      reject(error)
+    })
+  }
+
   // generate_certificate
   app.post('/generate_certificate', function(req, res) {
-    const product = req.body
-    const lab = product.lab
+    const product = req.body;
+    const { lab } = product;
     const testURLPrefix = 'http://cblabs.us/test-results/';
-    const qrcodePageURL = `${testURLPrefix}${sampleName(product.name)}-${product._id}`
-    let qrcodeDataURL = ''
-    let certificatePDF = ''
+    // http://cblabs.us/test-results/5b3a3ab09ec141057532f128;
+    // const qrcodePageURL = `${testURLPrefix}${sampleName(product.name)}-${product._id}`;
+    const qrcodePageURL = `${testURLPrefix}${product._id}`;
+    // const clientEmail = product.tracking.user.email;
+    const clientEmail = 'tyhummel+client@gmail.com';
+    let qrcodeDataURL = '';
+    let certificatePDF = '';
+    let { email_sent } = lab;
+    let shouldEmailState = product.lab.tests.filter(t => t.selected).length === 6 && (!email_sent || !email_sent.state)
+    let shouldEmailClient = !email_sent || !email_sent.client
+    let updatedSample = {};
+    const params = {
+      from: product.lab.location.email,
+      siteName: 'CBLabs Testing',
+      link: 'https://cblabstesting.com',
+      intro: `Please find the attached pdf certificate for ${product.name}`
+    }
+
+    console.log('\nshouldEmailState ',shouldEmailState)
+    console.log('shouldEmailClient',shouldEmailClient)
 
     qrCode.create(qrcodePageURL)
-      .then(image => qrcodeDataURL = image)
-      .then(() => qrCode.upload(qrcodeDataURL, product._id))
+      .then(image => lab.qrcodeDataURL = image)
+      .then(() => qrCode.upload(lab.qrcodeDataURL, product._id))
       .then(aws => lab.qr_code = aws.Location)
       .then(() => certificate.create(product))
       .then(pdf => certificatePDF = pdf)
       .then(() => certificate.upload(certificatePDF, product._id))
       .then(aws => lab.certificate = aws.Location)
+      .then(() => updateLabData(product))
+      .then(data => updatedSample = data)
       .then(() => {
-        request.put(mm420Api.requestOptions({url:'/update_lab_data/'+product._id}, product), function(error, response, data) {
-          if (error) {console.log('update_lab_data error', error)}
-          if (!error && response.statusCode == 200) {
-            console.log('update_lab_data data',data);
-            res.status(200).send(data)
-          }
-        })
+        if (shouldEmailState) {
+          console.log('emailing state')
+          return certificate.email(stateEmail, sampleName(updatedSample.name), updatedSample._id, updatedSample.lab.certificate, params)
+        }
+        console.log('NOT emailing state')
+      })
+      .then(data => {
+        if (data) {
+          console.log('email state data',data)
+          updatedSample.lab.email_sent = Object.assign(updatedSample.lab.email_sent || {}, {state:true})
+        }
+      })
+      .then(() => {
+        if (shouldEmailClient) {
+          console.log('emailing client')
+          return certificate.email(clientEmail, sampleName(updatedSample.name), updatedSample._id, updatedSample.lab.certificate, params)
+        }
+        console.log('NOT emailing client')
+      }) 
+      .then(data => {
+        if (data) {
+          console.log('email client data',data)
+          updatedSample.lab.email_sent = Object.assign(updatedSample.lab.email_sent || {}, {client:true})
+        }
+      })
+      .then(() => {
+        if (shouldEmailState || shouldEmailClient) {
+          console.log('updating email_sent')
+          return updateLabData(updatedSample)
+        }
+      })
+      .then(data => {
+        // console.log('finalProduct data',data);
+        const fullUpdate = data ? data : updatedSample
+        res.status(200).send(fullUpdate)
       })
       .catch(error => {
         console.log('generate certificate error')
+        return console.error(error)
       })
   });
 
-  // app.post('/email_certificate', function(req, res) {
-  //   const sample = req.body
-  //   certificate.create(sample),
-  //     .then(pdf => certificate.upload(pdf, sample.SampleNumber))
-  //     .then(aws => )
-  // });
+  app.post('/email_certificate', function(req, res) {
+    const { email, name, number, certUrl, params }= req.body
+    certificate.email(email, name, number, certUrl, params)
+      .then(data => {
+        res.status(200).send(data)
+      })
+      .catch(error => {
+        console.log('email_certificate error')
+        return console.error(error)
+      })
+  });
 
   // select all
   app.get('/products_data', function(req, res) {
@@ -486,6 +567,37 @@ module.exports = function(app) {
       product.save(function(err, obj) {
         if(err) return console.error(err);
         Product.populate(obj, populateOptions, function (err, popObj) {
+          if(err) { return handleError(res, err); }
+          res.status(200).json(popObj);
+        });
+      });
+    });
+
+  });
+  app.put('/update_lab_data_sample/:id', function(req, res) {
+    Product.findById(req.params.id, function(error, product) { 
+
+      // if you want to overwrite
+      // product.lab = req.body.lab;
+
+      // if you want to merge
+      Object.assign(product.lab, req.body.lab);
+      // Object.assign(product.lab.data, req.body.lab.data);
+      // Object.assign({}, product.lab.headers, req.body.lab.headers);
+      for (let i = 0; i < product.lab.tests.length; i++) {
+        const test  = product.lab.tests[i]
+        const newHeaders = req.body.lab.tests.find(t => t.name === test.name).headers
+        console.log('\ntypeof test.headers',typeof test.headers)
+        test.headers = Boolean(test.headers) || !test.headers ? {} : test.headers
+        Object.assign(test.headers, newHeaders);
+        console.log('test.headers',test.headers)
+        console.log('newHeaders',newHeaders)
+      }
+
+
+      product.save(function(err, obj) {
+        if(err) return console.error(err);
+        Product.populate(obj, populateSampleOptions, function (err, popObj) {
           if(err) { return handleError(res, err); }
           res.status(200).json(popObj);
         });
