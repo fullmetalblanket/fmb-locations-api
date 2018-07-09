@@ -151,39 +151,39 @@ module.exports = function(app) {
       .then(() => certificate.upload(certificatePDF, product._id))
       .then(aws => lab.certificate = aws.Location)
       .then(() => updateLabData(product))
-      .then(data => updatedSample = data)
-      .then(() => {
-        if (shouldEmailState) {
-          console.log('emailing state')
-          return certificate.email(stateEmail, sampleName(updatedSample.name), updatedSample._id, updatedSample.lab.certificate, params)
-        }
-        console.log('NOT emailing state')
-      })
-      .then(data => {
-        if (data) {
-          console.log('email state data',data)
-          updatedSample.lab.email_sent = Object.assign(updatedSample.lab.email_sent || {}, {state:true})
-        }
-      })
-      .then(() => {
-        if (shouldEmailClient) {
-          console.log('emailing client')
-          return certificate.email(clientEmail, sampleName(updatedSample.name), updatedSample._id, updatedSample.lab.certificate, params)
-        }
-        console.log('NOT emailing client')
-      }) 
-      .then(data => {
-        if (data) {
-          console.log('email client data',data)
-          updatedSample.lab.email_sent = Object.assign(updatedSample.lab.email_sent || {}, {client:true})
-        }
-      })
-      .then(() => {
-        if (shouldEmailState || shouldEmailClient) {
-          console.log('updating email_sent')
-          return updateLabData(updatedSample)
-        }
-      })
+      // .then(data => updatedSample = data)
+      // .then(() => {
+      //   if (shouldEmailState) {
+      //     console.log('emailing state')
+      //     return certificate.email(stateEmail, sampleName(updatedSample.name), updatedSample._id, updatedSample.lab.certificate, params)
+      //   }
+      //   console.log('NOT emailing state')
+      // })
+      // .then(data => {
+      //   if (data) {
+      //     console.log('email state data',data)
+      //     updatedSample.lab.email_sent = Object.assign(updatedSample.lab.email_sent || {}, {state:true})
+      //   }
+      // })
+      // .then(() => {
+      //   if (shouldEmailClient) {
+      //     console.log('emailing client')
+      //     return certificate.email(clientEmail, sampleName(updatedSample.name), updatedSample._id, updatedSample.lab.certificate, params)
+      //   }
+      //   console.log('NOT emailing client')
+      // }) 
+      // .then(data => {
+      //   if (data) {
+      //     console.log('email client data',data)
+      //     updatedSample.lab.email_sent = Object.assign(updatedSample.lab.email_sent || {}, {client:true})
+      //   }
+      // })
+      // .then(() => {
+      //   if (shouldEmailState || shouldEmailClient) {
+      //     console.log('updating email_sent')
+      //     return updateLabData(updatedSample)
+      //   }
+      // })
       .then(data => {
         // console.log('finalProduct data',data);
         const fullUpdate = data ? data : updatedSample
@@ -588,10 +588,11 @@ module.exports = function(app) {
         const test  = product.lab.tests[i]
         const newHeaders = req.body.lab.tests.find(t => t.name === test.name).headers
         console.log('\ntypeof test.headers',typeof test.headers)
-        test.headers = Boolean(test.headers) || !test.headers ? {} : test.headers
-        Object.assign(test.headers, newHeaders);
         console.log('test.headers',test.headers)
         console.log('newHeaders',newHeaders)
+        product.lab.tests[i].headers = newHeaders
+        // Object.assign(test.headers, newHeaders);
+        console.log('test.headers b',test.headers)
       }
 
 
