@@ -328,6 +328,9 @@ function create(sample) {
         if (result.name === 'Total THC') {
           result.limit = result.limit + '%'
         }
+        if (test.type.name === 'potency' && result.name !== 'Total THC') {
+          pass = 'PASS'
+        }
 
         if (test.type.name !== "terpenes") {
           doc.text(result.limit, leftEdge + limitCol, resultRow, {width: colWidth, align: 'right'});
