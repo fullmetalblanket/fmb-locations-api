@@ -15,7 +15,7 @@ const certificate = require('../../scripts/certificate');
 const qrCode = require('../../scripts/qrCode');
 const request = require('request');
 const mm420Api = require('../mm420-api');
-const mergeDeep = require('../../scripts/mergeDeep')
+const merge = require('../../scripts/merge')
 
 var populateOptions = [
   {
@@ -594,7 +594,7 @@ module.exports = function(app) {
       console.log('\nreq.body.lab.email_sent',req.body.lab.email_sent);
       // console.log('product.lab.email_sent',product.lab.email_sent);
 
-      mergeDeep.merge(product.lab, req.body.lab);
+      merge.deep(product.lab, req.body.lab);
 
       // // if you want to merge
       // // Object.assign(product.lab, req.body.lab);

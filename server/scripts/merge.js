@@ -17,7 +17,7 @@ function isObject(item) {
  * @param target
  * @param ...sources
  */
-function merge(target, ...sources) {
+function deep(target, ...sources) {
   if (!sources.length) return target;
   const source = sources.shift();
 
@@ -25,17 +25,17 @@ function merge(target, ...sources) {
     for (const key in source) {
       if (isObject(source[key])) {
         if (!target[key]) Object.assign(target, { [key]: {} });
-        merge(target[key], source[key]);
+        deep(target[key], source[key]);
       } else {
         Object.assign(target, { [key]: source[key] });
       }
     }
   }
 
-  return merge(target, ...sources);
+  return deep(target, ...sources);
 }
 
 module.exports = {
   isObject,
-  merge
+  deep
 }
