@@ -15,6 +15,7 @@ const certificate = require('../../scripts/certificate');
 const qrCode = require('../../scripts/qrCode');
 const request = require('request');
 const mm420Api = require('../mm420-api');
+const mergeDeep = require('../../scripts/mergeDeep')
 
 var populateOptions = [
   {
@@ -590,24 +591,30 @@ module.exports = function(app) {
 
       // if you want to overwrite
       // product.lab = req.body.lab;
-      // console.log('\nreq.body.lab.tests ',req.body.lab.tests);
+      console.log('\nreq.body.lab.email_sent',req.body.lab.email_sent);
+      // console.log('product.lab.email_sent',product.lab.email_sent);
 
-      // if you want to merge
-      Object.assign(product.lab, req.body.lab);
-      Object.assign(product.lab.email_sent, req.body.lab.email_sent);
-      // Object.assign({}, product.lab.headers, req.body.lab.headers);
-      for (let i = 0; i < product.lab.tests.length; i++) {
-        const test  = product.lab.tests[i];
-        const newHeaders = req.body.lab.tests && req.body.lab.tests.find(t => t.name === test.name).headers || {};
-        if (typeof test.headers === 'boolean') {
-          console.log('newHeaders FUCKER IS BOOLEAN',test.headers);
-          test.headers = {};
-        }
-        // product.lab.tests[i].headers = newHeaders
-        Object.assign(test.headers, newHeaders);
-      }
+      mergeDeep.merge(product.lab, req.body.lab);
 
-      // console.log('\nproduct tests about to save',product.lab.tests);
+      // // if you want to merge
+      // // Object.assign(product.lab, req.body.lab);
+      // product.lab = Object.assign(product.lab, {}, req.body.lab);
+      // // Object.assign({}, product.lab.headers, req.body.lab.headers);
+      // for (let i = 0; i < product.lab.tests.length; i++) {
+      //   const test  = product.lab.tests[i];
+      //   const newHeaders = req.body.lab.tests && req.body.lab.tests.find(t => t.name === test.name).headers || {};
+      //   if (typeof test.headers === 'boolean') {
+      //     console.log('newHeaders FUCKER IS BOOLEAN ',test.headers);
+      //     test.headers = {};
+      //   }
+      //   // product.lab.tests[i].headers = newHeaders
+      //   Object.assign(test.headers, newHeaders);
+      // }
+
+      // console.log('product.lab.email_sent 2',product.lab.email_sent);
+      // product.lab.email_sent = Object.assign(product.lab.email_sent, {}, req.body.lab.email_sent);
+      // console.log('product.lab.email_sent 3',product.lab.email_sent);
+      // // console.log('\nproduct tests about to save',product.lab.tests);
 
       product.save(function(err, obj) {
         if(err) return console.error(err);
