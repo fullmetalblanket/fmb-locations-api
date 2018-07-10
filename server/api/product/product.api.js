@@ -99,6 +99,8 @@ const stateEmail = 'tyhummel+state@gmail.com';
 module.exports = function(app) {
 
   function updateLabData(update) {
+    // console.log('\nupdateLabData update',update);
+    // console.log('\nupdateLabData update.lab.tests',update.lab.tests);
     return new Promise((resolve,reject) => {
       request.put(mm420Api.requestOptions({url:'/update_lab_data_sample/'+update._id}, update), function(error, response, data) {
         if (error) {
@@ -139,18 +141,26 @@ module.exports = function(app) {
       intro: `Please find the attached pdf certificate for ${product.name}`
     }
 
-    console.log('\nshouldEmailState ',shouldEmailState)
+    let update = JSON.parse(JSON.stringify(product))
+    console.log('\ncloned product = update',update)
+
+    // console.log('\ngenerate_certificate lab.tests',JSON.stringify(lab.tests));
+
+    console.log('\nshouldEmailState',shouldEmailState)
     console.log('shouldEmailClient',shouldEmailClient)
 
     qrCode.create(qrcodePageURL)
-      .then(image => lab.qrcodeDataURL = image)
-      .then(() => qrCode.upload(lab.qrcodeDataURL, product._id))
-      .then(aws => lab.qr_code = aws.Location)
+      .then(image => product.lab.qrcodeDataURL = image)
+      .then(() => qrCode.upload(product.lab.qrcodeDataURL, product._id))
+      .then(aws => update.lab.qr_code = aws.Location)
       .then(() => certificate.create(product))
       .then(pdf => certificatePDF = pdf)
       .then(() => certificate.upload(certificatePDF, product._id))
-      .then(aws => lab.certificate = aws.Location)
-      .then(() => updateLabData(product))
+      .then(aws => update.lab.certificate = aws.Location)
+      .then(() => {
+        console.log('1. lab update',update)
+      })
+      .then(() => updateLabData(update))
       // .then(data => updatedSample = data)
       // .then(() => {
       //   if (shouldEmailState) {
@@ -185,8 +195,9 @@ module.exports = function(app) {
       //   }
       // })
       .then(data => {
-        // console.log('finalProduct data',data);
+        // console.log('\nfinalProduct data',JSON.stringify(data));
         const fullUpdate = data ? data : updatedSample
+        // console.log('\nfinalProduct fullUpdate',JSON.stringify(fullUpdate));
         res.status(200).send(fullUpdate)
       })
       .catch(error => {
@@ -579,22 +590,24 @@ module.exports = function(app) {
 
       // if you want to overwrite
       // product.lab = req.body.lab;
+      // console.log('\nreq.body.lab.tests ',req.body.lab.tests);
 
       // if you want to merge
       Object.assign(product.lab, req.body.lab);
       // Object.assign(product.lab.data, req.body.lab.data);
       // Object.assign({}, product.lab.headers, req.body.lab.headers);
       for (let i = 0; i < product.lab.tests.length; i++) {
-        const test  = product.lab.tests[i]
-        const newHeaders = req.body.lab.tests.find(t => t.name === test.name).headers
-        console.log('\ntypeof test.headers',typeof test.headers)
-        console.log('test.headers',test.headers)
-        console.log('newHeaders',newHeaders)
-        product.lab.tests[i].headers = newHeaders
-        // Object.assign(test.headers, newHeaders);
-        console.log('test.headers b',test.headers)
+        const test  = product.lab.tests[i];
+        const newHeaders = req.body.lab.tests && req.body.lab.tests.find(t => t.name === test.name).headers || {};
+        if (typeof test.headers === 'boolean') {
+          console.log('newHeaders FUCKER IS BOOLEAN',test.headers);
+          test.headers = {};
+        }
+        // product.lab.tests[i].headers = newHeaders
+        Object.assign(test.headers, newHeaders);
       }
 
+      // console.log('\nproduct tests about to save',product.lab.tests);
 
       product.save(function(err, obj) {
         if(err) return console.error(err);

@@ -50,16 +50,16 @@ function sortTests(tests) {
     tests.unshift(potency);
   }
 
-  const microbio = tests.find(test => test.type.name === 'microbio');
-  if (microbio) {
-    const { data } = microbio;
-    let f = data.filter(d => d.type === 'fungus')
-    console.log('f',f)
-    f = sortArray(f, 'name')
-    let b = data.filter(d => d.type === 'bacteria')
-    b = sortArray(b, 'name')
-    microbio.data = b.concat(f)
-  }
+  // const microbio = tests.find(test => test.type.name === 'microbio');
+  // if (microbio) {
+  //   const { data } = microbio;
+  //   let f = data.filter(d => d.type === 'fungus')
+  //   console.log('--> f',f)
+  //   f = sortArray(f, 'name')
+  //   let b = data.filter(d => d.type === 'bacteria')
+  //   b = sortArray(b, 'name')
+  //   microbio.data = b.concat(f)
+  // }
 
   return tests;
 }
@@ -95,10 +95,11 @@ function create(sample) {
     const logo = path.join(__dirname,'../../assets/images/cblabs-logo-blue.png');
     const signature = path.join(__dirname,'../../assets/images/clarence-signature.png');
     const { _id, name, product_type, lab, tracking } = sample;
-    const { user: primaryUser, secondary: secondaryUser } = tracking
-    const { qrcodeDataURL, tests, location: labUser, date_tested } = lab;
+    let { user: primaryUser, secondary: secondaryUser } = tracking
+    const { qrcodeDataURL, tests, location: labUser, date_tested, date_acquired, batch_size, sample_increment, sample_weight } = lab;
     const selectedTests = sortTests(tests.filter(test => test.selected));
     const completeDate = moment(date_tested).format('M/D/YYYY');
+    const receivedDate = moment(date_acquired).format('M/D/YYYY');
 
     const docWidth = 612;
     // const docHeight = 792;
@@ -193,16 +194,11 @@ function create(sample) {
       },
     }
 
-
-
-    // 
-    // NEW
-    // 
     console.log('\n');
     let currentPage = 0;
     let currentCol = 0;
 
-    const testStartingRow = 188;
+    const testStartingRow = 222;
 
     const page = [{
       name: 0,
@@ -246,15 +242,17 @@ function create(sample) {
       return height;
     }
 
-
-    const mgCol = 110;
-    const mgWidth = 30;
-    const percentCol = 170;
-    const percentWidth = 30;
-    const resultWidth = 30;
+    // columnWidth: 260
+    const colWidth = 30;
+    const mgCol = 100;
+    const percentCol = 145;
+    const limitCol = 190;
 
     const renderTestHeader = (test, leftEdge, rightEdge) => {
       const { headers } = test;    
+
+      console.log('renderTestHeader test',test)
+      const amtCol = test.type.name === 'terpenes' ? percentCol : mgCol
 
       let lineRow = newRow();     
       doc.moveTo(leftEdge, lineRow)
@@ -265,16 +263,27 @@ function create(sample) {
       doc.fontSize(7);
       if (headers) {
         if (headers.mg) {
-          doc.text('mg/g', leftEdge + mgCol, headersRow, {width: mgWidth, align: 'right'});
+          doc.text('mg/g', leftEdge + amtCol, headersRow, {width: colWidth, align: 'right'});
+        }
+        if (headers.ppm) {
+          if (test.type.name === 'pesticides') {
+            doc.text('ppm', leftEdge + percentCol, headersRow, {width: colWidth, align: 'right'});
+          } else {
+            doc.text('ppm', leftEdge + amtCol, headersRow, {width: colWidth, align: 'right'});
+          }
         }
         if (headers.percent) {
-          doc.text('%', leftEdge + percentCol, headersRow, {width: percentWidth, align: 'right'});
-        }
-        if (headers.type) {
-          doc.text('type', leftEdge + percentCol, headersRow, {width: percentWidth, align: 'right'});
+          if (test.type.name === 'terpenes') {
+            doc.text('%', rightEdge - colWidth, headersRow, {width: colWidth, align: 'right'});
+          } else {
+            doc.text('%', leftEdge + percentCol, headersRow, {width: colWidth, align: 'right'});
+          }
         }
       }
-      doc.text('result', rightEdge - resultWidth, headersRow, {width: resultWidth, align: 'right'});
+      if (test.type.name !== "terpenes") {
+        doc.text('limit', leftEdge + limitCol, headersRow, {width: colWidth, align: 'right'});
+        doc.text('result', rightEdge - colWidth, headersRow, {width: colWidth, align: 'right'});
+      }
       
       lineRow = newRow('small');
       doc.moveTo(leftEdge, lineRow)
@@ -284,6 +293,7 @@ function create(sample) {
 
     const renderTestData = (test, leftEdge, rightEdge) => {
       const { data } = test;
+      const amtCol = test.type.name === 'terpenes' ? percentCol : mgCol
       for (let r = 0; r < data.length; r++) {
         let result = data[r];
         console.log('name',result.name);
@@ -293,22 +303,36 @@ function create(sample) {
         doc.text(result.name, leftEdge, resultRow);
 
         if (result.mg) {
-          doc.text(result.mg, leftEdge + mgCol, resultRow, {width: mgWidth, align: 'right'});
+          doc.text(result.mg, leftEdge + amtCol, resultRow, {width: colWidth, align: 'right'});
+        }
+        if (result.ppm) {
+          if (test.type.name === 'pesticides') {
+            doc.text(result.ppm, leftEdge + percentCol, resultRow, {width: colWidth, align: 'right'});
+          } else {
+            doc.text(result.ppm, leftEdge + amtCol, resultRow, {width: colWidth, align: 'right'});
+          }
         }
         if (result.percent) {
-          doc.text(result.percent, leftEdge + percentCol, resultRow, {width: percentWidth, align: 'right'});
+          if (test.type.name === 'terpenes') { 
+            doc.text(result.percent, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
+          } else {
+            doc.text(result.percent, leftEdge + percentCol, resultRow, {width: colWidth, align: 'right'});
+          }
         }
-        if (result.type) {
-          const typeAbbr = result.type === 'fungus' ? 'f' : 'b'
-          doc.text(typeAbbr, leftEdge + percentCol, resultRow, {width: percentWidth, align: 'right'});
-        }
-
 
         let pass = result.pass ? 'PASS' : 'FAIL';
-        if (test.name === 'moisture') {
-          pass = result.value
+        if (result.name === 'Final weight' || result.name === 'Initial weight') {
+          pass = ''
         }
-        doc.text(pass, rightEdge - resultWidth, resultRow, {width: resultWidth, align: 'right'});
+
+        if (result.name === 'Total THC') {
+          result.limit = result.limit + '%'
+        }
+
+        if (test.type.name !== "terpenes") {
+          doc.text(result.limit, leftEdge + limitCol, resultRow, {width: colWidth, align: 'right'});
+          doc.text(pass, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
+        }
       }
     }
 
@@ -410,13 +434,15 @@ function create(sample) {
       }
       console.log('row',row)
       if (row > b.documentHeight - 120) {
-        console.log('\ngetNextAvailableRow: not enough space')
+        console.log('\ngetNextAvailableRow: not enough space ')
         addPage();
         return getNextAvailableRow();
       }
       return row;
     }
 
+
+    // Start the doc
 
     doc.lineWidth(.25);
 
@@ -436,33 +462,67 @@ function create(sample) {
       .text(labBiz.business_phone, logoRight, b.newRow(), {width: logoTextWidth});
     
     // client biz info
+    // Distributor
+    const infoWidth = 140;
+    const primaryLeft = b.col1right;
+    const secondaryLeft = b.right - infoWidth;
+
+    secondaryUser = secondaryUser || primaryUser;
+
+    // Producer
     const primeBiz = primaryUser.business;
     const primeUserName = primeBiz && primeBiz.business_name || primaryUser.email;
-    const secUserName = secondaryUser && secondaryUser.business && ` / ${secondaryUser.business.business_name}` || '';
+    let secBiz = secondaryUser.business;
+    let secUserName = secBiz && secBiz.business_name || secondaryUser.email;
+
     b.currentRow = 26;
-    doc.fontSize(10)
-      .text(`${primeUserName}${secUserName}`, b.col2, b.newRow(), {width: b.columnWidth, align: 'right'})
-      .text(`License # ${primaryUser.credentials.license || 'pending'}`, b.col2, b.newRow(), {width: b.columnWidth, align: 'right'})
-      .text(`${primeBiz.address_line_1} ${primeBiz.address_line_2}`, b.col2, b.newRow(), {width: b.columnWidth, align: 'right'})
-      .text(`${primeBiz.city}, ${primeBiz.state } ${primeBiz.zip}`, b.col2, b.newRow(), {width: b.columnWidth, align: 'right'})
-      .text(`${primeBiz.business_phone}`, b.col2, b.newRow(), {width: b.columnWidth, align: 'right'});
+    doc.fontSize(10);
+    let r = b.newRow()
+    doc.text('Distributor:', primaryLeft, r, {width: infoWidth, align: 'right'});
+    doc.text('Producer:', secondaryLeft, r, {width: infoWidth, align: 'right'});
+    r = b.newRow()
+    doc.text(primeUserName, primaryLeft, r, {width: infoWidth, align: 'right'});
+    doc.text(secUserName, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    r = b.newRow()
+    doc.text(`License # ${primaryUser.credentials.license || 'pending'}`, primaryLeft, r, {width: infoWidth, align: 'right'});
+    doc.text(`License # ${secondaryUser.credentials.license || 'pending'}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    r = b.newRow()
+    doc.text(`${primeBiz.address_line_1} ${primeBiz.address_line_2}`, primaryLeft, r, {width: infoWidth, align: 'right'});
+    doc.text(`${secBiz.address_line_1} ${secBiz.address_line_2}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    r = b.newRow()
+    doc.text(`${primeBiz.city}, ${primeBiz.state } ${primeBiz.zip}`, primaryLeft, r, {width: infoWidth, align: 'right'});
+    doc.text(`${secBiz.city}, ${secBiz.state } ${secBiz.zip}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+
+
+    let lineRow = 105;     
+    // doc.moveTo(b.col1, lineRow)
+    //   .lineTo(b.right, lineRow)
+    //   .fillAndStroke('#000', '#aaa');
 
     // title
     doc.fontSize(20)
       .text('Certificate of Analysis', 0, 110, {width: 610, align: 'center'});
 
-    let lineRow = 136;     
+    lineRow = 134;     
     doc.moveTo(b.col1, lineRow)
       .lineTo(b.right, lineRow)
       .fillAndStroke('#000', '#aaa');
 
-    doc.fontSize(12)
-      .text(`Name: ${name}`, b.col1, 148)
-      .text(`Matrix: ${toTitleCase(product_type.name)}`, b.col2, 148, {width: b.columnWidth, align: 'right'});
+    doc.fontSize(13)
+      .text(`Name: ${name}`, b.col1, 142)
+      .fontSize(10)
+      .text(`ID: ${sample._id}`, b.col1, 161)
+      .fontSize(9)
+      .text(`Date Tested: ${completeDate}`, b.col1, 176)
+      .text(`Date Received: ${receivedDate}`, b.col1, 190)
+      .text(`Date Collected: ${receivedDate}`, b.col1, 204);
 
-    doc.fontSize(10)
-      .text(`ID: ${sample._id}`, b.col1, 166)
-      .text(`Date Tested: ${completeDate}`, b.col2, 166, {width: b.columnWidth, align: 'right'});
+    doc.fontSize(13)
+      .text(`Matrix: ${toTitleCase(product_type.name)}`, b.col2, 142, {width: b.columnWidth, align: 'right'})
+      .fontSize(9)
+      .text(`Batch Size: ${batch_size}`, b.col2, 162, {width: b.columnWidth, align: 'right'})
+      .text(`Sample Increment: ${sample_increment}`, b.col2, 176, {width: b.columnWidth, align: 'right'})
+      .text(`Sample Weight: ${sample_weight}g`, b.col2, 190, {width: b.columnWidth, align: 'right'});
 
     // sample name and matrix
     // doc.fontSize(14)

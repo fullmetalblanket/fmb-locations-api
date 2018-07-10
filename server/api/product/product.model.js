@@ -99,10 +99,10 @@ var productSchema = mongoose.Schema({
         name: String,
         machine: String,
         headers: {
+          _id : false,
           mg: Boolean,
           ppm: Boolean,
-          percent: Boolean,
-          type: Boolean
+          percent: Boolean
         },
         data: [{
           _id : false,
@@ -112,11 +112,12 @@ var productSchema = mongoose.Schema({
           mg: String,
           ppm: String,
           percent: String,
-          limit: String,
-          type: {type: String, default: ''} // for microbio ['b', 'f'] (b = 'bacteria', f = 'fungus')
+          limit: String
         }]
       }
     ],
+    batch_size: String,
+    sample_increment: String,
     sample_weight: Number,
     web_link: String,
     data: {
