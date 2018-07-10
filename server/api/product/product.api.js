@@ -15,7 +15,9 @@ const certificate = require('../../scripts/certificate');
 const qrCode = require('../../scripts/qrCode');
 const request = require('request');
 const mm420Api = require('../mm420-api');
-const merge = require('../../scripts/merge')
+const merge = require('../../scripts/merge');
+
+var environment = process.env.NODE_ENV || 'development';
 
 var populateOptions = [
   {
@@ -94,8 +96,9 @@ function sampleName(string) {
   return toTitleCase(string.replace(/-/, ' '));
 }
 
-// const stateEmail = 'bcc@dca.ca.gov';
-const stateEmail = 'tyhummel+state@gmail.com';
+const stateEmail = environment.production ? 'bcc@dca.ca.gov' : 'tyhummel+state@gmail.com';
+console.log('stateEmail',stateEmail)
+// const stateEmail = 'tyhummel+state@gmail.com';
 
 module.exports = function(app) {
 

@@ -548,6 +548,10 @@ function create(sample) {
       doc.fontSize(11)
         .text(toTitleCase(test.name), leftEdge, (titleRow - 2));
 
+      if (test.type.name === 'potency') {
+        doc.fontSize(8).text('(dry weight)', leftEdge + 80, titleRow)
+      }
+
       if (test.machine) {
         doc.fontSize(8)
           .text(test.machine, leftEdge, (titleRow + 1), {width: b.columnWidth, align: 'right'});
