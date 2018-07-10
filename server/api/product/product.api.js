@@ -594,7 +594,7 @@ module.exports = function(app) {
 
       // if you want to merge
       Object.assign(product.lab, req.body.lab);
-      // Object.assign(product.lab.data, req.body.lab.data);
+      Object.assign(product.lab.email_sent, req.body.lab.email_sent);
       // Object.assign({}, product.lab.headers, req.body.lab.headers);
       for (let i = 0; i < product.lab.tests.length; i++) {
         const test  = product.lab.tests[i];
