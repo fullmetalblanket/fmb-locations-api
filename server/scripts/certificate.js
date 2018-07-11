@@ -281,7 +281,9 @@ function create(sample) {
         }
       }
       if (test.type.name !== "terpenes") {
-        doc.text('limit', leftEdge + limitCol, headersRow, {width: colWidth, align: 'right'});
+        if (test.type.name !== 'microbio') {
+          doc.text('limit', leftEdge + limitCol, headersRow, {width: colWidth, align: 'right'});
+        }
         doc.text('result', rightEdge - colWidth, headersRow, {width: colWidth, align: 'right'});
       }
       
@@ -459,15 +461,15 @@ function create(sample) {
     const logoTextWidth = b.columnWidth - logoRight;
     doc.fontSize(10)
       .text('CB Labs, Inc', logoRight, b.newRow(), {width: logoTextWidth})
-      .text(`License # ${labUser.credentials.license}`, logoRight, b.newRow(), {width: logoTextWidth})
+      .text(`Lic. # ${labUser.credentials.license}`, logoRight, b.newRow(), {width: logoTextWidth})
       .text(`${labBiz.address_line_1} ${labBiz.address_line_2}`, logoRight, b.newRow(), {width: logoTextWidth})
       .text(`${labBiz.city}, ${labUser.business.state } ${labBiz.zip}`, logoRight, b.newRow(), {width: logoTextWidth})
       .text(labBiz.business_phone, logoRight, b.newRow(), {width: logoTextWidth});
     
     // client biz info
     // Distributor
-    const infoWidth = 140;
-    const primaryLeft = b.col1right;
+    const infoWidth = 160;
+    const primaryLeft = b.col1right - 40;
     const secondaryLeft = b.right - infoWidth;
 
     secondaryUser = secondaryUser || primaryUser;
@@ -487,8 +489,8 @@ function create(sample) {
     doc.text(primeUserName, primaryLeft, r, {width: infoWidth, align: 'right'});
     doc.text(secUserName, secondaryLeft, r, {width: infoWidth, align: 'right'});
     r = b.newRow()
-    doc.text(`License # ${primaryUser.credentials.license || 'pending'}`, primaryLeft, r, {width: infoWidth, align: 'right'});
-    doc.text(`License # ${secondaryUser.credentials.license || 'pending'}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    doc.text(`Lic. # ${primaryUser.credentials.license || 'pending'}`, primaryLeft, r, {width: infoWidth, align: 'right'});
+    doc.text(`Lic. # ${secondaryUser.credentials.license || 'pending'}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
     r = b.newRow()
     doc.text(`${primeBiz.address_line_1} ${primeBiz.address_line_2}`, primaryLeft, r, {width: infoWidth, align: 'right'});
     doc.text(`${secBiz.address_line_1} ${secBiz.address_line_2}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
@@ -552,7 +554,7 @@ function create(sample) {
         .text(toTitleCase(test.name), leftEdge, (titleRow - 2));
 
       if (test.type.name === 'potency') {
-        doc.fontSize(8).text('(dry weight)', leftEdge + 80, titleRow)
+        doc.fontSize(7).text('(dry weight)', leftEdge + 74, titleRow)
       }
 
       if (test.machine) {
