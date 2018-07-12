@@ -622,7 +622,7 @@ function email(email, name, number, certURL, params) {
     subject: `Certificate for ${name} - ${number}`,
     attachments: [
       {
-        filename: `certificate-${number}`,
+        filename: `certificate-${number}.pdf`,
         path: certURL,
         cid: `certificate-${number}`
       }
