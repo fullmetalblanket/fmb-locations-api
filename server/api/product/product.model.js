@@ -85,6 +85,9 @@ var productSchema = mongoose.Schema({
     date_acquired: Date, // date sample received by lab
     date_tested: Date, // date testing complete
     date_due: Date, // date test is due
+    batch_size: String,
+    sample_increment: String,
+    sample_weight: String,
     qr_code: String,
     certificate: String,
     email_sent: {
@@ -98,6 +101,7 @@ var productSchema = mongoose.Schema({
         type: { type: ObjectId, ref: 'TestType' },
         name: String,
         machine: String,
+        test_sample_weight: Number, // grams
         headers: {
           _id : false,
           mg: Boolean,
@@ -116,9 +120,6 @@ var productSchema = mongoose.Schema({
         }]
       }
     ],
-    batch_size: String,
-    sample_increment: String,
-    sample_weight: Number,
     web_link: String,
     data: {
       thc: String,

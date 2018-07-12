@@ -527,7 +527,7 @@ function create(sample) {
       .fontSize(9)
       .text(`Batch Size: ${batch_size}`, b.col2, 162, {width: b.columnWidth, align: 'right'})
       .text(`Sample Increment: ${sample_increment}`, b.col2, 176, {width: b.columnWidth, align: 'right'})
-      .text(`Sample Weight: ${sample_weight}g`, b.col2, 190, {width: b.columnWidth, align: 'right'});
+      .text(`Sample Weight: ${sample_weight}`, b.col2, 190, {width: b.columnWidth, align: 'right'});
 
     // sample name and matrix
     // doc.fontSize(14)
@@ -541,7 +541,7 @@ function create(sample) {
 
     for (let i = 0; i < selectedTests.length; i++) {
       const test = selectedTests[i];
-      console.log('\ntest ',test.name);
+      console.log('\ntest',test.name);
 
       selectPageAndRow(test);
 
