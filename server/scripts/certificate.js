@@ -629,7 +629,7 @@ function email(email, name, number, certURL, params) {
     ],
     params
   }
-  console.log('certificate.email payload',payload);
+  console.log('certificate.email payload ',payload);
   return new Promise((resolve, reject) => {
     request.post(mm420Api.requestOptions({url:'/email-pdf'}, payload), function(error, response, data) {
       if (!error && response.statusCode == 200) {

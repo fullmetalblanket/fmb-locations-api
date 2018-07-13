@@ -205,8 +205,9 @@ module.exports = function(app) {
     // console.log('send-contact-email: html',html)
 
     var sendMailOptions = {
-      from: appData.contactFormData.email,
+      from: appData.sendAddress,
       to: appData.sendAddress, // TODO: change this to location specific address
+      replyTo: appData.contactFormData.email,
       subject: 'Contact Form Submission',
       html: html,
       text: JSON.stringify(req.body, null, 2)
