@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(morgan('dev'));
 
-console.log('dirname', __dirname);
+console.log('dirname ', __dirname);
 
 // for email templates
 app.set('view engine', 'ejs');

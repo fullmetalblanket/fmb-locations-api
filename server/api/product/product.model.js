@@ -111,6 +111,7 @@ var productSchema = mongoose.Schema({
         data: [{
           _id : false,
           name: String, 
+          display_name: String,
           value: String,
           pass: Boolean,          
           mg: String,

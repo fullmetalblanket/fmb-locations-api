@@ -101,6 +101,10 @@ function create(sample) {
     const completeDate = moment(date_tested).format('M/D/YYYY');
     const receivedDate = moment(date_acquired).format('M/D/YYYY');
 
+    const inhalables = ['flowers', 'cartridges', 'concentrates']
+    const { name: productTypeName } = product_type
+    const inhalable = inhalables.indexOf(productTypeName) > -1
+
     const docWidth = 612;
     // const docHeight = 792;
     const docHeight = 828;
@@ -328,6 +332,11 @@ function create(sample) {
         const omit = ['CBD Decarbed Total', 'THC Decarbed Total', 'Total Cannabinoids']
         test.data = test.data.filter(d => omit.indexOf(d.name) === -1)
       }
+      if (test.type.name === 'microbio') {
+        if (!inhalable) {
+          test.data = test.data.filter(d => d.name.toLowerCase().indexOf('aspergillus') === -1)
+        }
+      }
     }
 
     const renderTestData = (test, leftEdge, rightEdge) => {
@@ -340,7 +349,7 @@ function create(sample) {
         let resultRow = r === 0 ? newRow('small') : newRow();
 
         doc.fontSize(8);
-        doc.text(result.name, leftEdge, resultRow);
+        doc.text(result.display_name || result.name, leftEdge, resultRow);
 
         if (result.mg) {
           if (test.type.name === 'potency') {
