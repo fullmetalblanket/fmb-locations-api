@@ -605,10 +605,13 @@ module.exports = function(app) {
 
       // if you want to overwrite
       // product.lab = req.body.lab;
-      console.log('\nreq.body.lab.email_sent',req.body.lab.email_sent);
+      console.log('\nreq.body.lab',req.body.lab);
+      console.log('\nproduct.lab',product.lab);
       // console.log('product.lab.email_sent',product.lab.email_sent);
 
-      merge.deep(product.lab, req.body.lab);
+      if (product && product.lab && req.body && req.body.lab) {
+        merge.deep(product.lab, req.body.lab);
+      }
 
       // // if you want to merge
       // // Object.assign(product.lab, req.body.lab);
