@@ -22,7 +22,7 @@ module.exports = function(app) {
   app.post('/get_upload_policy', function(req, res) {
     // var date = this.generateTimestamp();
     var folder = req.body.folder || req.query.folder || 'default/';
-    console.log('\nget_upload_policy: image folder', folder);
+    console.log('\nget_upload_policy: image folder ', folder);
 
     var date = req.body.date;
     var datetime = date + 'T000000Z';
@@ -75,7 +75,7 @@ module.exports = function(app) {
     console.log('get_upload_policy: signature', signature);
     console.log('get_upload_policy: datetime', datetime);
     console.log('get_upload_policy: credential', credential);
-    console.log('get_upload_policy: bucket', Config.bucket);
+    console.log('get_upload_policy: bucket ', Config.bucket);
 
     const policyInfo = {
       policyBase64: policyBase64,

@@ -146,6 +146,7 @@ function create(sample) {
       largeRowSize: 18,
       rowSize: 12,
       smallRowSize: 6,
+      footerRowSize: 12,
       currentRow: 36, // current row value
       changePage: page => {
         b.currentPage = page;
@@ -184,7 +185,17 @@ function create(sample) {
           }
         } else {
           if (size) {
-            const rowSize = size === 'large' ? b.largeRowSize : b.smallRowSize;
+            let rowSize = b.rowSize
+            if (size === 'large') {
+              rowSize = b.largeRowSize
+            }
+            if (size === 'small') {
+              rowSize = b.smallRowSize
+            }
+            if (size === 'footer') {
+              rowSize = b.footerRowSize
+            }
+            // const rowSize = size === 'large' ? b.largeRowSize : b.smallRowSize;
             pts = rowSize;
           }
         }
@@ -239,6 +250,10 @@ function create(sample) {
         height += i === 0 ? b.smallRowSize : b.rowSize;
       }
       height += b.largeRowSize;
+      if (test.type.name === 'potency') {
+        height += b.rowSize * 4;
+        height += b.largeRowSize;
+      }
       return height;
     }
 
@@ -263,7 +278,11 @@ function create(sample) {
       doc.fontSize(7);
       if (headers) {
         if (headers.mg) {
-          doc.text('mg/g', leftEdge + amtCol, headersRow, {width: colWidth, align: 'right'});
+          if (test.type.name === 'potency') {
+            doc.text('mg/g', leftEdge + percentCol, headersRow, {width: colWidth, align: 'right'});
+          } else {
+            doc.text('mg/g', leftEdge + amtCol, headersRow, {width: colWidth, align: 'right'});
+          }
         }
         if (headers.ppm) {
           if (test.type.name === 'pesticides') {
@@ -273,14 +292,14 @@ function create(sample) {
           }
         }
         if (headers.percent) {
-          if (test.type.name === 'terpenes') {
+          if (test.type.name === 'terpenes' || test.type.name === 'potency') {
             doc.text('%', rightEdge - colWidth, headersRow, {width: colWidth, align: 'right'});
           } else {
             doc.text('%', leftEdge + percentCol, headersRow, {width: colWidth, align: 'right'});
           }
         }
       }
-      if (test.type.name !== "terpenes") {
+      if (test.type.name !== "terpenes" && test.type.name !== "potency") {
         if (test.type.name !== 'microbio') {
           doc.text('limit', leftEdge + limitCol, headersRow, {width: colWidth, align: 'right'});
         }
@@ -293,19 +312,42 @@ function create(sample) {
         .fillAndStroke('#000', '#aaa');
     }
 
+    const renderTestFooter = (test, leftEdge, rightEdge) => {
+      if (test.type.name === 'potency') {
+        doc.fontSize(7);
+        doc.text('LOQ (Limit of Quantitation) = 1.0', leftEdge, newRow('large'));
+        doc.text('Total THC = THCA * 0.877 + THC', leftEdge, newRow());
+        doc.text('Total CBD = CBDA * 0.877 + CBD', leftEdge, newRow());
+        doc.text('d9THC = THC', leftEdge, newRow());
+        doc.text('d8THC = 8THC', leftEdge, newRow());
+      }
+    }
+
+    const trimTestData = test => {
+      if (test.type.name === 'potency') {
+        const omit = ['CBD Decarbed Total', 'THC Decarbed Total', 'Total Cannabinoids']
+        test.data = test.data.filter(d => omit.indexOf(d.name) === -1)
+      }
+    }
+
     const renderTestData = (test, leftEdge, rightEdge) => {
       const { data } = test;
       const amtCol = test.type.name === 'terpenes' ? percentCol : mgCol
       for (let r = 0; r < data.length; r++) {
         let result = data[r];
         console.log('name',result.name);
+
         let resultRow = r === 0 ? newRow('small') : newRow();
 
         doc.fontSize(8);
         doc.text(result.name, leftEdge, resultRow);
 
         if (result.mg) {
-          doc.text(result.mg, leftEdge + amtCol, resultRow, {width: colWidth, align: 'right'});
+          if (test.type.name === 'potency') {
+            doc.text(result.mg, leftEdge + percentCol, resultRow, {width: colWidth, align: 'right'});
+          } else {
+            doc.text(result.mg, leftEdge + amtCol, resultRow, {width: colWidth, align: 'right'});
+          }
         }
         if (result.ppm) {
           if (test.type.name === 'pesticides') {
@@ -315,7 +357,7 @@ function create(sample) {
           }
         }
         if (result.percent) {
-          if (test.type.name === 'terpenes') { 
+          if (test.type.name === 'terpenes' || test.type.name === 'potency') { 
             doc.text(result.percent, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
           } else {
             doc.text(result.percent, leftEdge + percentCol, resultRow, {width: colWidth, align: 'right'});
@@ -327,14 +369,14 @@ function create(sample) {
           pass = ''
         }
 
-        if (result.name === 'Total THC') {
-          result.limit = result.limit + '%'
-        }
-        if (test.type.name === 'potency' && result.name !== 'Total THC') {
-          pass = 'PASS'
-        }
+        // if (result.name === 'Total THC') {
+        //   result.limit = result.limit + '%'
+        // }
+        // if (test.type.name === 'potency' && result.name !== 'Total THC') {
+        //   pass = 'PASS'
+        // }
 
-        if (test.type.name !== "terpenes") {
+        if (test.type.name !== "terpenes" && test.type.name !== "potency") {
           doc.text(result.limit, leftEdge + limitCol, resultRow, {width: colWidth, align: 'right'});
           doc.text(pass, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
         }
@@ -357,6 +399,8 @@ function create(sample) {
 
       const imageRow = b.newRow('small');
       const textRow = imageRow + 14;
+
+      doc.text('LOQ = Limit of Quantitation', b.col1, textRow)
 
       doc.text(`${pageNum}/${pageLength}`, b.col1right - 30, textRow, {width: 94, align: 'center'})
       .image(qrcodeDataURL, right - 32, imageRow, {fit: [34, 34]});
@@ -543,6 +587,8 @@ function create(sample) {
       const test = selectedTests[i];
       console.log('\ntest',test.name);
 
+      trimTestData(test)
+
       selectPageAndRow(test);
 
       const leftEdge = currentCol === 0 ? b.col1 : b.col2;
@@ -564,19 +610,9 @@ function create(sample) {
 
       renderTestHeader(test, leftEdge, rightEdge);
 
-      //
-      // test data
-      //
       renderTestData(test, leftEdge, rightEdge)
-      // const { data } = test;
-      // for (let r = 0; r < data.length; r++) {
-      //   let result = data[r];
-      //   console.log('name',result.name);
-      //   let resultRow = r === 0 ? newRow('small') : newRow();
-      //   doc.fontSize(8)
-      //     .text(result.name, leftEdge + 120, resultRow)
-      //     .text(result.value, leftEdge + 180, resultRow, {width: b.columnWidth, align: 'right'});
-      // }
+
+      renderTestFooter(test, leftEdge, rightEdge)
 
       newRow('large');
     }
