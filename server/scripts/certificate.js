@@ -608,7 +608,7 @@ function create(sample) {
       doc.fontSize(11)
         .text(toTitleCase(test.name), leftEdge, (titleRow - 2));
 
-      if (test.type.name === 'potency') {
+      if (test.type.name === 'potency' && sample.product_type.name === 'flowers') {
         doc.fontSize(7).text('(dry weight)', leftEdge + 74, titleRow)
       }
 
