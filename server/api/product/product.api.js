@@ -601,10 +601,14 @@ module.exports = function(app) {
 
   });
   app.put('/update_lab_data_sample/:id', function(req, res) {
+    console.log('update_lab_data_sample id',req.params.id)
     Product.findById(req.params.id, function(error, product) { 
 
       // if you want to overwrite
       // product.lab = req.body.lab;
+      if (!product) {
+        res.status(200).json({error: 'no product found'});
+      }
       console.log('\nreq.body.lab',req.body.lab);
       console.log('\nproduct.lab',product.lab);
       // console.log('product.lab.email_sent',product.lab.email_sent);
