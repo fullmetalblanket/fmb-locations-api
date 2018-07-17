@@ -131,19 +131,19 @@ module.exports = function(app) {
     // const qrcodePageURL = `${testURLPrefix}${sampleName(product.name)}-${product._id}`;
     const qrcodePageURL = `${testURLPrefix}${product._id}`;
     // const clientEmail = product.tracking.user.email;
-    const clientEmail = 'tyhummel+client@gmail.com';
-    let qrcodeDataURL = '';
+    // const clientEmail = 'tyhummel+client@gmail.com';
+    // let qrcodeDataURL = '';
     let certificatePDF = '';
     let { email_sent } = lab;
     let shouldEmailState = product.lab.tests.filter(t => t.selected).length === 6 && (!email_sent || !email_sent.state)
     let shouldEmailClient = !email_sent || !email_sent.client
     let updatedSample = {};
-    const params = {
-      from: product.lab.location.email,
-      siteName: 'CBLabs Testing',
-      link: 'https://cblabstesting.com',
-      intro: `Please find the attached pdf certificate for ${product.name}`
-    }
+    // const params = {
+    //   from: product.lab.location.email,
+    //   siteName: 'CBLabs Testing',
+    //   link: 'https://cblabstesting.com',
+    //   intro: `Please find the attached pdf certificate for ${product.name}`
+    // }
 
     let update = JSON.parse(JSON.stringify(product))
     console.log('\ncloned product = update ',update)
@@ -601,9 +601,9 @@ module.exports = function(app) {
 
   });
   app.put('/update_lab_data_sample/:id', function(req, res) {
-    console.log('update_lab_data_sample id',req.params.id)
-    Product.findById(req.params.id, function(error, product) { 
-
+    console.log('update_lab_data_sample id ',req.params.id)
+    Product.findById(req.params.id, function(err, product) { 
+      if(err) { return handleError(res, err); }
       // if you want to overwrite
       // product.lab = req.body.lab;
       if (!product) {
