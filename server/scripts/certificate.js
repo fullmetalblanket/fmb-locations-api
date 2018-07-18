@@ -250,12 +250,12 @@ function create(sample) {
       let height = b.rowSize * 2;
       height += b.rowSize - 2;
       for (let i = 0; i < test.data.length; i++) {
-        const result = test.data[i];
+        // const result = test.data[i];
         height += i === 0 ? b.smallRowSize : b.rowSize;
       }
       height += b.largeRowSize;
       if (test.type.name === 'potency') {
-        height += b.rowSize * 4;
+        height += b.rowSize * 5;
         height += b.largeRowSize;
       }
       return height;
@@ -319,7 +319,10 @@ function create(sample) {
     const renderTestFooter = (test, leftEdge, rightEdge) => {
       if (test.type.name === 'potency') {
         doc.fontSize(7);
-        doc.text('LOQ (Limit of Quantitation) = 1.0', leftEdge, newRow('large'));
+        if (sample.product_type.name === 'flowers') {
+          doc.text('dry weight is based on moisture content of sample', leftEdge, newRow('large'));
+        }
+        doc.text('LOQ (Limit of Quantitation) = 1.0', leftEdge, newRow());
         doc.text('Total THC = THCA * 0.877 + THC', leftEdge, newRow());
         doc.text('Total CBD = CBDA * 0.877 + CBD', leftEdge, newRow());
         doc.text('d9THC = THC', leftEdge, newRow());
@@ -336,6 +339,9 @@ function create(sample) {
         if (!inhalable) {
           test.data = test.data.filter(d => d.name.toLowerCase().indexOf('aspergillus') === -1)
         }
+      }
+      if (test.type.name === 'moisture') {
+        test.data = test.data.filter(d => d.name === 'Moisture')
       }
     }
 
