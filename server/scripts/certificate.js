@@ -437,11 +437,14 @@ function create(sample) {
       const signatureLine = newRow();
       doc.image(signature, leftEdge, signatureLine - 70, {width: 160});
       doc.text('Scientific Director, Clarence Gillett Ph. D.', leftEdge, signatureLine);
+      doc.fontSize(8);
+      doc.text(completeDate, leftEdge, signatureLine + 12);
       
       // qr code
       b.currentRow = signatureLine - 92;
       const codeLine = b.currentRow;
       doc.image(qrcodeDataURL, rightEdge - 82, codeLine, {fit: [90, 90]});
+      doc.fontSize(8)
       doc.text('verify at cblabs.us', rightEdge - 76, codeLine + 91, {width: 76, align: 'center'});
     }
 
