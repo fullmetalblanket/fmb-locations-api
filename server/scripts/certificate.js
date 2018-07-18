@@ -427,7 +427,7 @@ function create(sample) {
       newRow('large');
       newRow('large');
       lineRow = newRow();
-      console.log('lineRow',lineRow)
+      console.log('lineRow ',lineRow)
       doc.moveTo(leftEdge, lineRow)
         .lineTo(rightEdge, lineRow)
         .dash(5, {space: 10})
