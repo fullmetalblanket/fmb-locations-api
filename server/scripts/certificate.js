@@ -101,7 +101,7 @@ function create(sample) {
     const completeDate = moment(date_tested).format('M/D/YYYY');
     const receivedDate = moment(date_acquired).format('M/D/YYYY');
 
-    const inhalables = ['flowers', 'cartridges', 'concentrates']
+    const inhalables = ['flowers', 'cartridges', 'concentrates', 'pre-rolls']
     const { name: productTypeName } = product_type
     const inhalable = inhalables.indexOf(productTypeName) > -1
 
@@ -327,6 +327,9 @@ function create(sample) {
         doc.text('Total CBD = CBDA * 0.877 + CBD', leftEdge, newRow());
         doc.text('d9THC = THC', leftEdge, newRow());
         doc.text('d8THC = 8THC', leftEdge, newRow());
+      }
+      if (test.type.name === 'terpenes') {
+
       }
     }
 
