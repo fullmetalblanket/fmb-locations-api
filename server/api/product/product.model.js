@@ -90,6 +90,7 @@ var productSchema = mongoose.Schema({
     sample_weight: String,
     qr_code: String,
     certificate: String,
+    state_certification: Boolean,
     email_sent: {
       client: false,
       state: false

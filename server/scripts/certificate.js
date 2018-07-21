@@ -258,7 +258,32 @@ function create(sample) {
         height += b.rowSize * 5;
         height += b.largeRowSize;
       }
+      if (test.type.name === 'terpenes' || test.type.name === 'solvents' || test.type.name === 'pesticides') {
+        height += b.largeRowSize;
+      }
       return height;
+    }
+
+    const renderTestFooter = (test, leftEdge, rightEdge) => {
+      if (test.type.name === 'potency') {
+        doc.fontSize(7);
+        if (sample.product_type.name === 'flowers') {
+          doc.text('dry weight is based on moisture content of sample', leftEdge, newRow('large'));
+        }
+        doc.text('LOQ (Limit of Quantitation) = 1.0', leftEdge, newRow());
+        doc.text('Total THC = THCA * 0.877 + THC', leftEdge, newRow());
+        doc.text('Total CBD = CBDA * 0.877 + CBD', leftEdge, newRow());
+        doc.text('d9THC = THC', leftEdge, newRow());
+        doc.text('d8THC = 8THC', leftEdge, newRow());
+      }
+      if (test.type.name === 'terpenes' || test.type.name === 'solvents') {
+        doc.fontSize(7);
+        doc.text('LOQ (Limit of Quantitation) = 1.0', leftEdge, newRow('large'));
+      }
+      if (test.type.name === 'pesticides') {
+        doc.fontSize(7); 
+        doc.text('LOQ (Limit of Quantitation) = 0.1', leftEdge, newRow('large'));
+      }
     }
 
     // columnWidth: 260
@@ -314,23 +339,6 @@ function create(sample) {
       doc.moveTo(leftEdge, lineRow)
         .lineTo(rightEdge, lineRow)
         .fillAndStroke('#000', '#aaa');
-    }
-
-    const renderTestFooter = (test, leftEdge, rightEdge) => {
-      if (test.type.name === 'potency') {
-        doc.fontSize(7);
-        if (sample.product_type.name === 'flowers') {
-          doc.text('dry weight is based on moisture content of sample', leftEdge, newRow('large'));
-        }
-        doc.text('LOQ (Limit of Quantitation) = 1.0', leftEdge, newRow());
-        doc.text('Total THC = THCA * 0.877 + THC', leftEdge, newRow());
-        doc.text('Total CBD = CBDA * 0.877 + CBD', leftEdge, newRow());
-        doc.text('d9THC = THC', leftEdge, newRow());
-        doc.text('d8THC = 8THC', leftEdge, newRow());
-      }
-      if (test.type.name === 'terpenes') {
-
-      }
     }
 
     const trimTestData = test => {
@@ -583,7 +591,7 @@ function create(sample) {
       .fontSize(10)
       .text(`ID: ${sample._id}`, b.col1, 161)
       .fontSize(9)
-      .text(`Date Tested: ${completeDate}`, b.col1, 176)
+      .text(`Date Analyzed: ${completeDate}`, b.col1, 176)
       .text(`Date Received: ${receivedDate}`, b.col1, 190)
       .text(`Date Collected: ${receivedDate}`, b.col1, 204);
 
