@@ -85,12 +85,14 @@ var productSchema = mongoose.Schema({
     date_acquired: Date, // date sample received by lab
     date_tested: Date, // date testing complete
     date_due: Date, // date test is due
+    batch_number: String,
     batch_size: String,
     sample_increment: String,
     sample_weight: String,
     qr_code: String,
     certificate: String,
     state_certification: Boolean,
+    // priority: Boolean,
     email_sent: {
       client: false,
       state: false
@@ -109,6 +111,7 @@ var productSchema = mongoose.Schema({
           ppm: Boolean,
           percent: Boolean
         },
+        note: String,
         data: [{
           _id : false,
           name: String, 

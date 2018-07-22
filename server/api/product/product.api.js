@@ -146,7 +146,7 @@ module.exports = function(app) {
     // }
 
     let update = JSON.parse(JSON.stringify(product))
-    console.log('\ncloned product = update ',update)
+    console.log('\ncloned product = update',update)
 
     // console.log('\ngenerate_certificate lab.tests',JSON.stringify(lab.tests));
 

@@ -94,9 +94,9 @@ function create(sample) {
     // console.log('certificate.create sample',sample)
     const logo = path.join(__dirname,'../../assets/images/cblabs-logo-blue.png');
     const signature = path.join(__dirname,'../../assets/images/clarence-signature.png');
-    const { _id, name, product_type, lab, tracking } = sample;
+    const { name, product_type, lab, tracking } = sample;
     let { user: primaryUser, secondary: secondaryUser } = tracking
-    const { qrcodeDataURL, tests, location: labUser, date_tested, date_acquired, batch_size, sample_increment, sample_weight } = lab;
+    const { qrcodeDataURL, tests, location: labUser, date_tested, date_acquired, batch_number, batch_size, sample_increment, sample_weight } = lab;
     const selectedTests = sortTests(tests.filter(test => test.selected));
     const completeDate = moment(date_tested).format('M/D/YYYY');
     const receivedDate = moment(date_acquired).format('M/D/YYYY');
@@ -598,9 +598,10 @@ function create(sample) {
     doc.fontSize(13)
       .text(`Matrix: ${toTitleCase(product_type.name)}`, b.col2, 142, {width: b.columnWidth, align: 'right'})
       .fontSize(9)
-      .text(`Batch Size: ${batch_size}`, b.col2, 162, {width: b.columnWidth, align: 'right'})
-      .text(`Sample Increment: ${sample_increment}`, b.col2, 176, {width: b.columnWidth, align: 'right'})
-      .text(`Sample Weight: ${sample_weight}`, b.col2, 190, {width: b.columnWidth, align: 'right'});
+      .text(`Batch Number: ${batch_number}`, b.col2, 162, {width: b.columnWidth, align: 'right'})
+      .text(`Batch Size: ${batch_size}`, b.col2, 176, {width: b.columnWidth, align: 'right'})
+      .text(`Sample Increment: ${sample_increment}`, b.col2, 190, {width: b.columnWidth, align: 'right'})
+      .text(`Sample Weight: ${sample_weight}`, b.col2, 204, {width: b.columnWidth, align: 'right'});
 
     // sample name and matrix
     // doc.fontSize(14)

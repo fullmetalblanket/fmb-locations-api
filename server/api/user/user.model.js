@@ -128,6 +128,10 @@ var userSchema = mongoose.Schema({
     ]
   },
 
+  lab: {
+    priority: Boolean,
+  },
+
   // this is for a "soft user delete" | not sure what the impact of a hard delete would be
   deleted: Boolean
 
