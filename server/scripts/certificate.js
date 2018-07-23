@@ -261,6 +261,9 @@ function create(sample) {
       if (test.type.name === 'terpenes' || test.type.name === 'solvents' || test.type.name === 'pesticides') {
         height += b.largeRowSize;
       }
+      if (test.type.name === 'pesticides') {
+        height += b.rowSize
+      }
       return height;
     }
 
@@ -283,6 +286,7 @@ function create(sample) {
       if (test.type.name === 'pesticides') {
         doc.fontSize(7); 
         doc.text('LOQ (Limit of Quantitation) = 0.1', leftEdge, newRow('large'));
+        doc.text('ND = Not Detected', leftEdge, newRow());
       }
     }
 
