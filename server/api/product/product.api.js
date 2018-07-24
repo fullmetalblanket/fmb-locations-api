@@ -162,7 +162,7 @@ module.exports = function(app) {
       .then(() => certificate.upload(certificatePDF, product._id))
       .then(aws => update.lab.certificate = aws.Location)
       .then(() => {
-        console.log('1. lab update',update)
+        console.log('1. lab update ',update)
       })
       .then(() => updateLabData(update))
       // .then(data => updatedSample = data)

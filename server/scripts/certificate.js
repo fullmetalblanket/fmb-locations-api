@@ -246,6 +246,8 @@ function create(sample) {
       return page[currentPage].col[currentCol].row;
     }
 
+    const flowers = sample.product_type.name === 'flowers'
+
     const getTestHeight = test => {
       let height = b.rowSize * 2;
       height += b.rowSize - 2;
@@ -257,9 +259,13 @@ function create(sample) {
       if (test.type.name === 'potency') {
         height += b.rowSize * 5;
         height += b.largeRowSize;
+        if (flowers) {
+          height += b.rowSize
+        }
       }
       if (test.type.name === 'terpenes' || test.type.name === 'solvents' || test.type.name === 'pesticides') {
         height += b.largeRowSize;
+        height += b.rowSize
       }
       if (test.type.name === 'pesticides') {
         height += b.rowSize
@@ -270,22 +276,31 @@ function create(sample) {
     const renderTestFooter = (test, leftEdge, rightEdge) => {
       if (test.type.name === 'potency') {
         doc.fontSize(7);
-        if (sample.product_type.name === 'flowers') {
+        if (flowers) {
           doc.text('dry weight is based on moisture content of sample', leftEdge, newRow('large'));
-        }
-        doc.text('LOQ (Limit of Quantitation) = 1.0', leftEdge, newRow());
+        } 
+        const nextRowSize = flowers ? null : 'large'
+        doc.text('LOQ (Limit of Quantitation) = 1.0 mg/g', leftEdge, newRow(nextRowSize));
+        doc.text('mg/g = milligrams per gram', leftEdge, newRow());
         doc.text('Total THC = THCA * 0.877 + THC', leftEdge, newRow());
         doc.text('Total CBD = CBDA * 0.877 + CBD', leftEdge, newRow());
         doc.text('d9THC = THC', leftEdge, newRow());
         doc.text('d8THC = 8THC', leftEdge, newRow());
       }
-      if (test.type.name === 'terpenes' || test.type.name === 'solvents') {
+      if (test.type.name === 'solvents') {
         doc.fontSize(7);
-        doc.text('LOQ (Limit of Quantitation) = 1.0', leftEdge, newRow('large'));
+        doc.text('LOQ (Limit of Quantitation) = 1.0 mcg/g', leftEdge, newRow('large'));
+        doc.text('mcg/g = micrograms per gram', leftEdge, newRow());
+      }
+      if (test.type.name === 'terpenes') {
+        doc.fontSize(7);
+        doc.text('LOQ (Limit of Quantitation) = 1.0 mg/g', leftEdge, newRow('large'));
+        doc.text('mg/g = milligrams per gram', leftEdge, newRow());
       }
       if (test.type.name === 'pesticides') {
         doc.fontSize(7); 
-        doc.text('LOQ (Limit of Quantitation) = 0.1', leftEdge, newRow('large'));
+        doc.text('LOQ (Limit of Quantitation) = 0.1 mcg/g', leftEdge, newRow('large'));
+        doc.text('mcg/g = micrograms per gram', leftEdge, newRow());
         doc.text('ND = Not Detected', leftEdge, newRow());
       }
     }
@@ -296,11 +311,18 @@ function create(sample) {
     const percentCol = 145;
     const limitCol = 190;
 
+
+    const headerCols = {
+      one: 100,
+      two: 145,
+      three: 190
+    }
+
     const renderTestHeader = (test, leftEdge, rightEdge) => {
       const { headers } = test;    
 
-      console.log('renderTestHeader test',test)
-      const amtCol = test.type.name === 'terpenes' ? percentCol : mgCol
+      console.log('renderTestHeader test ',test)
+      // const amtCol = test.type.name === 'terpenes' ? percentCol : mgCol
 
       let lineRow = newRow();     
       doc.moveTo(leftEdge, lineRow)
@@ -310,30 +332,29 @@ function create(sample) {
       const headersRow = newRow('small') - 3;
       doc.fontSize(7);
       if (headers) {
-        if (headers.mg) {
-          if (test.type.name === 'potency') {
-            doc.text('mg/g', leftEdge + percentCol, headersRow, {width: colWidth, align: 'right'});
+        if (headers.mg || headers.ppm) {
+          if (test.type.name === 'potency' || test.type.name === 'terpenes') {
+            doc.text('mg/g', leftEdge + headerCols.three, headersRow, {width: colWidth, align: 'right'});
+          } else if (test.type.name === 'pesticides') {
+            doc.text('mcg/g', leftEdge + headerCols.three, headersRow, {width: colWidth, align: 'right'});
           } else {
-            doc.text('mg/g', leftEdge + amtCol, headersRow, {width: colWidth, align: 'right'});
-          }
-        }
-        if (headers.ppm) {
-          if (test.type.name === 'pesticides') {
-            doc.text('ppm', leftEdge + percentCol, headersRow, {width: colWidth, align: 'right'});
-          } else {
-            doc.text('ppm', leftEdge + amtCol, headersRow, {width: colWidth, align: 'right'});
+            if (test.type.name === 'solvents') {
+              doc.text('mcg/g', leftEdge + headerCols.one, headersRow, {width: colWidth, align: 'right'});
+            } else {
+              doc.text('mg/g', leftEdge + headerCols.one, headersRow, {width: colWidth, align: 'right'});
+            }
           }
         }
         if (headers.percent) {
-          if (test.type.name === 'terpenes' || test.type.name === 'potency') {
+          if (test.type.name === 'potency' || test.type.name === 'terpenes') {
             doc.text('%', rightEdge - colWidth, headersRow, {width: colWidth, align: 'right'});
           } else {
-            doc.text('%', leftEdge + percentCol, headersRow, {width: colWidth, align: 'right'});
+            doc.text('%', leftEdge + headerCols.two, headersRow, {width: colWidth, align: 'right'});
           }
         }
       }
       if (test.type.name !== "terpenes" && test.type.name !== "potency") {
-        if (test.type.name !== 'microbio') {
+        if (test.type.name !== 'microbio' && test.type.name !== 'pesticides') {
           doc.text('limit', leftEdge + limitCol, headersRow, {width: colWidth, align: 'right'});
         }
         doc.text('result', rightEdge - colWidth, headersRow, {width: colWidth, align: 'right'});
@@ -343,6 +364,47 @@ function create(sample) {
       doc.moveTo(leftEdge, lineRow)
         .lineTo(rightEdge, lineRow)
         .fillAndStroke('#000', '#aaa');
+    }
+
+    const renderTestData = (test, leftEdge, rightEdge) => {
+      const { data } = test;
+      // const amtCol = test.type.name === 'terpenes' ? percentCol : mgCol
+      for (let r = 0; r < data.length; r++) {
+        let result = data[r];
+        console.log('name',result.name);
+
+        let resultRow = r === 0 ? newRow('small') : newRow();
+
+        doc.fontSize(8);
+        doc.text(result.display_name || result.name, leftEdge, resultRow);
+
+        if (result.mg || result.ppm) {
+          if (test.type.name === 'potency' || test.type.name === 'terpenes' || test.type.name === 'pesticides') {
+            doc.text(result.mg || result.ppm, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
+          } else {
+            doc.text(result.ppm || result.mg, leftEdge + headerCols.one, resultRow, {width: colWidth, align: 'right'});
+          }
+        }
+        if (result.percent) {
+          if (test.type.name === 'potency' || test.type.name === 'terpenes') { 
+            doc.text(result.percent, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
+          } else {
+            doc.text(result.percent, leftEdge + headerCols.two, resultRow, {width: colWidth, align: 'right'});
+          }
+        }
+
+        let pass = result.pass ? 'PASS' : 'FAIL';
+        if (result.name === 'Final weight' || result.name === 'Initial weight') {
+          pass = ''
+        }
+
+        if (test.type.name !== "terpenes" && test.type.name !== "potency") {
+          if (test.type.name !== 'pesticides') {
+            doc.text(result.limit, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
+          }
+          doc.text(pass, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
+        }
+      }
     }
 
     const trimTestData = test => {
@@ -357,59 +419,6 @@ function create(sample) {
       }
       if (test.type.name === 'moisture') {
         test.data = test.data.filter(d => d.name === 'Moisture')
-      }
-    }
-
-    const renderTestData = (test, leftEdge, rightEdge) => {
-      const { data } = test;
-      const amtCol = test.type.name === 'terpenes' ? percentCol : mgCol
-      for (let r = 0; r < data.length; r++) {
-        let result = data[r];
-        console.log('name',result.name);
-
-        let resultRow = r === 0 ? newRow('small') : newRow();
-
-        doc.fontSize(8);
-        doc.text(result.display_name || result.name, leftEdge, resultRow);
-
-        if (result.mg) {
-          if (test.type.name === 'potency') {
-            doc.text(result.mg, leftEdge + percentCol, resultRow, {width: colWidth, align: 'right'});
-          } else {
-            doc.text(result.mg, leftEdge + amtCol, resultRow, {width: colWidth, align: 'right'});
-          }
-        }
-        if (result.ppm) {
-          if (test.type.name === 'pesticides') {
-            doc.text(result.ppm, leftEdge + percentCol, resultRow, {width: colWidth, align: 'right'});
-          } else {
-            doc.text(result.ppm, leftEdge + amtCol, resultRow, {width: colWidth, align: 'right'});
-          }
-        }
-        if (result.percent) {
-          if (test.type.name === 'terpenes' || test.type.name === 'potency') { 
-            doc.text(result.percent, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
-          } else {
-            doc.text(result.percent, leftEdge + percentCol, resultRow, {width: colWidth, align: 'right'});
-          }
-        }
-
-        let pass = result.pass ? 'PASS' : 'FAIL';
-        if (result.name === 'Final weight' || result.name === 'Initial weight') {
-          pass = ''
-        }
-
-        // if (result.name === 'Total THC') {
-        //   result.limit = result.limit + '%'
-        // }
-        // if (test.type.name === 'potency' && result.name !== 'Total THC') {
-        //   pass = 'PASS'
-        // }
-
-        if (test.type.name !== "terpenes" && test.type.name !== "potency") {
-          doc.text(result.limit, leftEdge + limitCol, resultRow, {width: colWidth, align: 'right'});
-          doc.text(pass, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
-        }
       }
     }
 
@@ -430,7 +439,7 @@ function create(sample) {
       const imageRow = b.newRow('small');
       const textRow = imageRow + 14;
 
-      doc.text('LOQ = Limit of Quantitation', b.col1, textRow)
+      // doc.text('LOQ = Limit of Quantitation', b.col1, textRow)
 
       doc.text(`${pageNum}/${pageLength}`, b.col1right - 30, textRow, {width: 94, align: 'center'})
       .image(qrcodeDataURL, right - 32, imageRow, {fit: [34, 34]});
@@ -603,9 +612,9 @@ function create(sample) {
       .text(`Matrix: ${toTitleCase(product_type.name)}`, b.col2, 142, {width: b.columnWidth, align: 'right'})
       .fontSize(9)
       .text(`Batch Number: ${batch_number}`, b.col2, 162, {width: b.columnWidth, align: 'right'})
-      .text(`Batch Size: ${batch_size}`, b.col2, 176, {width: b.columnWidth, align: 'right'})
+      .text(`Total Batch Size: ${batch_size}`, b.col2, 176, {width: b.columnWidth, align: 'right'})
       .text(`Sample Increment: ${sample_increment}`, b.col2, 190, {width: b.columnWidth, align: 'right'})
-      .text(`Sample Weight: ${sample_weight}`, b.col2, 204, {width: b.columnWidth, align: 'right'});
+      .text(`Total Sample Weight: ${sample_weight}`, b.col2, 204, {width: b.columnWidth, align: 'right'});
 
     // sample name and matrix
     // doc.fontSize(14)
