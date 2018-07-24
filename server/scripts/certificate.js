@@ -575,15 +575,27 @@ function create(sample) {
     doc.text(primeUserName, primaryLeft, r, {width: infoWidth, align: 'right'});
     doc.text(secUserName, secondaryLeft, r, {width: infoWidth, align: 'right'});
     r = b.newRow()
-    doc.text(`Lic. # ${primaryUser.credentials.license || 'pending'}`, primaryLeft, r, {width: infoWidth, align: 'right'});
-    doc.text(`Lic. # ${secondaryUser.credentials.license || 'pending'}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    if (primaryUser.credentials && primaryUser.credentials.license) {
+      doc.text(`Lic. # ${primaryUser.credentials.license}`, primaryLeft, r, {width: infoWidth, align: 'right'});
+    }
+    if (secondaryUser.credentials && secondaryUser.credentials.license) {
+      doc.text(`Lic. # ${secondaryUser.credentials.license}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    }
     r = b.newRow()
-    doc.text(`${primeBiz.address_line_1} ${primeBiz.address_line_2}`, primaryLeft, r, {width: infoWidth, align: 'right'});
-    doc.text(`${secBiz.address_line_1} ${secBiz.address_line_2}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    if (primeBiz.address_line_1) {
+      doc.text(`${primeBiz.address_line_1} ${primeBiz.address_line_2}`, primaryLeft, r, {width: infoWidth, align: 'right'});
+    }
+    if (secBiz.address_line_1) {
+      doc.text(`${secBiz.address_line_1} ${secBiz.address_line_2}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    }
     r = b.newRow()
-    doc.text(`${primeBiz.city}, ${primeBiz.state } ${primeBiz.zip}`, primaryLeft, r, {width: infoWidth, align: 'right'});
-    doc.text(`${secBiz.city}, ${secBiz.state } ${secBiz.zip}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
 
+    if (primeBiz.city && primeBiz.state && primeBiz.zip) {
+      doc.text(`${primeBiz.city}, ${primeBiz.state } ${primeBiz.zip}`, primaryLeft, r, {width: infoWidth, align: 'right'});
+    }
+    if (secBiz.city && secBiz.state && secBiz.zip) {
+      doc.text(`${secBiz.city}, ${secBiz.state } ${secBiz.zip}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    }
 
     let lineRow = 105;     
     // doc.moveTo(b.col1, lineRow)
