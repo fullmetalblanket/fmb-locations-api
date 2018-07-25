@@ -268,7 +268,7 @@ function create(sample) {
         height += b.rowSize;
       }
       if (test.type.name === 'pesticides') {
-        height += b.rowSize;
+        height += b.rowSize * 2;
         height += b.largeRowSize;
       }
       if (test.type.name === 'moisture') {
@@ -304,6 +304,7 @@ function create(sample) {
       if (test.type.name === 'pesticides') {
         doc.fontSize(7); 
         doc.text('LOQ (Limit of Quantitation) = 0.1 mcg/g', leftEdge, newRow('large'));
+        doc.text('LOD (Limit of Detection) = 0.1 mcg/g', leftEdge, newRow());
         doc.text('mcg/g = micrograms per gram', leftEdge, newRow());
         doc.text('ND = Not Detected', leftEdge, newRow());
         doc.text('Analytical Method: A novel comprehensive strategy for residual pesticide analysis in cannabis flower. Lilly Asanuma et. al.', leftEdge, newRow());
