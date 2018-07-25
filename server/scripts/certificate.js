@@ -1,25 +1,25 @@
 const PDFDocument = require('pdfkit');
-const fs = require('fs');
-const blobStream  = require('blob-stream');
+// const fs = require('fs');
+// const blobStream  = require('blob-stream');
 const path = require('path');
 const moment = require('moment');
 const aws = require('./aws');
 const request = require('request');
 const mm420Api = require('../api/mm420-api');
 
-function sortArray(array, property, direction) {
-  direction = direction || 1;
-  array.sort(function compare(a, b) {
-      let comparison = 0;
-      if (a[property] > b[property]) {
-          comparison = 1 * direction;
-      } else if (a[property] < b[property]) {
-          comparison = -1 * direction;
-      }
-      return comparison;
-  });
-  return array; // Chainable
-}
+// function sortArray(array, property, direction) {
+//   direction = direction || 1;
+//   array.sort(function compare(a, b) {
+//       let comparison = 0;
+//       if (a[property] > b[property]) {
+//           comparison = 1 * direction;
+//       } else if (a[property] < b[property]) {
+//           comparison = -1 * direction;
+//       }
+//       return comparison;
+//   });
+//   return array; // Chainable
+// }
 
 function sortTests(tests) {
   const solvents = tests.find(test => test.type.name === 'solvents');
@@ -260,18 +260,19 @@ function create(sample) {
         height += b.rowSize * 5;
         height += b.largeRowSize;
         if (flowers) {
-          height += b.rowSize
+          height += b.rowSize;
         }
       }
       if (test.type.name === 'terpenes' || test.type.name === 'solvents' || test.type.name === 'pesticides') {
         height += b.largeRowSize;
-        height += b.rowSize
+        height += b.rowSize;
       }
       if (test.type.name === 'pesticides') {
-        height += b.rowSize
+        height += b.rowSize;
+        height += b.largeRowSize;
       }
       if (test.type.name === 'moisture') {
-        height += b.largeRowSize
+        height += b.largeRowSize;
       }
       return height;
     }
@@ -305,6 +306,7 @@ function create(sample) {
         doc.text('LOQ (Limit of Quantitation) = 0.1 mcg/g', leftEdge, newRow('large'));
         doc.text('mcg/g = micrograms per gram', leftEdge, newRow());
         doc.text('ND = Not Detected', leftEdge, newRow());
+        doc.text('Analytical Method: A novel comprehensive strategy for residual pesticide analysis in cannabis flower. Lilly Asanuma et. al.', leftEdge, newRow());
       }
       if (test.type.name === 'moisture') {
         doc.fontSize(7); 
