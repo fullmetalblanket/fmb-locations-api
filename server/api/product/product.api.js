@@ -150,7 +150,7 @@ module.exports = function(app) {
 
     // console.log('\ngenerate_certificate lab.tests',JSON.stringify(lab.tests));
 
-    console.log('\nshouldEmailState',shouldEmailState)
+    console.log('\nshouldEmailState ',shouldEmailState)
     console.log('shouldEmailClient',shouldEmailClient)
 
     qrCode.create(qrcodePageURL)

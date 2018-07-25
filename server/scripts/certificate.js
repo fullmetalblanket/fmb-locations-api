@@ -270,6 +270,9 @@ function create(sample) {
       if (test.type.name === 'pesticides') {
         height += b.rowSize
       }
+      if (test.type.name === 'moisture') {
+        height += b.largeRowSize
+      }
       return height;
     }
 
@@ -302,6 +305,10 @@ function create(sample) {
         doc.text('LOQ (Limit of Quantitation) = 0.1 mcg/g', leftEdge, newRow('large'));
         doc.text('mcg/g = micrograms per gram', leftEdge, newRow());
         doc.text('ND = Not Detected', leftEdge, newRow());
+      }
+      if (test.type.name === 'moisture') {
+        doc.fontSize(7); 
+        doc.text('Loss on drying: AOAC 934.01', leftEdge, newRow('large'));
       }
     }
 

@@ -113,6 +113,9 @@ var userSchema = mongoose.Schema({
     user: {
       licensePromptDismissed: Boolean,
       licensePromptPendingReminderDate: Date
+    },
+    samples_admin: {
+      filters: String // stringified array of objects
     }
   },
 
