@@ -209,7 +209,7 @@ function create(sample) {
       },
     }
 
-    console.log('\n');
+    console.log('\n ');
     let currentPage = 0;
     let currentCol = 0;
 
@@ -379,41 +379,47 @@ function create(sample) {
     const renderTestData = (test, leftEdge, rightEdge) => {
       const { data } = test;
       // const amtCol = test.type.name === 'terpenes' ? percentCol : mgCol
+
+      const exclusions = ['triphenyl phosphate', 'm-/p-xylene', 'o-xylene']
+
       for (let r = 0; r < data.length; r++) {
         let result = data[r];
         console.log('name',result.name);
 
-        let resultRow = r === 0 ? newRow('small') : newRow();
+        if (exclusions.indexOf(result.name.toLowerCase()) === -1) {
+          let resultRow = r === 0 ? newRow('small') : newRow();
 
-        doc.fontSize(8);
-        doc.text(result.display_name || result.name, leftEdge, resultRow);
-
-        if (result.mg || result.ppm) {
-          if (test.type.name === 'potency' || test.type.name === 'terpenes' || test.type.name === 'pesticides') {
-            doc.text(result.mg || result.ppm, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
-          } else {
-            doc.text(result.ppm || result.mg, leftEdge + headerCols.one, resultRow, {width: colWidth, align: 'right'});
+          doc.fontSize(8);
+          doc.text(result.display_name || result.name, leftEdge, resultRow);
+  
+          if (result.mg || result.ppm) {
+            if (test.type.name === 'potency' || test.type.name === 'terpenes' || test.type.name === 'pesticides') {
+              doc.text(result.mg || result.ppm, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
+            } else {
+              doc.text(result.ppm || result.mg, leftEdge + headerCols.one, resultRow, {width: colWidth, align: 'right'});
+            }
+          }
+          if (result.percent) {
+            if (test.type.name === 'potency' || test.type.name === 'terpenes') { 
+              doc.text(result.percent, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
+            } else {
+              doc.text(result.percent, leftEdge + headerCols.two, resultRow, {width: colWidth, align: 'right'});
+            }
+          }
+  
+          let pass = result.pass ? 'PASS' : 'FAIL';
+          if (result.name === 'Final weight' || result.name === 'Initial weight') {
+            pass = ''
+          }
+  
+          if (test.type.name !== "terpenes" && test.type.name !== "potency") {
+            if (test.type.name !== 'pesticides') {
+              doc.text(result.limit, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
+            }
+            doc.text(pass, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
           }
         }
-        if (result.percent) {
-          if (test.type.name === 'potency' || test.type.name === 'terpenes') { 
-            doc.text(result.percent, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
-          } else {
-            doc.text(result.percent, leftEdge + headerCols.two, resultRow, {width: colWidth, align: 'right'});
-          }
-        }
 
-        let pass = result.pass ? 'PASS' : 'FAIL';
-        if (result.name === 'Final weight' || result.name === 'Initial weight') {
-          pass = ''
-        }
-
-        if (test.type.name !== "terpenes" && test.type.name !== "potency") {
-          if (test.type.name !== 'pesticides') {
-            doc.text(result.limit, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
-          }
-          doc.text(pass, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
-        }
       }
     }
 
