@@ -386,6 +386,10 @@ function create(sample) {
         let result = data[r];
         console.log('name',result.name);
 
+        if (result.name.toLowerCase() === 'propone') {
+          result.name = 'Propane'
+        }
+
         if (exclusions.indexOf(result.name.toLowerCase()) === -1) {
           let resultRow = r === 0 ? newRow('small') : newRow();
 
