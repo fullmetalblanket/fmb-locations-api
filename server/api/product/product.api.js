@@ -297,6 +297,17 @@ module.exports = function(app) {
       if(err) return console.error(err);
       Product.populate(docs, populateSampleOptions, function (err, docs) {
         if(err) { return handleError(res, err); }
+        res.status(200).json(docs); 
+      });
+    });
+  });
+
+  // get samples by status
+  app.get('/samples_data_lab_status/:labId/:status', function(req, res) {
+    Product.find({'lab.location': req.params.labId}, function(err, docs) {
+      if(err) return console.error(err);
+      Product.populate(docs, populateSampleOptions, function (err, docs) {
+        if(err) { return handleError(res, err); }
         res.status(200).json(docs);
       });
     });

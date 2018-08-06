@@ -237,7 +237,7 @@ function create(sample) {
     }
 
     const newRow = (size) => {
-      console.log('newRow');
+      console.log('newRow ');
       let rowSize = b.rowSize;
       if (size) {
         rowSize = size === 'large' ? b.largeRowSize : b.smallRowSize;
