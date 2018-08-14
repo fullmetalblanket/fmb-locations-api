@@ -26,7 +26,8 @@
     "version:minor": "npm version minor --force -m \"version %s\"",
     "version:major": "npm version major --force -m \"version %s\"",
     "getdb:prod": "mongodump -h ds147099-a0.mlab.com:47099 -d heroku_4hfnvk9x -u tyson -p zxcvasdf1324 -o dump/matchmaker420-api",
-    "setdb:prod": "mongorestore --drop --db matchmaker420-api dump/matchmaker420-api/heroku_4hfnvk9x"
+    "setdb:prod": "mongorestore --drop --db matchmaker420-api dump/matchmaker420-api/heroku_4hfnvk9x",
+    "heroku:restart": "heroku restart --app matchmaker420-api"
   },
   "private": true,
   "engines": {

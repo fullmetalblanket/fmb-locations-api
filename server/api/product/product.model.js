@@ -110,7 +110,9 @@ var productSchema = mongoose.Schema({
           _id : false,
           mg: Boolean,
           ppm: Boolean,
-          percent: Boolean
+          percent: Boolean,
+          lod: Boolean,
+          claim: Boolean
         },
         note: String,
         data: [{
@@ -123,6 +125,7 @@ var productSchema = mongoose.Schema({
           ppm: String,
           percent: String,
           limit: String,
+          lod: String,
           claim: String
         }]
       }

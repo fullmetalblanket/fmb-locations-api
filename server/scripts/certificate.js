@@ -72,7 +72,7 @@ function testsPassed(tests) {
       return false;
     }
   }
-  console.log(`testsPassed: passing all tests`)
+  console.log(`testsPassed: passing all tests `)
   return true;
 }
 
@@ -163,7 +163,7 @@ function create(sample) {
     const b = {
       width: 540, // minus padding
       // height: 720,
-      // documentHeight: 738,
+      documentHeight: 738,
       height: 756,
       documentHeight: 774,
       currentPage: 1,
@@ -354,13 +354,13 @@ function create(sample) {
     const colWidth = 30;
     const mgCol = 100;
     const percentCol = 145;
-    const limitCol = 190;
+    const limitCol = 195;
 
 
     const headerCols = {
-      one: 100,
-      two: 145,
-      three: 190
+      one: 110,
+      two: 150,
+      three: 195
     }
 
     const renderTestHeader = (test, leftEdge, rightEdge) => {
@@ -381,7 +381,7 @@ function create(sample) {
           if (test.type.name === 'potency' || test.type.name === 'terpenes') {
             doc.text('mg/g', leftEdge + headerCols.three, headersRow, {width: colWidth, align: 'right'});
           } else if (test.type.name === 'pesticides') {
-            doc.text('mcg/g', leftEdge + headerCols.three, headersRow, {width: colWidth, align: 'right'});
+            doc.text('mcg/g', leftEdge + headerCols.two, headersRow, {width: colWidth, align: 'right'});
           } else {
             if (test.type.name === 'solvents') {
               doc.text('mcg/g', leftEdge + headerCols.one, headersRow, {width: colWidth, align: 'right'});
@@ -397,10 +397,14 @@ function create(sample) {
             doc.text('%', leftEdge + headerCols.two, headersRow, {width: colWidth, align: 'right'});
           }
         }
+        if (headers.lod) {
+          doc.text('lod', leftEdge + headerCols.one, headersRow, {width: colWidth, align: 'right'});
+        }
       }
+
       if (test.type.name !== "terpenes" && test.type.name !== "potency") {
-        if (test.type.name !== 'microbio' && test.type.name !== 'pesticides') {
-          doc.text('limit', leftEdge + limitCol, headersRow, {width: colWidth, align: 'right'});
+        if (test.type.name !== 'microbio') {
+          doc.text('limit', leftEdge + headerCols.three, headersRow, {width: colWidth, align: 'right'});
         }
         doc.text('result', rightEdge - colWidth, headersRow, {width: colWidth, align: 'right'});
       }
@@ -432,8 +436,10 @@ function create(sample) {
           doc.text(result.display_name || result.name, leftEdge, resultRow);
   
           if (result.mg || result.ppm) {
-            if (test.type.name === 'potency' || test.type.name === 'terpenes' || test.type.name === 'pesticides') {
+            if (test.type.name === 'potency' || test.type.name === 'terpenes') {
               doc.text(result.mg || result.ppm, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
+            } else if (test.type.name === 'pesticides') {
+              doc.text(result.ppm || result.mg, leftEdge + headerCols.two, resultRow, {width: colWidth, align: 'right'});
             } else {
               doc.text(result.ppm || result.mg, leftEdge + headerCols.one, resultRow, {width: colWidth, align: 'right'});
             }
@@ -445,6 +451,10 @@ function create(sample) {
               doc.text(result.percent, leftEdge + headerCols.two, resultRow, {width: colWidth, align: 'right'});
             }
           }
+
+          if (result.lod) {
+            doc.text(result.lod, leftEdge + headerCols.one, resultRow, {width: colWidth, align: 'right'});
+          }
   
           let pass = result.pass ? 'PASS' : 'FAIL';
           if (result.name === 'Final weight' || result.name === 'Initial weight') {
@@ -452,9 +462,9 @@ function create(sample) {
           }
   
           if (test.type.name !== "terpenes" && test.type.name !== "potency") {
-            if (test.type.name !== 'pesticides') {
+            // if (test.type.name !== 'pesticides') {
               doc.text(result.limit, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
-            }
+            // }
             doc.text(pass, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
           }
         }
@@ -562,12 +572,24 @@ function create(sample) {
           }
           currentPage = p;
           currentCol = colToUse;
+          // we found a page and column to use
           return
         } 
+        console.log('mostSpace ',mostSpace)
       }
+      // we didn't find a page and column to use
+      console.log('thing',thing.type && thing.type.name)
+      console.log('thingHeight',thingHeight)
       console.log('!spaceFound');
       addPage();
       selectPageAndRow(thing);
+      // if (thing.type && thing.type.name === 'pesticides') {
+      //   currentPage = page.length -1;
+      //   currentCol - 0;
+      //   return
+      // } else {
+      //   selectPageAndRow(thing);
+      // }
     }
 
     const getNextAvailableRow = () => {
