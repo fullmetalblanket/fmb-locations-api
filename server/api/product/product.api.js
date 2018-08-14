@@ -146,11 +146,11 @@ module.exports = function(app) {
     // }
 
     let update = JSON.parse(JSON.stringify(product))
-    console.log('\ncloned product = update',update)
+    console.log('\ncloned product = update ',update)
 
     // console.log('\ngenerate_certificate lab.tests',JSON.stringify(lab.tests));
 
-    console.log('\nshouldEmailState ',shouldEmailState)
+    console.log('\nshouldEmailState',shouldEmailState)
     console.log('shouldEmailClient',shouldEmailClient)
 
     qrCode.create(qrcodePageURL)
@@ -162,7 +162,7 @@ module.exports = function(app) {
       .then(() => certificate.upload(certificatePDF, product._id))
       .then(aws => update.lab.certificate = aws.Location)
       .then(() => {
-        console.log('1. lab update ',update)
+        console.log('1. lab update',update)
       })
       .then(() => updateLabData(update))
       // .then(data => updatedSample = data)
@@ -281,7 +281,7 @@ module.exports = function(app) {
 
   // select samples by user id populated - all labs
   app.get('/samples_data/:id', function(req, res) {
-    console.log('\ntryna get samples by user id', req.params.id);
+    console.log('\ntryna get samples by user id ', req.params.id);
     Product.find({'tracking.user': req.params.id}, function(err, objs) {
       if(err) return console.error(err);
       Product.populate(objs, populateSampleOptions, function (err, docs) {

@@ -64,6 +64,39 @@ function sortTests(tests) {
   return tests;
 }
 
+function testsPassed(tests) {
+  for(let t = 0; t < tests.length; t++) {
+    const test = tests[t];
+    if (!testPassed(test)) {
+      console.log(`testsPassed: failing all tests due to ${test.type.name}`)
+      return false;
+    }
+  }
+  console.log(`testsPassed: passing all tests`)
+  return true;
+}
+
+function testPassed(test) {
+  const excludes = [
+    'moisture',
+    'terpenes'
+  ]
+  if (excludes.indexOf(test.type.name) > -1) {
+    // console.log('testPassed: excluding',test.type.name)
+    return true
+  }
+  for (let d = 0; d < test.data.length; d++) {
+    console.log('\ntestPassed: checkingTest',test.type.name)
+    const datum = test.data[d]
+    if (!datum.pass) {
+      console.log(`testPassed: failing ${test.type.name} | ${datum.name}`)
+      return false
+    }
+    console.log(`testPassed: passing ${test.type.name}`)
+  }
+  return true
+}
+
 function toTitleCase(str) {
   return str.replace(/\w\S*/g, function(txt){
       return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -100,6 +133,8 @@ function create(sample) {
     const selectedTests = sortTests(tests.filter(test => test.selected));
     const completeDate = moment(date_tested).format('M/D/YYYY');
     const receivedDate = moment(date_acquired).format('M/D/YYYY');
+    const batchPassed = testsPassed(selectedTests) ? 'PASS' : 'FAIL';
+    console.log('batchPassed',batchPassed)
 
     const inhalables = ['flowers', 'cartridges', 'concentrates', 'pre-rolls']
     const { name: productTypeName } = product_type
@@ -652,6 +687,9 @@ function create(sample) {
     // doc.fontSize(14)
     //   .text(`${name}, ${toTitleCase(product_type.name)}`, 0, 134, {width: 610, align: 'center'});
 
+    // batch pass/fail
+    doc.fontSize(13)
+      .text(`Batch: ${batchPassed}`, 255, 142, {width: 100, align: 'center'});
 
     //
     // tests

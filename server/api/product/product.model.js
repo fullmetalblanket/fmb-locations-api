@@ -100,6 +100,7 @@ var productSchema = mongoose.Schema({
     tests: [
       {
         _id : false,
+        date_tested: Date,
         selected: Boolean,
         type: { type: ObjectId, ref: 'TestType' },
         name: String,
@@ -121,7 +122,8 @@ var productSchema = mongoose.Schema({
           mg: String,
           ppm: String,
           percent: String,
-          limit: String
+          limit: String,
+          claim: String
         }]
       }
     ],
