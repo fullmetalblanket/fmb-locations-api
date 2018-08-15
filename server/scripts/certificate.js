@@ -491,9 +491,11 @@ function create(sample) {
           }
   
           if (test.type.name !== "terpenes" && test.type.name !== "potency") {
-            // if (test.type.name !== 'pesticides') {
+            if (test.type.name === 'pesticides') {
               doc.text(parseFloat(result.limit).toExponential(2), leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
-            // }
+            } else {
+              doc.text(result.limit, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
+            }
             doc.text(pass, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
           }
         }
