@@ -298,11 +298,11 @@ function create(sample) {
           height += b.rowSize;
         }
       }
-      if (test.type.name === 'terpenes' || test.type.name === 'solvents' || test.type.name === 'pesticides') {
+      if (test.type.name === 'terpenes' || test.type.name === 'pesticides') {
         height += b.largeRowSize;
         height += b.rowSize;
       }
-      if (test.type.name === 'pesticides') {
+      if (test.type.name === 'pesticides' || test.type.name === 'solvents') {
         height += b.rowSize * 2;
         height += b.largeRowSize;
       }
@@ -342,6 +342,7 @@ function create(sample) {
       if (test.type.name === 'solvents') {
         doc.fontSize(7);
         doc.text('LOQ (Limit of Quantitation) = 1.0 mcg/g', leftEdge, newRow('large'));
+        doc.text('AL (action level) = mcg/g', leftEdge, newRow());
         doc.text('mcg/g = micrograms per gram', leftEdge, newRow());
       }
       if (test.type.name === 'terpenes') {
@@ -448,7 +449,7 @@ function create(sample) {
         if (exclusions.indexOf(result.name.toLowerCase()) === -1) {
 
 
-          if (test.type.name === 'pesticides' && r > 34 && !changedRow) {
+          if (test.type.name === 'pesticides' && r > 35 && !changedRow) {
             currentCol = 1;
             leftEdge = b.col2;
             rightEdge = leftEdge + b.columnWidth;
@@ -458,7 +459,7 @@ function create(sample) {
             renderTestHeader(test, leftEdge, rightEdge);
           }
 
-          let resultRow = r === 0 || r === 35 ? newRow('small') : newRow();
+          let resultRow = r === 0 || r === 36 ? newRow('small') : newRow();
 
 
           doc.fontSize(8);
