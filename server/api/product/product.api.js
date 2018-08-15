@@ -151,7 +151,7 @@ module.exports = function(app) {
     // console.log('\ngenerate_certificate lab.tests',JSON.stringify(lab.tests));
 
     console.log('\nshouldEmailState',shouldEmailState)
-    console.log('shouldEmailClient ',shouldEmailClient)
+    console.log('shouldEmailClient',shouldEmailClient)
 
     qrCode.create(qrcodePageURL)
       .then(image => product.lab.qrcodeDataURL = image)

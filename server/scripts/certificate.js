@@ -351,8 +351,9 @@ function create(sample) {
       }
       if (test.type.name === 'pesticides') {
         doc.fontSize(7); 
-        doc.text('LOQ (Limit of Quantitation) = 0.1 mcg/g', leftEdge, newRow('large'));
-        doc.text('LOD (Limit of Detection) = 0.1 mcg/g', leftEdge, newRow());
+        doc.text('LOD (Limit of Detection) = mcg/g', leftEdge, newRow('large'));
+        doc.text('value = mcg/g', leftEdge, newRow());
+        doc.text('AL (action level) = mcg/g', leftEdge, newRow());
         doc.text('mcg/g = micrograms per gram', leftEdge, newRow());
         doc.text('ND = Not Detected', leftEdge, newRow());
         doc.text('Analytical Method: A novel comprehensive strategy for residual pesticide analysis in cannabis flower. Lilly Asanuma et. al.', leftEdge, newRow());
@@ -394,7 +395,7 @@ function create(sample) {
           if (test.type.name === 'potency' || test.type.name === 'terpenes') {
             doc.text('mg/g', leftEdge + headerCols.three, headersRow, {width: colWidth, align: 'right'});
           } else if (test.type.name === 'pesticides') {
-            doc.text('mcg/g', leftEdge + headerCols.two, headersRow, {width: colWidth, align: 'right'});
+            doc.text('value', leftEdge + headerCols.two, headersRow, {width: colWidth, align: 'right'});
           } else {
             if (test.type.name === 'solvents') {
               doc.text('mcg/g', leftEdge + headerCols.one, headersRow, {width: colWidth, align: 'right'});
@@ -411,13 +412,13 @@ function create(sample) {
           }
         }
         if (headers.lod) {
-          doc.text('lod', leftEdge + headerCols.one, headersRow, {width: colWidth, align: 'right'});
+          doc.text('LOD', leftEdge + headerCols.one, headersRow, {width: colWidth, align: 'right'});
         }
       }
 
       if (test.type.name !== "terpenes" && test.type.name !== "potency") {
         if (test.type.name !== 'microbio') {
-          doc.text('limit', leftEdge + headerCols.three, headersRow, {width: colWidth, align: 'right'});
+          doc.text('AL', leftEdge + headerCols.three, headersRow, {width: colWidth, align: 'right'});
         }
         doc.text('result', rightEdge - colWidth, headersRow, {width: colWidth, align: 'right'});
       }
@@ -447,7 +448,7 @@ function create(sample) {
         if (exclusions.indexOf(result.name.toLowerCase()) === -1) {
 
 
-          if (test.type.name === 'pesticides' && r > 35 && !changedRow) {
+          if (test.type.name === 'pesticides' && r > 34 && !changedRow) {
             currentCol = 1;
             leftEdge = b.col2;
             rightEdge = leftEdge + b.columnWidth;
@@ -457,7 +458,7 @@ function create(sample) {
             renderTestHeader(test, leftEdge, rightEdge);
           }
 
-          let resultRow = r === 0 || r === 36 ? newRow('small') : newRow();
+          let resultRow = r === 0 || r === 35 ? newRow('small') : newRow();
 
 
           doc.fontSize(8);
@@ -481,7 +482,7 @@ function create(sample) {
           }
 
           if (result.lod) {
-            doc.text(result.lod, leftEdge + headerCols.one, resultRow, {width: colWidth, align: 'right'});
+            doc.text(parseFloat(result.lod).toExponential(2), leftEdge + headerCols.one, resultRow, {width: colWidth, align: 'right'});
           }
   
           let pass = result.pass ? 'PASS' : 'FAIL';
@@ -491,7 +492,7 @@ function create(sample) {
   
           if (test.type.name !== "terpenes" && test.type.name !== "potency") {
             // if (test.type.name !== 'pesticides') {
-              doc.text(result.limit, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
+              doc.text(parseFloat(result.limit).toExponential(2), leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
             // }
             doc.text(pass, rightEdge - colWidth, resultRow, {width: colWidth, align: 'right'});
           }
