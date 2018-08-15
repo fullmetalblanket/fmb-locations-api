@@ -127,7 +127,16 @@ var productSchema = mongoose.Schema({
           limit: String,
           lod: String,
           claim: String
-        }]
+        }],
+        // temporary
+        claim1: {
+          value: String,
+          pass: Boolean
+        },
+        claim2: {
+          value: String,
+          pass: Boolean
+        }
       }
     ],
     web_link: String,
