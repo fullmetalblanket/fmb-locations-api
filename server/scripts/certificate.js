@@ -449,7 +449,7 @@ function create(sample) {
         if (exclusions.indexOf(result.name.toLowerCase()) === -1) {
 
 
-          if (test.type.name === 'pesticides' && r > 35 && !changedRow) {
+          if (test.type.name === 'pesticides' && r > 37 && !changedRow) {
             currentCol = 1;
             leftEdge = b.col2;
             rightEdge = leftEdge + b.columnWidth;
@@ -459,7 +459,7 @@ function create(sample) {
             renderTestHeader(test, leftEdge, rightEdge);
           }
 
-          let resultRow = r === 0 || r === 36 ? newRow('small') : newRow();
+          let resultRow = r === 0 || r === 38 ? newRow('small') : newRow();
 
 
           doc.fontSize(8);
