@@ -313,6 +313,7 @@ function create(sample) {
     }
 
     const renderTestFooter = (test, leftEdge, rightEdge) => {
+      leftEdge = currentCol === 1 ? b.col2 : leftEdge
       if (test.type.name === 'potency') {
         doc.fontSize(7);
         if (flowers) {
@@ -433,6 +434,8 @@ function create(sample) {
 
       const exclusions = ['triphenyl phosphate', 'm-/p-xylene', 'o-xylene']
 
+      let changedRow = false
+
       for (let r = 0; r < data.length; r++) {
         let result = data[r];
         console.log('name',result.name);
@@ -442,7 +445,20 @@ function create(sample) {
         }
 
         if (exclusions.indexOf(result.name.toLowerCase()) === -1) {
-          let resultRow = r === 0 ? newRow('small') : newRow();
+
+
+          if (test.type.name === 'pesticides' && r > 35 && !changedRow) {
+            currentCol = 1;
+            leftEdge = b.col2;
+            rightEdge = leftEdge + b.columnWidth;
+            changedRow = true;
+            // newRow('small');
+            newRow();
+            renderTestHeader(test, leftEdge, rightEdge);
+          }
+
+          let resultRow = r === 0 || r === 36 ? newRow('small') : newRow();
+
 
           doc.fontSize(8);
           doc.text(result.display_name || result.name, leftEdge, resultRow);
@@ -594,14 +610,14 @@ function create(sample) {
       console.log('thingHeight',thingHeight)
       console.log('!spaceFound');
       addPage();
-      selectPageAndRow(thing);
-      // if (thing.type && thing.type.name === 'pesticides') {
-      //   currentPage = page.length -1;
-      //   currentCol - 0;
-      //   return
-      // } else {
-      //   selectPageAndRow(thing);
-      // }
+      // selectPageAndRow(thing);
+      if (thing.type && thing.type.name === 'pesticides') {
+        currentPage = page.length -1;
+        currentCol = 0;
+        return
+      } else {
+        selectPageAndRow(thing);
+      }
     }
 
     const getNextAvailableRow = () => {
@@ -784,9 +800,9 @@ function create(sample) {
 
       renderTestHeader(test, leftEdge, rightEdge);
 
-      renderTestData(test, leftEdge, rightEdge)
+      renderTestData(test, leftEdge, rightEdge);
 
-      renderTestFooter(test, leftEdge, rightEdge)
+      renderTestFooter(test, leftEdge, rightEdge);
 
       newRow('large');
     }
