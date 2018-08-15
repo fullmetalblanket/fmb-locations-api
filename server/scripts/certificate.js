@@ -323,14 +323,14 @@ function create(sample) {
         doc.text('LOQ (Limit of Quantitation) = 1.0 mg/g', leftEdge, row1);
         if (test.claim1 && test.claim1.value) {
           doc.fontSize(8);
-          doc.text(`label claim  ${test.claim1.value}  ${test.claim1.pass ? 'PASS' : 'FAIL'}`, ((leftEdge + b.columnWidth) - 120), row1, {width: 120, align: 'right'})
+          doc.text(`label claim  ${test.claim1.value}  ${test.claim1.pass ? 'PASS' : '  FAIL'}`, ((leftEdge + b.columnWidth) - 120), row1, {width: 120, align: 'right'})
           doc.fontSize(7);
         }
         const row2 = newRow()
         doc.text('mg/g = milligrams per gram', leftEdge, row2);
         if (test.claim2 && test.claim2.value) {
           doc.fontSize(8);
-          doc.text(`label claim  ${test.claim2.value}  ${test.claim2.pass ? 'PASS' : 'FAIL'}`, ((leftEdge + b.columnWidth) - 120), row2, {width: 120, align: 'right'})
+          doc.text(`label claim  ${test.claim2.value}  ${test.claim2.pass ? 'PASS' : '  FAIL'}`, ((leftEdge + b.columnWidth) - 120), row2, {width: 120, align: 'right'})
           doc.fontSize(7);
         }
         doc.text('Total THC = THCA * 0.877 + THC', leftEdge, newRow());
@@ -743,17 +743,44 @@ function create(sample) {
 
       const titleRow = newRow();
 
+      // let drywgt = ''
+      // if (test.type.name === 'potency' && sample.product_type.name === 'flowers') {
+      //   doc.fontSize(7).text('(dry weight)', leftEdge + 74, titleRow)
+      // }
+
+      // let tested = ''
+      // if (test.date_tested) {
+      //   const date = moment(test.date_tested).format('M/D/YYYY')
+      //   tested = ` date tested: ${date}`
+      //   // const position = (leftEdge + 74)
+      //   // doc.fontSize(7).text(`tested: ${date}`, position, titleRow)
+      // }
+
       doc.fontSize(11)
-        .text(toTitleCase(test.name), leftEdge, (titleRow - 2));
+        .text(`${toTitleCase(test.name)}`, leftEdge, (titleRow - 2));
+
+      let headerRight = ''
 
       if (test.type.name === 'potency' && sample.product_type.name === 'flowers') {
-        doc.fontSize(7).text('(dry weight)', leftEdge + 74, titleRow)
+        // doc.fontSize(7).text('(dry weight)', leftEdge + 74, titleRow)
+        headerRight += '  (dry weight)  '
+      }
+
+      if (test.date_tested) {
+        const date = moment(test.date_tested).format('M/D/YYYY')
+        headerRight += `  tested: ${date}`
+        // const position = (leftEdge + 74)
+        // doc.fontSize(7).text(`tested: ${date}`, position, titleRow)
       }
 
       if (test.machine) {
-        doc.fontSize(8)
-          .text(test.machine, leftEdge, (titleRow + 1), {width: b.columnWidth, align: 'right'});
+        headerRight += `  ${test.machine}`
+        // doc.fontSize(8)
+        //   .text(test.machine, leftEdge, (titleRow + 1), {width: b.columnWidth, align: 'right'});
       }
+
+      doc.fontSize(8)
+          .text(headerRight, leftEdge, titleRow, {width: b.columnWidth, align: 'right'});
 
       renderTestHeader(test, leftEdge, rightEdge);
 
