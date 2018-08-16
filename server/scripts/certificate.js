@@ -785,12 +785,13 @@ function create(sample) {
         headerRight += '  (dry weight)  '
       }
 
-      if (test.date_tested) {
-        const date = moment(test.date_tested).format('M/D/YYYY')
+      // if (test.date_tested) {
+        // const date = moment(test.date_tested).format('M/D/YYYY')
+        const date = moment(date_tested).format('M/D/YYYY')
         headerRight += `  tested: ${date}`
         // const position = (leftEdge + 74)
         // doc.fontSize(7).text(`tested: ${date}`, position, titleRow)
-      }
+      // }
 
       if (test.machine) {
         headerRight += `  ${test.machine}`
