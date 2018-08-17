@@ -108,7 +108,7 @@ module.exports = function(app) {
     return new Promise((resolve,reject) => {
       request.put(mm420Api.requestOptions({url:'/update_lab_data_sample/'+update._id}, update), function(error, response, data) {
         if (error) {
-          console.log('update_lab_data_sample error ', error)
+          console.log('update_lab_data_sample error', error)
           reject(error)
         }
         if (!error && response.statusCode == 200) {
