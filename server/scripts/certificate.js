@@ -763,41 +763,20 @@ function create(sample) {
 
       const titleRow = newRow();
 
-      // let drywgt = ''
-      // if (test.type.name === 'potency' && sample.product_type.name === 'flowers') {
-      //   doc.fontSize(7).text('(dry weight)', leftEdge + 74, titleRow)
-      // }
-
-      // let tested = ''
-      // if (test.date_tested) {
-      //   const date = moment(test.date_tested).format('M/D/YYYY')
-      //   tested = ` date tested: ${date}`
-      //   // const position = (leftEdge + 74)
-      //   // doc.fontSize(7).text(`tested: ${date}`, position, titleRow)
-      // }
-
       doc.fontSize(11)
         .text(`${toTitleCase(test.name)}`, leftEdge, (titleRow - 2));
 
       let headerRight = ''
 
       if (test.type.name === 'potency' && sample.product_type.name === 'flowers') {
-        // doc.fontSize(7).text('(dry weight)', leftEdge + 74, titleRow)
         headerRight += '  (dry weight)  '
       }
 
-      // if (test.date_tested) {
-        // const date = moment(test.date_tested).format('M/D/YYYY')
-        const date = moment(date_tested).format('M/D/YYYY')
-        headerRight += `  tested: ${date}`
-        // const position = (leftEdge + 74)
-        // doc.fontSize(7).text(`tested: ${date}`, position, titleRow)
-      // }
+      const date = test.date_tested ? moment(test.date_tested).format('M/D/YYYY') : moment(date_tested).format('M/D/YYYY')
+      headerRight += `  tested: ${date}`
 
       if (test.machine) {
         headerRight += `  ${test.machine}`
-        // doc.fontSize(8)
-        //   .text(test.machine, leftEdge, (titleRow + 1), {width: b.columnWidth, align: 'right'});
       }
 
       doc.fontSize(8)

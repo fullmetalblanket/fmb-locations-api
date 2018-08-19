@@ -108,7 +108,7 @@ module.exports = function(app) {
     return new Promise((resolve,reject) => {
       request.put(mm420Api.requestOptions({url:'/update_lab_data_sample/'+update._id}, update), function(error, response, data) {
         if (error) {
-          console.log('update_lab_data_sample error', error)
+          console.log('update_lab_data_sample error ', error)
           reject(error)
         }
         if (!error && response.statusCode == 200) {
@@ -323,6 +323,17 @@ module.exports = function(app) {
         if(err) { return handleError(res, err); }
         console.log('docs', docs.length);
         res.status(200).json(docs);
+      });
+    })
+  });
+
+  // get single sample populated
+  app.get('/sample_data_populated/:id', function(req, res) {
+    Product.findOne({_id: req.params.id}, function(err, obj) {
+      if(err) return console.error(err);
+      Product.populate(obj, populateSampleOptions, function (err, doc) {
+        if(err) { return handleError(res, err); }
+        res.status(200).json(doc);
       });
     })
   });
