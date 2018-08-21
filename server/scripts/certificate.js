@@ -286,28 +286,31 @@ function create(sample) {
     const getTestHeight = test => {
       let height = b.rowSize * 2;
       height += b.rowSize - 2;
+      // add up each data row
       for (let i = 0; i < test.data.length; i++) {
-        // const result = test.data[i];
         height += i === 0 ? b.smallRowSize : b.rowSize;
       }
+      // footer heights
+      // all footers at lease have this
       height += b.largeRowSize;
+      height += b.rowSize;
       if (test.type.name === 'potency') {
-        height += b.rowSize * 5;
-        height += b.largeRowSize;
+        height += b.rowSize * 6;
         if (flowers) {
           height += b.rowSize;
         }
+        if (test.claim1 && test.claim1.value) {
+          height += b.rowSize;
+        }
+        if (test.claim2 && test.claim2.value) {
+          height += b.rowSize;
+        }
       }
-      if (test.type.name === 'terpenes' || test.type.name === 'solvents' || test.type.name === 'pesticides') {
-        height += b.largeRowSize;
-        height += b.rowSize;
+      if (test.type.name === 'solvents') {
+        height += b.rowSize * 2;
       }
       if (test.type.name === 'pesticides') {
-        height += b.rowSize * 4;
-        height += b.largeRowSize;
-      }
-      if (test.type.name === 'moisture') {
-        height += b.largeRowSize;
+        height += b.rowSize * 5;
       }
       return height;
     }
@@ -338,11 +341,13 @@ function create(sample) {
         doc.text('Total CBD = CBDA * 0.877 + CBD', leftEdge, newRow());
         doc.text('d9THC = THC', leftEdge, newRow());
         doc.text('d8THC = 8THC', leftEdge, newRow());
+        doc.text('method per SOP', leftEdge, newRow());
       }
       if (test.type.name === 'solvents') {
         doc.fontSize(7);
-        doc.text('AL (action level) = mcg/g', leftEdge, newRow());
+        doc.text('AL (action level) = mcg/g', leftEdge, newRow('large'));
         doc.text('mcg/g = micrograms per gram', leftEdge, newRow());
+        doc.text('method per SOP', leftEdge, newRow());
       }
       if (test.type.name === 'terpenes') {
         doc.fontSize(7);
@@ -357,11 +362,15 @@ function create(sample) {
         doc.text('mcg/g = micrograms per gram', leftEdge, newRow());
         doc.text('ND = Not Detected', leftEdge, newRow());
         doc.text('LOQ meets state requirements for 0.1 mcg/g', leftEdge, newRow())
-        doc.text('Analytical Method: A novel comprehensive strategy for residual pesticide analysis in cannabis flower. Lilly Asanuma et. al.', leftEdge, newRow());
+        doc.text('Analytical Method: A novel comprehensive strategy for residual pesticide analysis in cannabis flower. Lilly Asanuma et. al.', leftEdge, newRow(), {width:b.columnWidth});
       }
       if (test.type.name === 'moisture') {
         doc.fontSize(7); 
         doc.text('Loss on drying: AOAC 934.01', leftEdge, newRow('large'));
+      }
+      if (test.type.name === 'microbio') {
+        doc.fontSize(7); 
+        doc.text('method per SOP', leftEdge, newRow('large'));
       }
     }
 
@@ -796,7 +805,7 @@ function create(sample) {
 
     renderFooters();
 
-    console.log('certificate created ')
+    console.log('certificate created')
     doc.end();
 
     resolve(doc);
