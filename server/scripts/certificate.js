@@ -471,7 +471,7 @@ function create(sample) {
           let resultRow = r === 0 || r === 39 ? newRow('small') : newRow();
 
 
-          doc.fontSize(8);
+          doc.fontSize(8); 
           doc.text(result.display_name || result.name, leftEdge, resultRow);
   
           if (result.mg || result.ppm) {

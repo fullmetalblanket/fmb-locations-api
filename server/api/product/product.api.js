@@ -316,7 +316,7 @@ module.exports = function(app) {
   // select samples by user id populated for specific lab use
   app.get('/samples_data_client_lab/:clientId/:labId', function(req, res) {
     console.log('\ntryna get samples by clientId', req.params.clientId);
-    console.log('tryna get samples for labId', req.params.labId);
+    console.log('tryna get samples for labId ', req.params.labId);
     Product.find({'tracking.user': req.params.clientId, 'lab.location': req.params.labId}, function(err, objs) {
       if(err) return console.error(err);
       Product.populate(objs, populateSampleOptions, function (err, docs) {
