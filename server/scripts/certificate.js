@@ -686,34 +686,64 @@ function create(sample) {
 
     b.currentRow = 26;
     doc.fontSize(10);
-    let r = b.newRow()
-    doc.text('Distributor:', primaryLeft, r, {width: infoWidth, align: 'right'});
-    doc.text('Producer:', secondaryLeft, r, {width: infoWidth, align: 'right'});
-    r = b.newRow()
-    doc.text(primeUserName, primaryLeft, r, {width: infoWidth, align: 'right'});
-    doc.text(secUserName, secondaryLeft, r, {width: infoWidth, align: 'right'});
-    r = b.newRow()
-    if (primaryUser.credentials && primaryUser.credentials.license) {
-      doc.text(`Lic. # ${primaryUser.credentials.license}`, primaryLeft, r, {width: infoWidth, align: 'right'});
-    }
-    if (secondaryUser.credentials && secondaryUser.credentials.license) {
-      doc.text(`Lic. # ${secondaryUser.credentials.license}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
-    }
-    r = b.newRow()
-    if (primeBiz.address_line_1) {
-      doc.text(`${primeBiz.address_line_1} ${primeBiz.address_line_2}`, primaryLeft, r, {width: infoWidth, align: 'right'});
-    }
-    if (secBiz.address_line_1) {
-      doc.text(`${secBiz.address_line_1} ${secBiz.address_line_2}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
-    }
-    r = b.newRow()
+    // let r = b.newRow()
 
-    if (primeBiz.city && primeBiz.state && primeBiz.zip) {
-      doc.text(`${primeBiz.city}, ${primeBiz.state } ${primeBiz.zip}`, primaryLeft, r, {width: infoWidth, align: 'right'});
-    }
-    if (secBiz.city && secBiz.state && secBiz.zip) {
-      doc.text(`${secBiz.city}, ${secBiz.state } ${secBiz.zip}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
-    }
+    const pLicense = primaryUser.credentials && primaryUser.credentials.license && `  |  Lic. # ${primaryUser.credentials.license}`
+    doc.text(`Distributor: ${primeUserName}${pLicense}`, primaryLeft, b.newRow(), {align: 'right'});
+    let { address_line_1, address_line_2, city, state, zip } = primeBiz
+    const pLine1 = address_line_1 ? address_line_1 : ''
+    const pLine2 = address_line_2 ? ` ${address_line_2}` : ''
+    const pCity = city ? ` ${city}` : ''
+    const pState = state ? `, ${state}` : ''
+    const pZip = zip ? ` ${zip}` : ''
+    const primeAddress = `${pLine1}${pLine2}${pCity}${pState}${pZip}`
+    doc.text(primeAddress, primaryLeft, b.newRow(), {align: 'right'});
+
+    b.newRow();
+
+    const sLicense = secondaryUser.credentials && secondaryUser.credentials.license && `  |  Lic. # ${secondaryUser.credentials.license}`
+    doc.text(`Producer: ${secUserName}${sLicense}`, primaryLeft, b.newRow(), {align: 'right'});
+    let { address_line_1: sal1, address_line_2: sal2, city: sC, state: sS, zip: sZ } = secBiz
+    const sLine1 = sal1 ? sal1 : ''
+    const sLine2 = sal2 ? ` ${sal2}` : ''
+    const sCity = sC ? ` ${sC}` : ''
+    const sState = sS ? `, ${sS}` : ''
+    const sZip = sZ ? ` ${sZ}` : ''
+    const secAddress = `${sLine1}${sLine2}${sCity}${sState}${sZip}`
+    doc.text(secAddress, primaryLeft, b.newRow(), {align: 'right'});
+
+
+
+    // doc.text('Distributor:', primaryLeft, r, {width: infoWidth, align: 'right'});
+    // doc.text('Producer:', secondaryLeft, r, {width: infoWidth, align: 'right'});
+    // r = b.newRow()
+    // doc.text(primeUserName, primaryLeft, r, {width: infoWidth, align: 'right'});
+    // doc.text(secUserName, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    // r = b.newRow()
+    // if (primaryUser.credentials && primaryUser.credentials.license) {
+    //   doc.text(`Lic. # ${primaryUser.credentials.license}`, primaryLeft, r, {width: infoWidth, align: 'right'});
+    // }
+    // if (secondaryUser.credentials && secondaryUser.credentials.license) {
+    //   doc.text(`Lic. # ${secondaryUser.credentials.license}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    // }
+    // r = b.newRow()
+    // if (primeBiz.address_line_1) {
+    //   doc.text(`${primeBiz.address_line_1} ${primeBiz.address_line_2}`, primaryLeft, r, {width: infoWidth, align: 'right'});
+    // }
+    // if (secBiz.address_line_1) {
+    //   doc.text(`${secBiz.address_line_1} ${secBiz.address_line_2}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    // }
+    // r = b.newRow()
+
+    // if (primeBiz.city && primeBiz.state && primeBiz.zip) {
+    //   doc.text(`${primeBiz.city}, ${primeBiz.state } ${primeBiz.zip}`, primaryLeft, r, {width: infoWidth, align: 'right'});
+    // }
+    // if (secBiz.city && secBiz.state && secBiz.zip) {
+    //   doc.text(`${secBiz.city}, ${secBiz.state } ${secBiz.zip}`, secondaryLeft, r, {width: infoWidth, align: 'right'});
+    // }
+
+
+
 
     let lineRow = 105;     
     // doc.moveTo(b.col1, lineRow)
@@ -734,9 +764,9 @@ function create(sample) {
       .fontSize(10)
       .text(`ID: ${sample._id}`, b.col1, 161)
       .fontSize(9)
-      .text(`Date Analyzed: ${completeDate}`, b.col1, 176)
-      .text(`Date Received: ${receivedDate}`, b.col1, 190)
-      .text(`Date Collected: ${receivedDate}`, b.col1, 204);
+      // .text(`Date Analyzed: ${completeDate}`, b.col1, 176)
+      .text(`Date Received: ${receivedDate}`, b.col1, 176)
+      .text(`Date Collected: ${receivedDate}`, b.col1, 190);
 
     doc.fontSize(13)
       .text(`Matrix: ${toTitleCase(product_type.name)}`, b.col2, 142, {width: b.columnWidth, align: 'right'})
