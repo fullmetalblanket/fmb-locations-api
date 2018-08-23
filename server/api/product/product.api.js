@@ -279,7 +279,19 @@ module.exports = function(app) {
 
 
 
-  // select samples by user id populated - all labs
+
+  // get all completed samples (not unlisted)
+  app.get('/samples_data_tested/', function(req, res) {
+    Product.find({'lab.date_tested': {$exists: true, $ne: null}, 'lab.unlisted': {$exists: false, $ne: true}}, function(err, docs) {
+      if(err) return console.error(err);
+      Product.populate(docs, populateSampleOptions, function (err, docs) {
+        if(err) { return handleError(res, err); }
+        res.status(200).json(docs); 
+      });
+    });
+  });
+
+  // get samples by user id populated - all labs
   app.get('/samples_data/:id', function(req, res) {
     console.log('\ntryna get samples by user id ', req.params.id);
     Product.find({'tracking.user': req.params.id}, function(err, objs) {

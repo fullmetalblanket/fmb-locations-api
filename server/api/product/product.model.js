@@ -79,6 +79,7 @@ var productSchema = mongoose.Schema({
 
   // Laboratory
   lab: {
+    unlisted: Boolean,
     location: { type: ObjectId, ref: 'User' }, // Novato or Santa Ana (sales@cblabs.us or sasales@cblabs.us)
     // sample_id: String, // mongo id's are too long for lab personnel to manually type, so we're generating our own
     // sample_name: String, // can be different than the product name
