@@ -248,7 +248,7 @@ function create(sample) {
     let currentPage = 0;
     let currentCol = 0;
 
-    const testStartingRow = 222;
+    const testStartingRow = 234;
 
     const page = [{
       name: 0,
@@ -688,8 +688,11 @@ function create(sample) {
     doc.fontSize(10);
     // let r = b.newRow()
 
-    const pLicense = primaryUser.credentials && primaryUser.credentials.license && `  |  Lic. # ${primaryUser.credentials.license}`
-    doc.text(`Distributor: ${primeUserName}${pLicense}`, primaryLeft, b.newRow(), {align: 'right'});
+    const pLicense = primaryUser.credentials && primaryUser.credentials.license && ` Lic. # ${primaryUser.credentials.license}`
+    doc.text(`Distributor: ${primeUserName}`, primaryLeft, b.newRow(), {align: 'right'});
+    if (pLicense) {
+      doc.text(pLicense, primaryLeft, b.newRow(), {align: 'right'});
+    }
     let { address_line_1, address_line_2, city, state, zip } = primeBiz
     const pLine1 = address_line_1 ? address_line_1 : ''
     const pLine2 = address_line_2 ? ` ${address_line_2}` : ''
@@ -699,18 +702,21 @@ function create(sample) {
     const primeAddress = `${pLine1}${pLine2}${pCity}${pState}${pZip}`
     doc.text(primeAddress, primaryLeft, b.newRow(), {align: 'right'});
 
-    b.newRow();
-
-    const sLicense = secondaryUser.credentials && secondaryUser.credentials.license && `  |  Lic. # ${secondaryUser.credentials.license}`
-    doc.text(`Producer: ${secUserName}${sLicense}`, primaryLeft, b.newRow(), {align: 'right'});
-    let { address_line_1: sal1, address_line_2: sal2, city: sC, state: sS, zip: sZ } = secBiz
-    const sLine1 = sal1 ? sal1 : ''
-    const sLine2 = sal2 ? ` ${sal2}` : ''
-    const sCity = sC ? ` ${sC}` : ''
-    const sState = sS ? `, ${sS}` : ''
-    const sZip = sZ ? ` ${sZ}` : ''
-    const secAddress = `${sLine1}${sLine2}${sCity}${sState}${sZip}`
-    doc.text(secAddress, primaryLeft, b.newRow(), {align: 'right'});
+    if (secondaryUser) {
+      const sLicense = secondaryUser.credentials && secondaryUser.credentials.license && `Lic. # ${secondaryUser.credentials.license}`
+      doc.text(`Producer: ${secUserName}`, primaryLeft, b.newRow('large'), {align: 'right'});
+      if (sLicense) {
+        doc.text(sLicense, primaryLeft, b.newRow(), {align: 'right'});
+      }
+      let { address_line_1: sal1, address_line_2: sal2, city: sC, state: sS, zip: sZ } = secBiz
+      const sLine1 = sal1 ? sal1 : ''
+      const sLine2 = sal2 ? ` ${sal2}` : ''
+      const sCity = sC ? ` ${sC}` : ''
+      const sState = sS ? `, ${sS}` : ''
+      const sZip = sZ ? ` ${sZ}` : ''
+      const secAddress = `${sLine1}${sLine2}${sCity}${sState}${sZip}`
+      doc.text(secAddress, primaryLeft, b.newRow(), {align: 'right'});
+    }
 
 
 
@@ -745,36 +751,36 @@ function create(sample) {
 
 
 
-    let lineRow = 105;     
+    let lineRow = 120;     // 105
     // doc.moveTo(b.col1, lineRow)
     //   .lineTo(b.right, lineRow)
     //   .fillAndStroke('#000', '#aaa');
 
     // title
     doc.fontSize(20)
-      .text('Certificate of Analysis', 0, 110, {width: 610, align: 'center'});
+      .text('Certificate of Analysis', 0, lineRow + 5, {width: 610, align: 'center'});
 
-    lineRow = 134;     
+    lineRow = lineRow + 29; // 139
     doc.moveTo(b.col1, lineRow)
       .lineTo(b.right, lineRow)
       .fillAndStroke('#000', '#aaa');
 
     doc.fontSize(13)
-      .text(`Name: ${name}`, b.col1, 142)
+      .text(`Name: ${name}`, b.col1, lineRow + 8) // 142
       .fontSize(10)
-      .text(`ID: ${sample._id}`, b.col1, 161)
+      .text(`ID: ${sample._id}`, b.col1, lineRow + 27) // 161
       .fontSize(9)
       // .text(`Date Analyzed: ${completeDate}`, b.col1, 176)
-      .text(`Date Received: ${receivedDate}`, b.col1, 176)
-      .text(`Date Collected: ${receivedDate}`, b.col1, 190);
+      .text(`Date Received: ${receivedDate}`, b.col1, lineRow + 42) // 176
+      .text(`Date Collected: ${receivedDate}`, b.col1, lineRow + 56); // 190
 
     doc.fontSize(13)
-      .text(`Matrix: ${toTitleCase(product_type.name)}`, b.col2, 142, {width: b.columnWidth, align: 'right'})
+      .text(`Matrix: ${toTitleCase(product_type.name)}`, b.col2, lineRow + 8, {width: b.columnWidth, align: 'right'}) // 142
       .fontSize(9)
-      .text(`Batch Number: ${batch_number}`, b.col2, 162, {width: b.columnWidth, align: 'right'})
-      .text(`Total Batch Size: ${batch_size}`, b.col2, 176, {width: b.columnWidth, align: 'right'})
-      .text(`Sample Increment: ${sample_increment}`, b.col2, 190, {width: b.columnWidth, align: 'right'})
-      .text(`Total Sample Weight: ${sample_weight}`, b.col2, 204, {width: b.columnWidth, align: 'right'});
+      .text(`Batch Number: ${batch_number}`, b.col2, lineRow + 25, {width: b.columnWidth, align: 'right'}) // 162
+      .text(`Total Batch Size: ${batch_size}`, b.col2, lineRow + 39, {width: b.columnWidth, align: 'right'}) // 176
+      .text(`Sample Increment: ${sample_increment}`, b.col2, lineRow + 53, {width: b.columnWidth, align: 'right'}) // 190
+      .text(`Total Sample Weight: ${sample_weight}`, b.col2, lineRow + 67, {width: b.columnWidth, align: 'right'}); // 204
 
     // sample name and matrix
     // doc.fontSize(14)
@@ -782,7 +788,7 @@ function create(sample) {
 
     // batch pass/fail
     doc.fontSize(13)
-      .text(`Batch: ${batchPassed}`, 255, 142, {width: 100, align: 'center'});
+      .text(`Batch: ${batchPassed}`, 255, lineRow + 8, {width: 100, align: 'center'});
 
     //
     // tests
