@@ -35,11 +35,12 @@ var checkCredentials = function(req, res, next) {
     // console.log('\nduration.asSeconds()', duration.asSeconds());
   
     // var authorized = clients[auth[0]] === auth[1];
-    var authorized = clients.find(c => c.key === auth[0] && c.secret === auth[1])
-    var expired = duration.asSeconds() > 25;
+    var authorized = clients.find(c => c.key === auth[0] && c.secret === auth[1]);
+    // var expired = duration.asSeconds() > 25;
+    var expired = false;
   
     if (authorized && !expired) {
-      console.log('authorized',authorized.name)
+      console.log('authorized ',authorized.name)
       isAuthorized();
     } else {
       console.log('unauthorized',auth)

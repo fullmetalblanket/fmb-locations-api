@@ -23,6 +23,8 @@ var userSchema = mongoose.Schema({
   email: String,
   password: String,
 
+  emails: [String],
+
   images: {
     profile: ''
   },
@@ -55,6 +57,7 @@ var userSchema = mongoose.Schema({
 
   credentials: {
     license: String,
+    licenses: [String],
     ein: String,
     metrc: String
   },
@@ -115,7 +118,7 @@ var userSchema = mongoose.Schema({
       licensePromptPendingReminderDate: Date
     },
     samples_admin: {
-      filters: String // stringified array of objects
+      filters: String // stringified filters object
     }
   },
 

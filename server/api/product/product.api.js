@@ -279,7 +279,6 @@ module.exports = function(app) {
 
 
 
-
   // get all completed samples (not unlisted)
   app.get('/samples_data_tested/', function(req, res) {
     Product.find({'lab.date_tested': {$exists: true, $ne: null}, 'lab.unlisted': {$exists: false, $ne: true}}, function(err, docs) {
@@ -289,6 +288,18 @@ module.exports = function(app) {
         res.status(200).json(docs); 
       });
     });
+  });
+
+  // get samples by user id populated tested only
+  app.get('/samples_data_tested/:id', function(req, res) {
+    console.log('\ntryna get tested samples by user id ', req.params.id);
+    Product.find({'tracking.user': req.params.id, 'lab.date_tested': {$exists: true, $ne: null}}, function(err, objs) {
+      if(err) return console.error(err);
+      Product.populate(objs, populateSampleOptions, function (err, docs) {
+        if(err) { return handleError(res, err); }
+        res.status(200).json(docs);
+      });
+    })
   });
 
   // get samples by user id populated - all labs
@@ -314,16 +325,7 @@ module.exports = function(app) {
     });
   });
 
-  // get samples by status
-  app.get('/samples_data_lab_status/:labId/:status', function(req, res) {
-    Product.find({'lab.location': req.params.labId}, function(err, docs) {
-      if(err) return console.error(err);
-      Product.populate(docs, populateSampleOptions, function (err, docs) {
-        if(err) { return handleError(res, err); }
-        res.status(200).json(docs);
-      });
-    });
-  });
+
 
   // select samples by user id populated for specific lab use
   app.get('/samples_data_client_lab/:clientId/:labId', function(req, res) {
@@ -388,6 +390,54 @@ module.exports = function(app) {
     // })
   });
 
+    // get samples by status
+    app.get('/samples_by_lab_and_status/:labId/:status', function(req, res) {
+      console.log('samples_by_lab_and_status status',req.params.status)
+      var labId = req.params.labId
+      var status = req.params.status
+      var sort = {}
+      sort['lab.date_due'] = 1
+      var findObj = {
+        'lab.location': labId
+      }
+      switch(status) {
+        case 'due':
+          findObj['lab.date_due'] = { $gte: new Date() }
+          break;
+        case 'overdue':
+          findObj['lab.date_due'] = { $lt: new Date() }
+          break;
+        case 'complete':
+          findObj['lab.date_tested'] = { $exists: true, $ne: null }
+          break;
+        case 'incomplete':
+          findObj['lab.date_tested'] = { $eq: null }
+          break;
+        default:
+          console.log('get all ')
+      }
+      console.log('findObj',findObj)
+      Product.find(findObj)
+        .populate(populateSampleOptions)
+        .sort(sort)
+        .exec(function (err, docs) {
+          if(err) { return handleError(res, err); }
+          res.status(200).json(docs);
+        });
+      // .sort(sort)
+      // .populate(docs, populateSampleOptions, function (err, docs) {
+      //   if(err) { return handleError(res, err); }
+      //   res.status(200).json(docs);
+      // });
+      // Product.find(findObj, function(err, docs) {
+      //   if(err) return console.error(err);
+      //   Product.populate(docs, populateSampleOptions, function (err, docs) {
+      //     if(err) { return handleError(res, err); }
+      //     res.status(200).json(docs);
+      //   });
+      // });
+    });
+
 
   // select all by metadata.user_type populated restricted to
   // supplied params
@@ -406,7 +456,7 @@ module.exports = function(app) {
         if (thisRestriction === 'active') {
           obj.active = true;
         } else {
-          obj[restrictions[r]] = {$exists: true, $ne: null};
+          obj[restrictions[r]] = { $exists: true, $ne: null };
         }
       }
 
