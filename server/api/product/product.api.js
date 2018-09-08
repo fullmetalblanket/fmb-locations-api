@@ -443,7 +443,7 @@ module.exports = function(app) {
   // supplied params
   app.get('/products_data_by_user_type_special/:type/:restrictions', function(req, res) {
     console.log('\ntryna get products by metadata.user_type special type', req.params.type);
-    console.log('tryna get products by metadata.user_type special restrictions', req.params.restrictions);
+    console.log('tryna get products by metadata.user_type special restrictions ', req.params.restrictions);
     var obj = {
       'metadata.user_type': req.params.type
     };
