@@ -110,6 +110,9 @@ var userSchema = mongoose.Schema({
       sortProperty: String,
       searchQuery: String
     },
+    samples: {
+      filters: String // stringified filters object
+    },
     orders: {
       show: String // all, delivered, not_delivered
     },
@@ -117,8 +120,27 @@ var userSchema = mongoose.Schema({
       licensePromptDismissed: Boolean,
       licensePromptPendingReminderDate: Date
     },
-    samples_admin: {
-      filters: String // stringified filters object
+    admin: {
+      samples: {
+        filters: String, // stringified filters object
+        query: String // last search string used that returned results
+      },
+      testResults: {
+        tab: Number,
+        sample: { type: ObjectId, ref: 'Product' },
+        client: { type: ObjectId, ref: 'User' }
+      }
+    }
+  },
+
+  lab: {
+    priority: Boolean,
+  },
+
+  integrations: {
+    weedmaps: {
+      listing_id: Number,
+      listing_type: { type: ObjectId, ref: 'UserType' }
     }
   },
 
@@ -134,12 +156,8 @@ var userSchema = mongoose.Schema({
     ]
   },
 
-  lab: {
-    priority: Boolean,
-  },
-
   // this is for a "soft user delete" | not sure what the impact of a hard delete would be
-  deleted: Boolean
+  deleted: Boolean,
 
 },
 {

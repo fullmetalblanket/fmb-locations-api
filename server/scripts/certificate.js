@@ -131,8 +131,10 @@ function create(sample) {
     let { user: primaryUser, secondary: secondaryUser } = tracking
     const { qrcodeDataURL, tests, location: labUser, date_tested, date_acquired, batch_number, batch_size, sample_increment, sample_weight } = lab;
     const selectedTests = sortTests(tests.filter(test => test.selected));
-    const completeDate = moment(date_tested).format('M/D/YYYY');
-    const receivedDate = moment(date_acquired).format('M/D/YYYY');
+    // const completeDate = moment(date_tested).format('M/D/YYYY');
+    const completeDate = moment.tz(moment(date_tested),'America/Los_Angeles').format('M/D/YYYY');
+    // const receivedDate = moment(date_acquired).format('M/D/YYYY');
+    const receivedDate = moment.tz(moment(date_acquired),'America/Los_Angeles').format('M/D/YYYY');
     const batchPassed = testsPassed(selectedTests) ? 'PASS' : 'FAIL';
     console.log('batchPassed',batchPassed)
 
@@ -823,7 +825,8 @@ function create(sample) {
         headerRight += '  (dry weight)  '
       }
 
-      const date = test.date_tested ? moment(test.date_tested).format('M/D/YYYY') : moment(date_tested).format('M/D/YYYY')
+      const date = test.date_tested ? moment.tz(moment(test.date_tested),'America/Los_Angeles').format('M/D/YYYY') : moment.tz(moment(date_tested),'America/Los_Angeles').format('M/D/YYYY')
+
       headerRight += `  tested: ${date}`
 
       if (test.machine) {

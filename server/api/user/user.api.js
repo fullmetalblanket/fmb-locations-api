@@ -355,13 +355,17 @@ module.exports = function(app) {
 
   app.put('/set_default_address/:user/:address', function(req, res) {
     User.findById(req.params.user, function (err, user) {
-      user.addresses.forEach(function(address) {
-        address.default = address._id.toString()===req.params.address;
-      });
-      user.save(function(err, obj) {
-        if(err) return console.error(err);
-        res.status(200).json(obj);
-      });
+      if (user.addresses && user.addresses.length) {
+        user.addresses.forEach(function(address) {
+          address.default = address._id.toString()===req.params.address;
+        });
+        user.save(function(err, obj) {
+          if(err) return console.error(err);
+          res.status(200).json(obj);
+        });
+      } else {
+        res.status(200)
+      }
     })
   });
 
@@ -373,7 +377,7 @@ module.exports = function(app) {
 
   // save user preferences and settings
   app.put('/save_settings/:id/:setting/:update', function(req, res) {
-    console.log('\nupdate settings product filters: setting', req.params.setting);
+    console.log('\nupdate settings product filters: setting ', req.params.setting);
     console.log('update settings product filters: update', req.params.update);
     var setting = req.params.setting;
     var updateObj = {};
