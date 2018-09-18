@@ -126,6 +126,7 @@ var productSchema = mongoose.Schema({
           value: String,
           pass: Boolean,          
           mg: String,
+          mcg: String,
           ppm: String,
           percent: String,
           limit: String,
