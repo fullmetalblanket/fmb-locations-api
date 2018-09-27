@@ -460,25 +460,25 @@ function create(sample) {
     const renderTestFooter = (test, leftEdge, rightEdge) => {
       leftEdge = currentCol === 1 ? b.col2 : leftEdge
       if (test.type.name === 'potency') {
-        doc.fontSize(7);
-        if (flowers) {
-          doc.text('dry weight is based on moisture content of sample', leftEdge, newRow('large'));
-        } 
-        const nextRowSize = flowers ? null : 'large'
-        const row1 = newRow(nextRowSize)
-        doc.text('LOQ (Limit of Quantitation) = 1.0 mg/g', leftEdge, row1);
+        let nextRowSize = test.claim1 && test.claim1.value ? 'large' : null;
         if (test.claim1 && test.claim1.value) {
           doc.fontSize(8);
-          doc.text(`label claim  ${test.claim1.value}  ${test.claim1.pass ? 'PASS' : '  FAIL'}`, ((leftEdge + b.columnWidth) - 120), row1, {width: 120, align: 'right'})
+          doc.text(`label claim  ${test.claim1.value}% THC  difference ${test.claim1.differential}%  ${test.claim1.pass ? 'PASS' : '  FAIL'}`, leftEdge, newRow(nextRowSize))
           doc.fontSize(7);
         }
-        const row2 = newRow()
-        doc.text('mg/g = milligrams per gram', leftEdge, row2);
+        nextRowSize = (test.claim2 && test.claim2.value) && (!test.claim1 && !test.claim1.value) ? null : 'large';
+        doc.text('mg/g = milligrams per gram', leftEdge, newRow());
         if (test.claim2 && test.claim2.value) {
           doc.fontSize(8);
-          doc.text(`label claim  ${test.claim2.value}  ${test.claim2.pass ? 'PASS' : '  FAIL'}`, ((leftEdge + b.columnWidth) - 120), row2, {width: 120, align: 'right'})
+          doc.text(`label claim  ${test.claim2.value}% CBD  difference ${test.claim2.differential}%  ${test.claim2.pass ? 'PASS' : '  FAIL'}`, leftEdge, newRow(nextRowSize))
           doc.fontSize(7);
         }
+        doc.fontSize(7);
+        nextRowSize = (!test.claim1 || !test.claim1.value) || (!test.claim2 || test.claim2.value) ? 'large' : null
+        doc.text('LOQ (Limit of Quantitation) = 1.0 mg/g', leftEdge, newRow());
+        if (flowers) {
+          doc.text('dry weight is based on moisture content of sample', leftEdge, newRow());
+        } 
         doc.text('Total THC = THCA * 0.877 + THC', leftEdge, newRow());
         doc.text('Total CBD = CBDA * 0.877 + CBD', leftEdge, newRow());
         doc.text('d9THC = THC', leftEdge, newRow());

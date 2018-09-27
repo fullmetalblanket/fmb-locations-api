@@ -123,6 +123,8 @@ var userSchema = mongoose.Schema({
     admin: {
       samples: {
         filters: String, // stringified filters object
+        filterBy: String, // all, complete, due, overdue
+        sortBy: String, // date_due, date_tested, date_aquired, client, sample name
         query: String // last search string used that returned results
       },
       testResults: {

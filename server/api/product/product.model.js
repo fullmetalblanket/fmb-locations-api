@@ -136,11 +136,13 @@ var productSchema = mongoose.Schema({
         // temporary
         claim1: {
           value: String,
-          pass: Boolean
+          pass: Boolean,
+          differential: Number
         },
         claim2: {
           value: String,
-          pass: Boolean
+          pass: Boolean,
+          differential: Number
         }
       }
     ],

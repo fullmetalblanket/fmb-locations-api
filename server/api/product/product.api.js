@@ -97,7 +97,7 @@ function sampleName(string) {
 }
 
 const stateEmail = environment.production ? 'bcc@dca.ca.gov' : 'tyhummel+state@gmail.com';
-console.log('stateEmail',stateEmail)
+console.log('stateEmail ',stateEmail)
 // const stateEmail = 'tyhummel+state@gmail.com';
 
 module.exports = function(app) {

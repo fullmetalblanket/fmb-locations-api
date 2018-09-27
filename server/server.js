@@ -73,7 +73,7 @@ app.use(auth.checkCredentials);
 // }
 
 
-console.log('process.env.npm_package_version:', process.env.npm_package_version);
+console.log('process.env.npm_package_version: ', process.env.npm_package_version);
 
 //
 // database
