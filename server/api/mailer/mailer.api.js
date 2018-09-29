@@ -190,7 +190,7 @@ module.exports = function(app) {
   // TODO: try to use user's email first, fallback to siteEmail if fail
   // send feedback email (no template)
   app.post('/send-contact-email', function(req, res) {
-    console.log('\n--> send-contact-email');
+    console.log('\n--> send-contact-email ');
 
     // var appData = JSON.parse(req.body);
     var appData = req.body;

@@ -1,3 +1,4 @@
+
 var moment = require('moment');
 var tz = require('moment-timezone');
 var config = require('../config/config');
@@ -36,8 +37,8 @@ var checkCredentials = function(req, res, next) {
   
     // var authorized = clients[auth[0]] === auth[1];
     var authorized = clients.find(c => c.key === auth[0] && c.secret === auth[1]);
-    var expired = duration.asSeconds() > 15;
-    // var expired = false;
+    // var expired = duration.asSeconds() > 30;
+    var expired = false;
   
     if (authorized && !expired) {
        console.log('authorized ',authorized.name)
