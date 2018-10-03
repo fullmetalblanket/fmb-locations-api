@@ -1,6 +1,6 @@
 {
   "name": "matchmaker420-api",
-  "version": "2.3.11",
+  "version": "2.3.12",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
