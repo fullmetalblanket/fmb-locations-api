@@ -41,7 +41,7 @@ var checkCredentials = function(req, res, next) {
     var expired = false;
   
     if (authorized && !expired) {
-       console.log('authorized ',authorized.name)
+      console.log('authorized ',authorized.name)
       isAuthorized();
     } else {
       console.log('unauthorized',auth)

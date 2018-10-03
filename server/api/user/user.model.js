@@ -141,8 +141,7 @@ var userSchema = mongoose.Schema({
 
   integrations: {
     weedmaps: {
-      listing_id: Number,
-      listing_type: { type: ObjectId, ref: 'UserType' }
+      listing_id: Number
     }
   },
 

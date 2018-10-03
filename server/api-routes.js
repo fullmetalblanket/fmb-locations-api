@@ -29,6 +29,8 @@ module.exports = function(app) {
   require('./api/user-type/user-type.api')(app);
   require('./api/user/user.api')(app);
 
+  require('./api/weedmaps/weedmaps.api')(app);
+
   // get app version from server
   app.get('/app_version', function(req, res) {
     res.json({version: process.env.npm_package_version});

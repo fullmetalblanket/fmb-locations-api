@@ -79,7 +79,9 @@ function testsPassed(tests) {
 function testPassed(test) {
   const excludes = [
     'moisture',
-    'terpenes'
+    'terpenes',
+    'foreign',
+    'homogeneity'
   ]
   if (excludes.indexOf(test.type.name) > -1) {
     // console.log('testPassed: excluding',test.type.name)
@@ -130,7 +132,9 @@ function create(sample) {
     const { name, product_type, lab, tracking } = sample;
     let { user: primaryUser, secondary: secondaryUser } = tracking
     const { qrcodeDataURL, tests, location: labUser, date_tested, date_acquired, batch_number, batch_size, sample_increment, sample_weight } = lab;
-    const selectedTests = sortTests(tests.filter(test => test.selected));
+
+    const exclude = ['foreign', 'homogeneity']
+    const selectedTests = sortTests(tests.filter(test => test.selected && exclude.indexOf(test.type.name) === -1));
     // const completeDate = moment(date_tested).format('M/D/YYYY');
     const completeDate = moment.tz(moment(date_tested),'America/Los_Angeles').format('M/D/YYYY');
     // const receivedDate = moment(date_acquired).format('M/D/YYYY');
@@ -559,6 +563,22 @@ function create(sample) {
       .image(qrcodeDataURL, right - 32, imageRow, {fit: [34, 34]});
     }
 
+    const renderPassFailTests = () => {
+      selectPageAndRow(40, true)
+      const leftEdge = currentCol === 0 ? b.col1 : b.col2;
+      const rightEdge = currentCol === 0 ? b.col1right : b.right;
+      const include = ['foreign','homogeneity'];
+      const testsToRender = sample.lab.tests.filter(t => include.indexOf(t.type.name) > -1)
+      for (let test of testsToRender) {
+        const row = newRow('large')
+        doc.fontSize(11);
+        doc.text(test.name, leftEdge, row);
+        const pass = test.pass ? 'PASS' : 'FAIL';
+        doc.fontSize(9);
+        doc.text(pass, rightEdge - 40, row, {width: 40, align: 'right'});
+      }
+    }
+
     const renderSignatureAndQRCode = () => {
       // b.currentRow = getNextAvailableRow();
       selectPageAndRow(120, true)
@@ -806,6 +826,7 @@ function create(sample) {
     for (let i = 0; i < selectedTests.length; i++) {
       const test = selectedTests[i];
       console.log('\ntest',test.name);
+      const testName = test.name || test.type.name
 
       trimTestData(test)
 
@@ -817,7 +838,7 @@ function create(sample) {
       const titleRow = newRow();
 
       doc.fontSize(11)
-        .text(`${toTitleCase(test.name)}`, leftEdge, (titleRow - 2));
+        .text(`${toTitleCase(testName)}`, leftEdge, (titleRow - 2));
 
       let headerRight = ''
 
@@ -845,6 +866,7 @@ function create(sample) {
       newRow('large');
     }
 
+    renderPassFailTests();
 
     renderSignatureAndQRCode();
 

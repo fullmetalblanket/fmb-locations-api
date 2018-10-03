@@ -110,6 +110,7 @@ var productSchema = mongoose.Schema({
         name: String,
         machine: String,
         test_sample_weight: Number, // grams
+        pass: Boolean, // for foreign and homogeneity
         headers: {
           _id : false,
           mg: Boolean,
