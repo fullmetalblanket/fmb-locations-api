@@ -86,7 +86,7 @@ module.exports = function(app) {
     request.post(requestOptions(req.body), function(error, response, body) {
       if (error) console.log('\nweedmaps: error', error);
       // console.log('\nweedmaps.api: body', body);
-      // console.log('\nmweedmaps.api: response ', response);
+      console.log('mweedmaps.api: response ', response);
       // res.json(body);
       if (body) {
         res.json(body);

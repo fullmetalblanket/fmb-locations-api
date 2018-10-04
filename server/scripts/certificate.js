@@ -568,7 +568,7 @@ function create(sample) {
       const leftEdge = currentCol === 0 ? b.col1 : b.col2;
       const rightEdge = currentCol === 0 ? b.col1right : b.right;
       const include = ['foreign','homogeneity'];
-      const testsToRender = sample.lab.tests.filter(t => include.indexOf(t.type.name) > -1)
+      const testsToRender = sample.lab.tests.filter(t => t.selected && include.indexOf(t.type.name) > -1)
       for (let test of testsToRender) {
         const row = newRow('large')
         doc.fontSize(11);

@@ -288,6 +288,14 @@ var productSchema = mongoose.Schema({
     { type: ObjectId, ref: 'PaymentType' }
   ],
 
+  integrations: {
+    weedmaps: {
+      listing_wmid: Number,
+      listing_id: Number,
+      menu_item_id: Number,
+    }
+  },
+
   // this is for a "soft delete", they can always be brought back from the dead
   deleted: Boolean
 
