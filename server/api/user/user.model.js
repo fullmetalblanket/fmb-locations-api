@@ -65,7 +65,7 @@ var userSchema = mongoose.Schema({
   // addresses
   addresses: [
     {
-      _id: false,
+      // _id: false,
       nickname: String,
       address_line_1: String,
       address_line_2: String,
@@ -79,7 +79,7 @@ var userSchema = mongoose.Schema({
   // payment methods
   payment_methods: [
     {
-      _id: false,
+      // _id: false,
       // TODO: not accepting cards yet
       payment_type: String, // credit card
       card_type: String, // visa, mastercard, amex, discover
