@@ -385,6 +385,15 @@ function create(sample) {
         .fillAndStroke('#000', '#aaa');
     }
 
+    const ppmOrMg = (result) => {
+      if (result.ppm) {
+        return isNaN(result.ppm) ? result.ppm : parseFloat(result.ppm).toExponential(2)
+      }
+      // if (result.mg) {
+        return result.mg
+      // }
+    }
+
     const renderTestData = (test, leftEdge, rightEdge) => {
       const { data } = test;
       // const amtCol = test.type.name === 'terpenes' ? percentCol : mgCol
@@ -419,12 +428,14 @@ function create(sample) {
 
           doc.fontSize(8); 
           doc.text(result.display_name || result.name, leftEdge, resultRow);
+
+
   
           if (result.mg || result.ppm) {
             if (test.type.name === 'potency' || test.type.name === 'terpenes') {
               doc.text(result.mg || result.ppm, leftEdge + headerCols.three, resultRow, {width: colWidth, align: 'right'});
             } else if (test.type.name === 'pesticides' || test.type.name === 'solvents') {
-              doc.text(result.ppm || result.mg, leftEdge + headerCols.two, resultRow, {width: colWidth, align: 'right'});
+              doc.text(ppmOrMg(result), leftEdge + headerCols.two, resultRow, {width: colWidth, align: 'right'});
             } else {
               doc.text(result.ppm || result.mg, leftEdge + headerCols.one, resultRow, {width: colWidth, align: 'right'});
             }
