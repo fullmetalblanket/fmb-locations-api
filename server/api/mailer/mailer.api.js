@@ -90,9 +90,9 @@ module.exports = function(app) {
       attachments,
       params
       // attachments: [{
-      //   filename: 'mm420-logo-white-solid.jpg',
-      //   path: 'https://s3-us-west-1.amazonaws.com/matchmaker420/default/mm420-logo-white-solid.jpg',
-      //   cid: 'logo@matchmaker420.com'
+      //   filename: 'evercase-logo-white-solid.jpg',
+      //   path: 'https://s3-us-west-1.amazonaws.com/evercase/default/evercase-logo-white-solid.jpg',
+      //   cid: 'logo@evercase.space'
       // }]
     }
     console.log('\nemail-pdf sendMailOptions');
@@ -331,7 +331,7 @@ module.exports = function(app) {
 // }));
 
 
-// // var appUrl = 'https://app.matchmaker420.com';
+// // var appUrl = 'https://app.evercase.space';
 // //
 // // if (process.env.NODE_ENV === 'development') {
 // //   appUrl = 'http://localhost:4200';
@@ -345,7 +345,7 @@ module.exports = function(app) {
 // // }
 // //
 // // if (hostname.indexOf('stage') > -1) {
-// //   appUrl = 'https://mm420-stage.herokuapp.com';
+// //   appUrl = 'https://evercase-stage.herokuapp.com';
 // // }
 
 
@@ -362,11 +362,11 @@ module.exports = function(app) {
 //     console.log('\n--> send-new-user-email');
 
 //     var html = 'New User: ' + req.body.email + '<br /><br />';
-//     html += 'Manage: ' + 'https://app.matchmaker420.com/admin/users;id=' + req.body._id + '<br /><br />';
+//     html += 'Manage: ' + 'https://app.evercase.space/admin/users;id=' + req.body._id + '<br /><br />';
 
 //     var mailOptions = {
-//       from: 'admin@matchmaker420.com',
-//       to: 'admin@matchmaker420.com',
+//       from: 'admin@evercase.space',
+//       to: 'admin@evercase.space',
 //       subject: 'New User Sign Up',
 //       html: html,
 //       text: html
@@ -387,8 +387,8 @@ module.exports = function(app) {
 //     var templateDir = path.join(__dirname, 'templates', 'welcome-email');
 //     var sendWelcomeEmail = new EmailTemplate(templateDir);
 
-//     // var activationURL = 'https://app.matchmaker420.com/login;email=' + req.body.email + ';token='+ req.body.activation_token;
-//     var activationURL = 'https://app.matchmaker420.com/login;email=' + req.body.email;
+//     // var activationURL = 'https://app.evercase.space/login;email=' + req.body.email + ';token='+ req.body.activation_token;
+//     var activationURL = 'https://app.evercase.space/login;email=' + req.body.email;
 
 //     sendWelcomeEmail.render({
 //         name: req.body.administrator && req.body.administrator.administrator_name || req.body.email,
@@ -399,9 +399,9 @@ module.exports = function(app) {
 //       if (err) return next(err);
 
 //       var mailOptions = {
-//         from: 'admin@matchmaker420.com',
+//         from: 'admin@evercase.space',
 //         to: req.body.email,
-//         subject: 'Welcome to Matchmaker420',
+//         subject: 'Welcome to Evercase',
 //         html: result.html,
 //         text: result.text,
 //         forceEmbeddedImages: true
@@ -425,8 +425,8 @@ module.exports = function(app) {
 
 //     // TODO: get token from req.body.tokennpm run dev
 
-//     // 'https://app.matchmaker420.com/reset-password;email=something@something.com;token=iwYicy27wtAmBHIvuH0A5aTdTeE4MeeRVq68uy2Igq5sCT5qBuY9C7Bw9ophqde7'
-//     var resetURL = 'https://app.matchmaker420.com/reset-password;email=' + req.body.email + ';token=' + req.body.token;
+//     // 'https://app.evercase.space/reset-password;email=something@something.com;token=iwYicy27wtAmBHIvuH0A5aTdTeE4MeeRVq68uy2Igq5sCT5qBuY9C7Bw9ophqde7'
+//     var resetURL = 'https://app.evercase.space/reset-password;email=' + req.body.email + ';token=' + req.body.token;
 
 //     sendResetPasswordEmail.render({
 //       name: req.body.email,
@@ -437,15 +437,15 @@ module.exports = function(app) {
 //       if (err) return next(err);
 
 //       var mailOptions = {
-//         from: 'admin@matchmaker420.com',
+//         from: 'admin@evercase.space',
 //         to: req.body.email,
-//         subject: 'Matchmaker420: reset password',
+//         subject: 'Evercase: reset password',
 //         html: result.html,
 //         text: result.text,
 //         attachments: [{
-//           filename: 'mm420-logo-white-solid.jpg',
-//           path: 'https://s3-us-west-1.amazonaws.com/matchmaker420/default/mm420-logo-white-solid.jpg',
-//           cid: 'logo@matchmaker420.com'
+//           filename: 'evercase-logo-white-solid.jpg',
+//           path: 'https://s3-us-west-1.amazonaws.com/evercase/default/evercase-logo-white-solid.jpg',
+//           cid: 'logo@evercase.space'
 //         }]
 //         // forceEmbeddedImages: true
 //       };
@@ -472,11 +472,11 @@ module.exports = function(app) {
 //     html += 'Message: ' + appData.contactFormData.message + '<br /><br /><br />';
 //     html += 'appData: <br />' + JSON.stringify(req.body, null, 2);
 
-//     // from: appData.contactFormData.email, // amazon may reject some emails, use admin@matchmaker420.com
+//     // from: appData.contactFormData.email, // amazon may reject some emails, use admin@evercase.space
 //     var mailOptions = {
-//       // from: 'admin@matchmaker420.com',
+//       // from: 'admin@evercase.space',
 //       from: appData.contactFormData.email,
-//       to: 'admin@matchmaker420.com',
+//       to: 'admin@evercase.space',
 //       subject: 'Feedback Form Submission',
 //       html: html,
 //       text: JSON.stringify(req.body, null, 2)
@@ -498,7 +498,7 @@ module.exports = function(app) {
 //       }).catch(function(error) {
 //         console.log('feedback email error', error);
 //         if (tries <= 2) {
-//           mailOptions.from = 'admin@matchmaker420.com';
+//           mailOptions.from = 'admin@evercase.space';
 //           sendEmail();
 //         } else {
 //           res.json({error:'could not send email'});
@@ -526,7 +526,7 @@ module.exports = function(app) {
 
 //     var sendTo = order.orderType && order.orderType === 'seller' ? order.sellerEmail : order.buyerEmail;
 
-//     var appUrl = order.appURL || 'https://app.matchmaker420.com';
+//     var appUrl = order.appURL || 'https://app.evercase.space';
 
 //     sendOrderEmail.render({
 //       order: order,
@@ -539,9 +539,9 @@ module.exports = function(app) {
 //       console.log('send-order-email: sendTo', sendTo);
 
 //       var mailOptions = {
-//         from: 'admin@matchmaker420.com',
+//         from: 'admin@evercase.space',
 //         to: sendTo,
-//         subject: 'Matchmaker420: Order has been placed',
+//         subject: 'Evercase: Order has been placed',
 //         html: result.html,
 //         text: result.text,
 //         forceEmbeddedImages: true
@@ -578,8 +578,8 @@ module.exports = function(app) {
 //     console.log('\nemail html: ', html);
 
 //     var mailOptions = {
-//       from: 'admin@matchmaker420.com',
-//       to: 'admin@matchmaker420.com',
+//       from: 'admin@evercase.space',
+//       to: 'admin@evercase.space',
 //       subject: 'Coming Soon Data',
 //       html: html,
 //       text: JSON.stringify(req.body, null, 2)

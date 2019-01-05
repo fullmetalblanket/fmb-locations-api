@@ -27,7 +27,7 @@ app.engine ('html', require('ejs').renderFile );
 // Security
 // http://nodesource.com/blog/nine-security-tips-to-keep-express-from-getting-pwned/
 
-// https://www.ssllabs.com/ssltest/analyze.html?d=app.matchmaker420.com
+// https://www.ssllabs.com/ssltest/analyze.html?d=app.evercase.space
 var forceSSL = function() {
   return function (req, res, next) {
     console.log('process.env.NODE_ENV', process.env.NODE_ENV);
@@ -83,9 +83,8 @@ var mongoUri = process.env.MONGOLAB_URI ||
                process.env.MONGODB_URI ||
                process.env.MONGOHQ_URL ||
                process.env.MONGOLAB_PINK_URI ||
-               'mongodb://localhost:27017/matchmaker420-api';
+               `mongodb://localhost:${config.mongo.port}/${config.mongo.databaseName}`;
 mongoose.connect(mongoUri);
-// mongoose.connect('mongodb://localhost:27017/matchmaker420-dev');
 var db = mongoose.connection;
 mongoose.Promise = global.Promise;
 
@@ -102,7 +101,7 @@ db.once('open', function() {
 
     console.log(`* * * * App Version: ${pjson.version}`);
     console.log(`* * * * ${config.app.siteName} is running on port ${app.get('port')} in ${environment} mode * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * \n`);
-    // console.log('* * * * Matchmaker420 initialized * * * *\n');
+    // console.log('* * * * Evercase initialized * * * *\n');
   });
 
 });

@@ -13,7 +13,7 @@ function upload(image, number) {
   const buff = new Buffer(image.replace(/^data:image\/\w+;base64,/, ""),'base64')
   const params = {
     ACL: 'public-read',
-    Bucket: 'matchmaker420',
+    Bucket: 'evercase',
     Body: buff,
     ContentEncoding: 'base64',
     ContentType: 'image/png',

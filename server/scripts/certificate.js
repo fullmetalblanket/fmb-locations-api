@@ -5,7 +5,7 @@ const path = require('path');
 const moment = require('moment');
 const aws = require('./aws');
 const request = require('request');
-const mm420Api = require('../api/mm420-api');
+const evercaseApi = require('../api/evercase-api');
 
 // function sortArray(array, property, direction) {
 //   direction = direction || 1;
@@ -898,7 +898,7 @@ function create(sample) {
 function upload(certificate, id) {
   const params = {
     ACL: 'public-read',
-    Bucket: 'matchmaker420',
+    Bucket: 'evercase',
     Body: certificate,
     ContentType: 'application/pdf',
     Key: `certificates/certificate-${id}.pdf`
@@ -912,7 +912,7 @@ function upload(certificate, id) {
 
 
 function email(email, name, number, certURL, params) {
-  const from = params && params.from ? params.from : 'admin@matchmaker420.com'
+  const from = params && params.from ? params.from : 'admin@evercase.space'
   const payload = {
     from,
     to: email,
@@ -928,7 +928,7 @@ function email(email, name, number, certURL, params) {
   }
   console.log('certificate.email payload ',payload);
   return new Promise((resolve, reject) => {
-    request.post(mm420Api.requestOptions({url:'/email-pdf'}, payload), function(error, response, data) {
+    request.post(evercaseApi.requestOptions({url:'/email-pdf'}, payload), function(error, response, data) {
       if (!error && response.statusCode == 200) {
         resolve(data)
       }

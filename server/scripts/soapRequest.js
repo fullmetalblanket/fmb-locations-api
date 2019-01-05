@@ -157,7 +157,7 @@ module.exports = function(options) {
 
   // return new Promise((resolve,reject) => {
   //   var url = 'http://ws.cdyne.com/emailverify/Emailvernotestemail.asmx?wsdl';
-  //   var args = {email: "admin@matchmaker420.com", LicenseKey: 0};
+  //   var args = {email: "admin@evercase.space", LicenseKey: 0};
   
   //   soap.createClient(url, function(err, client) {
   //     if (err) console.log('soap createClient err',err);

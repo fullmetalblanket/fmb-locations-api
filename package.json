@@ -1,5 +1,5 @@
 {
-  "name": "matchmaker420-api",
+  "name": "evercase-api",
   "version": "2.3.14",
   "license": "MIT",
   "scripts": {
@@ -8,11 +8,11 @@
     "postinstall": "",
     "ship-staging": "git push heroku-stage staging:master",
     "ship-staging-force": "git push heroku-stage staging:master -f",
-    "dev": "concurrently \"mongod --dbpath ${PWD}/data/db\" \"nodemon server/server.js\"",
+    "dev": "concurrently \"mongod --dbpath ${PWD}/data/db --port 29000\" \"nodemon server/server.js\"",
     "mongo-express-global": "mongo-express -a -u admin -p pass",
-    "mongo-express-local-setup": "cp node_modules/mongo-express/config.default.js node_modules/mongo-express/config.js",
+    "mongo-express-local-setup": "cp server/config/mongo-express/config.js node_modules/mongo-express/config.js",
     "mongo-express-local": "node node_modules/mongo-express/app.js",
-    "localdb": "concurrently \"npm run mongo-express-global\" \"open http://localhost:8081/db/matchmaker420-api/\"",
+    "localdb": "concurrently \"npm run mongo-express-global\" \"open http://localhost:9001/db/evercase-api/\"",
     "preversion": "",
     "version": "",
     "postversion": "",
@@ -25,10 +25,10 @@
     "version:patch": "npm version patch --force -m \"version %s\"",
     "version:minor": "npm version minor --force -m \"version %s\"",
     "version:major": "npm version major --force -m \"version %s\"",
-    "getdb:remote:prod": "mongodump -h ds147099-a0.mlab.com:47099 -d heroku_4hfnvk9x -u tyson -p zxcvasdf1324 -o dump/matchmaker420-api",
-    "setdb:local:prod": "mongorestore --drop --db matchmaker420-api dump/matchmaker420-api/heroku_4hfnvk9x",
-    "setdb:remote:stage": "mongorestore --drop -h ds161529.mlab.com:61529 -d heroku_5741pc7s -u tyson -p zxcvasdf1324 dump/matchmaker420-api/heroku_4hfnvk9x",
-    "heroku:restart": "heroku restart --app matchmaker420-api"
+    "getdb:remote:prod": "mongodump -h ds147099-a0.mlab.com:47099 -d heroku_4hfnvk9x -u tyson -p zxcvasdf1324 -o dump/evercase-api",
+    "setdb:local:prod": "mongorestore --drop --db evercase-api dump/evercase-api/heroku_4hfnvk9x",
+    "setdb:remote:stage": "mongorestore --drop -h ds161529.mlab.com:61529 -d heroku_5741pc7s -u tyson -p zxcvasdf1324 dump/evercase-api/heroku_4hfnvk9x",
+    "heroku:restart": "heroku restart --app evercase-api"
   },
   "private": true,
   "engines": {

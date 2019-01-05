@@ -1,8 +1,6 @@
 var jwt = require('express-jwt');
 var config = require('./config.json');
 
-config.app.port = 4201
-
 // jwt token generation
 config.tokenSecret = '1 w1ll n07 f34r. f34r 15 7h3 m1ndk1ll3r.';
 

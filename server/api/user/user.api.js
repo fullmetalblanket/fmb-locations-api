@@ -9,12 +9,12 @@ var utils = require('../../config/utils');
 var UserType = require('../user-type/user-type.model');
 
 var token = '';
-var userApi = 'https://matchmaker420.auth0.com/api/v2/users/';
+var userApi = 'https://evercase.auth0.com/api/v2/users/';
 
 var clientOptions = { method: 'POST',
-  url: 'https://matchmaker420.auth0.com/oauth/token',
+  url: 'https://evercase.auth0.com/oauth/token',
   headers: { 'content-type': 'application/json' },
-  body: '{"client_id":"TOpofvXDFMLICINeW95YzSGqDvJDpl48","client_secret":"meitZbs-zvMRz_FL09VbcpGJ3sSFLu3rPlmh3Ut5vnrEIcl6w4WRuMRXJXRov6wm","audience":"https://matchmaker420.auth0.com/api/v2/","grant_type":"client_credentials"}',
+  body: '{"client_id":"TOpofvXDFMLICINeW95YzSGqDvJDpl48","client_secret":"meitZbs-zvMRz_FL09VbcpGJ3sSFLu3rPlmh3Ut5vnrEIcl6w4WRuMRXJXRov6wm","audience":"https://evercase.auth0.com/api/v2/","grant_type":"client_credentials"}',
 };
 
 var populateOptions = [

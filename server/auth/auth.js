@@ -5,6 +5,7 @@ var config = require('../config/config');
 
 var checkCredentials = function(req, res, next) {
   var authorization = req.header('Authorization');
+  console.log('authorization header',authorization)
 
   function isAuthorized() {
     console.log('\n+ + + + + Authorized + + + + +\n');

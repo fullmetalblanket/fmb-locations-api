@@ -22,7 +22,7 @@ var userSchema = mongoose.Schema({
   // login
   email: String,
   password: String,
-
+  
   emails: [String],
 
   images: {
