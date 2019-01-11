@@ -4,7 +4,7 @@ const tz = require('moment-timezone');
 const localtunnel = require('localtunnel');
 let tunnel = null;
 
-let apiUrl = process.env.MM420_API_URL;
+let apiUrl = process.env.EVERCASE_API_URL;
 // var apiUrl = 'https://api.evercase.space'; // for local dev
 // var apiUrl = 'https://api-stage.evercase.space'; // for local dev
 console.log('* * * * apiUrl A ',apiUrl);

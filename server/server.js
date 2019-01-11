@@ -6,6 +6,8 @@ var config = require('./config/config');
 
 var pjson = require('../package.json');
 
+require('./api/evercase-api');
+
 var environment = process.env.NODE_ENV || 'development';
 
 var app = express();

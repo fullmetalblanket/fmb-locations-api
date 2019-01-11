@@ -1,6 +1,6 @@
-
-var moment = require('moment');
-var tz = require('moment-timezone');
+// var moment = require('moment');
+var moment = require('moment-timezone');
+// var tz = require('moment-timezone');
 var config = require('../config/config');
 
 var checkCredentials = function(req, res, next) {

@@ -25,9 +25,9 @@ module.exports = function(app) {
   // require('./api/product-unit/product-unit.api')(app);
   // require('./api/product/product.api')(app);
   // require('./api/test-type/test-type.api')(app);
-  require('./api/upload/upload.api')(app);
-  // require('./api/user-type/user-type.api')(app);
   require('./api/user/user.api')(app);
+  require('./api/user-type/user-type.api')(app);
+  require('./api/upload/upload.api')(app);
 
   // require('./api/weedmaps/weedmaps.api')(app);
 

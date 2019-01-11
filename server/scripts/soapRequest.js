@@ -5,7 +5,7 @@ const httpntlm = require('httpntlm');
 const path = require('path');
 
 // TEMP
-const exampleLabData = require('../jobs/xlims/MM420exampleWithSampleAttributes.json');
+const exampleLabData = require('../jobs/xlims/EVERCASEexampleWithSampleAttributes.json');
 const testUrl = 'http://ws.cdyne.com/emailverify/Emailvernotestemail.asmx?wsdl';
 
 module.exports = function(options) {
