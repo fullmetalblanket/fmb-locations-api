@@ -20,14 +20,9 @@
   },
   "apiClients": [
     {
-      "name": "evercase",
+      "name": "Evercase App",
       "key":"ny>sg8qHu3",
       "secret":"P2viZ3A(Gj"
-    },
-    {
-      "name": "cblabs",
-      "key":"9G3xmzJsw(",
-      "secret":"Zs;tUfh43b"
     },
     {
       "name": "admin",

@@ -42,10 +42,10 @@ var checkCredentials = function(req, res, next) {
     var expired = false;
   
     if (authorized && !expired) {
-      console.log('authorized ',authorized.name)
+      console.log('Authorized:',authorized.name)
       isAuthorized();
     } else {
-      console.log('unauthorized',auth)
+      console.log('Unauthorized:',auth)
       notAuthorized();
     }
   } else {
