@@ -1,10 +1,11 @@
 var UserType = require('./user-type.model');
 var authCheck = require('../../config/config').authCheck;
+var VerifyToken = require('../../auth/verify-token');
 
 module.exports = function(app) {
 
   // select all
-  app.get('/user_types', function(req, res) {
+  app.get('/user_types', VerifyToken, function(req, res) {
     // console.log('\nUser Types api: Tryna get user types');
     UserType.find({}, function(err, docs) {
       if(err) {

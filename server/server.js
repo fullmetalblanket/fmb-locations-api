@@ -33,7 +33,7 @@ app.engine ('html', require('ejs').renderFile );
 var forceSSL = function() {
   return function (req, res, next) {
     console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-    console.log('process.API_URL', process.API_URL);
+    console.log('process.EVERCASE_API_URL', process.EVERCASE_API_URL);
     if (process.env.NODE_ENV === 'production') {
       console.log('\nPRODUCTION < - - - -');
       if (req.headers['x-forwarded-proto'] !== 'https') {
@@ -61,10 +61,9 @@ var allowCrossDomain = function(req, res, next) {
 };
 app.use(allowCrossDomain);
 
-// check api user credentials
-var auth = require('./auth/auth')
-app.use(auth.checkCredentials);
-
+// check api user (app) credentials
+var apiAuth = require('./auth/api-auth')
+app.use(apiAuth.checkCredentials);
 
 // run xlims cronjob
 // var xlims = require('./jobs/xlims/fetch-xlims')

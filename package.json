@@ -31,7 +31,9 @@
     "setdb:stage:prod": "mongorestore --drop -h ds149034.mlab.com:49034 -d heroku_9x3vpqx7 -u tyson -p zxcvasdf1324 dump/heroku_8s14nwds",
     "setdb:prod:local": "mongorestore --drop -h ds149034.mlab.com:49034 -d heroku_8s14nwds -u tyson -p zxcvasdf1324 dump/dev/evercase-api",
     "setdb:stage:local": "mongorestore --drop -h ds149034.mlab.com:49034 -d heroku_9x3vpqx7 -u tyson -p zxcvasdf1324 dump/dev/evercase-api",
-    "heroku:restart": "heroku restart --app evercase-api"
+    "heroku:restart": "heroku restart --app evercase-api",
+    "heroku:log:prod": "heroku logs --tail --app evercase-api",
+    "heroku:log:stage": "heroku logs --tail --app evercase-api-stage"
   },
   "private": true,
   "engines": {

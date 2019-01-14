@@ -1,21 +1,12 @@
 var User = require('./user.model');
-var UserType = require('../user-type/user-type.model');
-var http = require('http');
-var request = require('request');
+// var UserType = require('../user-type/user-type.model');
+// var http = require('http');
+// var request = require('request');
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
 var config = require('../../config/config');
 var utils = require('../../config/utils');
-var UserType = require('../user-type/user-type.model');
-
-var token = '';
-var userApi = 'https://evercase.auth0.com/api/v2/users/';
-
-var clientOptions = { method: 'POST',
-  url: 'https://evercase.auth0.com/oauth/token',
-  headers: { 'content-type': 'application/json' },
-  body: '{"client_id":"TOpofvXDFMLICINeW95YzSGqDvJDpl48","client_secret":"meitZbs-zvMRz_FL09VbcpGJ3sSFLu3rPlmh3Ut5vnrEIcl6w4WRuMRXJXRov6wm","audience":"https://evercase.auth0.com/api/v2/","grant_type":"client_credentials"}',
-};
+// var UserType = require('../user-type/user-type.model');
 
 var populateOptions = [
   {
@@ -91,88 +82,106 @@ module.exports = function(app) {
     })
   });
 
-    // login by email
-    app.post('/user_login', function(req, res) {
-      console.log('user_login req.body.email', req.body.email);
-      User.findOne({email: req.body.email}, function(err, user) {
-        if (err) {
-          console.error('login err',err);
-          return console.error('login error', err);
-        }
-        if (!user) {
-          console.error('login no user found');
-          return res.status(200).json({
-            error: 'User not found'
-          });
-        }
-        // check password
-        if (!bcrypt.compareSync(req.body.password, user.password)) {
-          console.error('login or password incorrect');
-          return res.status(200).json({
-            error: 'Password is incorrect'
-          });
-        }
-
-        User.populate(user, populateOptions, function (err, user) {
-          if(err) { return handleError(res, err); }
-
-          // create token
-          const role = user.role.name;
-          const { sessionExpiresIn } = config;
-          const expiresIn = role === 'admin' || role === 'laboratory' ? sessionExpiresIn.admin : sessionExpiresIn.user;
-          console.log('\nlogin: role', role);
-          var token = jwt.sign({user: user}, config.tokenSecret, {expiresIn});
-
-          res.status(200).json({
-            message: 'Successfully logged in',
-            token: token,
-            user: user,
-            userId: user._id
-          });
+  // login by email
+  app.post('/user_login', function(req, res) {
+    console.log('user_login req.body.email', req.body.email);
+    console.log('user_login req.body.password', req.body.password);
+    User.findOne({email: req.body.email}, function(err, user) {
+      if (err) {
+        console.error('login err',err);
+        return console.error('login error', err);
+      }
+      if (!user) {
+        console.error('login no user found');
+        return res.status(200).json({
+          error: 'User not found'
         });
-      })
-    });
+      }
+      // check password
+      if (!bcrypt.compareSync(req.body.password, user.password)) {
+        console.error('login or password incorrect');
+        return res.status(200).json({
+          error: 'Password is incorrect'
+        });
+      }
 
-    // login by email 2
-    app.post('/user_login_2', function(req, res) {
-      console.log('user_login req.body.email', req.body.email);
-      User.findOne({email: req.body.email}, function(err, user) {
-        if (err) {
-          console.error('login err',err);
-          return console.error('login error', err);
-        }
-        if (!user) {
-          console.error('login no user found');
-          return res.status(200).json({
-            error: 'User not found'
-          });
-        }
-        // check password
-        if (!bcrypt.compareSync(req.body.password, user.password)) {
-          console.error('login or password incorrect');
-          return res.status(200).json({
-            error: 'Password is incorrect'
-          });
-        }
+      // console.log('user_login user',user)
+
+      User.populate(user, populateOptions, function (err, user) {
+        if(err) { return handleError(res, err); }
+
+        // console.log('user_login populated user',user)
         // create token
         const role = user.role.name;
-        const { sessionExpiresIn } = config
+        const { sessionExpiresIn } = config;
         const expiresIn = role === 'admin' || role === 'laboratory' ? sessionExpiresIn.admin : sessionExpiresIn.user;
-        var token = jwt.sign({user: user}, config.tokenSecret, {
-          expiresIn: sessionExpiresIn
-        });
+        // const expiresIn = new Date(expires * 1000).toISOString().substr(11, 8);
+        // console.log('user_login: expires', expires);
+        console.log('user_login expiresIn', expiresIn);
 
-        User.populate(user, populateOptions, function (err, user) {
-          if(err) { return handleError(res, err); }
-          res.status(200).json({
-            message: 'Successfully logged in',
-            token: token,
-            user: user,
-            userId: user._id
-          });
-        });
-      })
-    });
+        // generate a token
+        const token = jwt.sign({user: user}, config.tokenSecret, { expiresIn });
+
+        // user.token = token
+        // user.save()
+        // user.token = ""
+
+        // create a cookie to send
+        req.cookie('evercase_token', token, {
+          secure: false,
+          httpOnly: false,
+          maxAge: expiresIn
+        })
+
+        console.log('user_login sending res.status(200)');
+
+        // res.status(200).json(user);
+        res.status(200).json({ user, token });
+        // res.send({ user, token });
+      });
+    })
+  });
+
+    // // login by email 2
+    // app.post('/user_login_2', function(req, res) {
+    //   console.log('user_login req.body.email', req.body.email);
+    //   User.findOne({email: req.body.email}, function(err, user) {
+    //     if (err) {
+    //       console.error('login err',err);
+    //       return console.error('login error', err);
+    //     }
+    //     if (!user) {
+    //       console.error('login no user found');
+    //       return res.status(200).json({
+    //         error: 'User not found'
+    //       });
+    //     }
+    //     // check password
+    //     if (!bcrypt.compareSync(req.body.password, user.password)) {
+    //       console.error('login or password incorrect');
+    //       return res.status(200).json({
+    //         error: 'Password is incorrect'
+    //       });
+    //     }
+    //     // create token
+    //     const role = user.role.name;
+    //     const { sessionExpiresIn } = config
+    //     const expiresIn = role === 'admin' || role === 'laboratory' ? sessionExpiresIn.admin : sessionExpiresIn.user;
+    //     var token = jwt.sign({user: user}, config.tokenSecret, {
+    //       expiresIn: sessionExpiresIn
+    //     });
+
+    //     User.populate(user, populateOptions, function (err, user) {
+    //       if(err) { return handleError(res, err); }
+    //       res.status(200).json({
+    //         message: 'Successfully logged in',
+    //         token: token,
+    //         user: user,
+    //         userId: user._id
+    //       });
+    //     });
+    //   })
+    // });
 
   // find by id
   app.get('/users_data/:id', function(req, res) {
