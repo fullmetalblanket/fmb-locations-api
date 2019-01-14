@@ -127,7 +127,7 @@ module.exports = function(app) {
         // user.token = ""
 
         // create a cookie to send
-        req.cookie('evercase_token', token, {
+        res.cookie('evercase_token', token, {
           secure: false,
           httpOnly: false,
           maxAge: expiresIn
