@@ -2,6 +2,7 @@
 var express = require('express');
 var morgan = require('morgan'); // logger
 var bodyParser = require('body-parser');
+// var cookieParser = require('cookie-parser');
 var config = require('./config/config');
 
 var pjson = require('../package.json');
@@ -17,6 +18,8 @@ app.use(bodyParser.json({
   type: ['json', 'application/csp-report']
 }));
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// app.use(cookieParser());
 
 app.use(morgan('dev'));
 

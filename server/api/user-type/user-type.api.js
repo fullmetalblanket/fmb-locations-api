@@ -1,19 +1,19 @@
 var UserType = require('./user-type.model');
-var authCheck = require('../../config/config').authCheck;
+// var authCheck = require('../../config/config').authCheck;
 var VerifyToken = require('../../auth/verify-token');
 
 module.exports = function(app) {
 
   // select all
-  app.get('/user_types', VerifyToken, function(req, res) {
-    // console.log('\nUser Types api: Tryna get user types');
+  app.get('/user_types', VerifyToken, function(req, res, next) {
+    // console.log('\nget user_types');
+    // console.log('\nget user types req.headers',req.headers);
     UserType.find({}, function(err, docs) {
       if(err) {
-        // console.log('but I failed', err);
+        console.log('user_types: but I failed', err);
         return console.error(err);
       }
-      // console.log('and I got something', docs);
-      res.json(docs);
+      res.status(200).json(docs);
     });
   });
 

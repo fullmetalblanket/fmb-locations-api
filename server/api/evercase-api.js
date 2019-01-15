@@ -38,7 +38,8 @@ exports.requestOptions = function(params, body, queryParams) {
     url: requestUrl,
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Basic ' + authorization
+      // 'Authorization': 'Basic ' + authorization,
+      'Api-Authorization': 'Basic ' + authorization
     }
   };
 

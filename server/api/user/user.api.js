@@ -1,3 +1,4 @@
+var express = require('express');
 var User = require('./user.model');
 // var UserType = require('../user-type/user-type.model');
 // var http = require('http');
@@ -109,8 +110,10 @@ module.exports = function(app) {
 
       User.populate(user, populateOptions, function (err, user) {
         if(err) { return handleError(res, err); }
-
         // console.log('user_login populated user',user)
+        const userId = user._id
+        console.log('user_login userId',userId)
+        console.log('user_login typeof userId',typeof userId)
         // create token
         const role = user.role.name;
         const { sessionExpiresIn } = config;
@@ -120,24 +123,27 @@ module.exports = function(app) {
         console.log('user_login expiresIn', expiresIn);
 
         // generate a token
-        const token = jwt.sign({user: user}, config.tokenSecret, { expiresIn });
+        const token = jwt.sign({ id: user._id }, config.tokenSecret, { expiresIn });
 
         // user.token = token
         // user.save()
         // user.token = ""
 
         // create a cookie to send
-        res.cookie('evercase_token', token, {
-          secure: false,
-          httpOnly: false,
-          maxAge: expiresIn
-        })
+        // res.cookie('evercase_token', token, {
+        //   secure: false,
+        //   httpOnly: false,
+        //   maxAge: expiresIn,
+        //   // domain: '.app.localhost'
+        // })
+        // express.session({cookie: { domain: '.app.localhost', maxAge: expiresIn }})
 
-        console.log('user_login sending res.status(200)');
+        // console.log('user_login sending res.status(200)');
+        // console.log('user_login res',res);
 
         // res.status(200).json(user);
-        res.status(200).json({ user, token });
-        // res.send({ user, token });
+        res.status(200).json({ userId, token, maxAge: expiresIn });
+        // res.send({ user, token, expiresIn });
       });
     })
   });
@@ -184,7 +190,7 @@ module.exports = function(app) {
     // });
 
   // find by id
-  app.get('/users_data/:id', function(req, res) {
+  app.get('/user_data/:id', function(req, res) {
     var userID = req.params.id;
     if (userID._id) {
       userID = userID._id
@@ -257,7 +263,7 @@ module.exports = function(app) {
   });
 
   // find by email
-  app.get('/users_data_by_email/:email', function(req, res) {
+  app.get('/user_data_by_email/:email', function(req, res) {
     User.findOne({email: req.params.email}, function(err, obj) {
       if(err) return console.error(err);
       res.json(obj);
@@ -265,7 +271,7 @@ module.exports = function(app) {
   });
 
   // find by partial email
-  app.get('/users_data_by_partial_email/:email', function(req, res) {
+  app.get('/user_data_by_partial_email/:email', function(req, res) {
     User.find({email: { $regex: req.params.email } }, function(err, obj) {
       if(err) return console.error(err);
       res.json(obj);
@@ -292,7 +298,7 @@ module.exports = function(app) {
   });
 
   // find by license
-  app.get('/users_data_by_license/:license', function(req, res) {
+  app.get('/user_data_by_license/:license', function(req, res) {
     User.findOne({'credentials.license': req.params.license}, function(err, obj) {
       if(err) return console.error(err);
       res.json(obj);

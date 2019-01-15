@@ -4,11 +4,12 @@ var moment = require('moment-timezone');
 var config = require('../config/config');
 
 var checkCredentials = function(req, res, next) {
-  var authorization = req.header('Authorization');
-  console.log('authorization header',authorization)
+  var authorization = req.header('Api-Authorization');
+  console.log('authorization req.headers',req.headers)
+  console.log('api-authorization header',authorization)
 
   function isAuthorized() {
-    console.log('\n+ + + + + Authorized + + + + +\n');
+    console.log('\n+ + + + + API Authorized + + + + +\n');
     next();
   }
 
@@ -20,7 +21,7 @@ var checkCredentials = function(req, res, next) {
   if (authorization) {
     // var clients = config.apiPairs;
     var clients = config.apiClients;
-    var auth = req.header('Authorization').replace('Basic ', '').split(':');
+    var auth = authorization.replace('Basic ', '').split(':');
   
     var rTime = '';
     for (var c = 2; c < auth.length; c++) {
