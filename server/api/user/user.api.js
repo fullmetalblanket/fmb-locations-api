@@ -40,6 +40,9 @@ module.exports = function(app) {
   app.get('/users_data', function(req, res) {
     User.find({}, function(err, docs) {
       if(err) return console.error(err);
+      docs.forEach(doc => {
+        doc.password = null
+      })
       res.json(docs);
     });
   });
@@ -49,6 +52,9 @@ module.exports = function(app) {
       if(err) return console.error(err);
       User.populate(docs, populateOptions, function (err, docs) {
         if(err) { return handleError(res, err); }
+        docs.forEach(doc => {
+          doc.password = null
+        })
         res.status(200).json(docs);
       });
     });
@@ -78,6 +84,7 @@ module.exports = function(app) {
       // set activation token
       obj.save(function(err, newUser) {
         if(err) return console.error(err);
+        newUser.password = null
         res.status(200).json(newUser);
       });
     })
@@ -199,6 +206,7 @@ module.exports = function(app) {
       if(err) return console.error(err);
       User.populate(obj, populateOptions, function (err, doc) {
         if(err) { return handleError(res, err); }
+        doc.password = null
         res.status(200).json(doc);
       });
     })
@@ -209,9 +217,10 @@ module.exports = function(app) {
     console.log('user_data_populated id');
     User.findOne({_id: req.params.id}, function(err, obj) {
       if(err) return console.error(err);
-      User.populate(obj, populateOptions, function (err, docs) {
+      User.populate(obj, populateOptions, function (err, doc) {
         if(err) { return handleError(res, err); }
-        res.status(200).json(docs);
+        doc.password = null
+        res.status(200).json(doc);
       });
     })
   });
@@ -224,6 +233,7 @@ module.exports = function(app) {
       console.log('\nobj', obj);
       User.populate(obj, populateOptions, function (err, doc) {
         if(err) { return handleError(res, err); }
+        doc.password = null
         res.status(200).json(doc);
       });
     })
@@ -246,10 +256,11 @@ module.exports = function(app) {
       reset_password_token_expires: Date.now() + 3600000 //1hr
     };
     console.log('set_reset_password_token req.params',req.params)
-    User.findOneAndUpdate({email: req.params.email}, update, {new: true}, function(err, obj) {
+    User.findOneAndUpdate({email: req.params.email}, update, {new: true}, function(err, doc) {
       if(err) return console.error(err);
-      console.log('obj', obj);
-      res.status(200).json(obj);
+      console.log('doc', doc);
+      doc.password = null
+      res.status(200).json(doc);
     });
 
   });
@@ -264,17 +275,19 @@ module.exports = function(app) {
 
   // find by email
   app.get('/user_data_by_email/:email', function(req, res) {
-    User.findOne({email: req.params.email}, function(err, obj) {
+    User.findOne({email: req.params.email}, function(err, doc) {
       if(err) return console.error(err);
-      res.json(obj);
+      doc.password = null
+      res.json(doc);
     })
   });
 
   // find by partial email
   app.get('/user_data_by_partial_email/:email', function(req, res) {
-    User.find({email: { $regex: req.params.email } }, function(err, obj) {
+    User.find({email: { $regex: req.params.email } }, function(err, doc) {
       if(err) return console.error(err);
-      res.json(obj);
+      doc.password = null
+      res.json(doc);
     })
   });
 
@@ -291,17 +304,19 @@ module.exports = function(app) {
     //     $caseSensitive: false,
     //   }
     // }
-    User.find(searchQuery, function(err, obj) {
+    User.find(searchQuery, function(err, doc) {
       if(err) return console.error(err);
-      res.json(obj);
+      doc.password = null
+      res.json(doc);
     })
   });
 
   // find by license
   app.get('/user_data_by_license/:license', function(req, res) {
-    User.findOne({'credentials.license': req.params.license}, function(err, obj) {
+    User.findOne({'credentials.license': req.params.license}, function(err, doc) {
       if(err) return console.error(err);
-      res.json(obj);
+      doc.password = null
+      res.json(doc);
     })
   });
 
@@ -314,10 +329,11 @@ module.exports = function(app) {
     };
     console.log('reset password req.body',req.body);
     console.log('reset password update',update);
-    User.findOneAndUpdate({email: req.body.email}, update, {new: true}, function(err, obj) {
+    User.findOneAndUpdate({email: req.body.email}, update, {new: true}, function(err, doc) {
       if(err) return console.error(err);
-      console.log('obj', obj);
-      res.status(200).json(obj);
+      console.log('doc', doc);
+      doc.password = null
+      res.status(200).json(doc);
     });
   });
 
@@ -326,9 +342,10 @@ module.exports = function(app) {
     console.log('user api: add_address', req.params);
     User.findById(req.params.user, function (err, user) {
       user.addresses.push(req.body);
-      user.save(function(err, obj) {
+      user.save(function(err, doc) {
         if(err) return console.error(err);
-        res.status(200).json(obj);
+        doc.password = null
+        res.status(200).json(doc);
       });
     })
   });
@@ -347,8 +364,9 @@ module.exports = function(app) {
       {new: true},
       function(err, obj) {
         if(err) return console.error(err);
-        console.log('UPDATE USER ADDRESS: updated obj', obj);
-        res.status(200).json(obj);
+        console.log('UPDATE USER ADDRESS: updated doc', doc);
+        doc.password = null
+        res.status(200).json(doc);
       }
     )
   });
@@ -404,6 +422,7 @@ module.exports = function(app) {
       // console.log('\nupdated user', obj);
       User.populate(obj, populateOptions, function (err, doc) {
         if(err) { return handleError(res, err); }
+        doc.password = null
         res.status(200).json(doc);
       });
     })
