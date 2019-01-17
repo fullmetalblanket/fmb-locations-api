@@ -102,14 +102,14 @@ module.exports = function(app) {
       if (!user) {
         console.error('login no user found');
         return res.status(200).json({
-          error: 'User not found'
+          error: 'User not found or password incorrect. Please check your credentials and try again.'
         });
       }
       // check password
       if (!bcrypt.compareSync(req.body.password, user.password)) {
-        console.error('login or password incorrect');
+        console.error('password incorrect');
         return res.status(200).json({
-          error: 'Password is incorrect'
+          error: 'User not found or password incorrect. Please check your credentials and try again.'
         });
       }
 
