@@ -5,7 +5,7 @@ var VerifyToken = require('../../auth/verify-token');
 module.exports = function(app) {
 
   // select all
-  app.get('/user_types', VerifyToken, function(req, res, next) {
+  app.get('/user_types', function(req, res, next) {
     // console.log('\nget user_types');
     // console.log('\nget user types req.headers',req.headers);
     UserType.find({}, function(err, docs) {

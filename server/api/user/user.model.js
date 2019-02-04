@@ -26,7 +26,14 @@ var userSchema = mongoose.Schema({
   emails: [String],
 
   images: {
-    profile: ''
+    profile: [{
+      original: String,
+      cropped: {
+        large: String,
+        small: String
+      },
+      primary: {type: Boolean, default: false}
+    }]
   },
 
   // cultivator, distributor, transport, manufacturer, retailer, microbusiness, laboratory, admin, sales

@@ -8,6 +8,7 @@ var jwt = require('jsonwebtoken');
 var config = require('../../config/config');
 var utils = require('../../config/utils');
 // var UserType = require('../user-type/user-type.model');
+var VerifyToken = require('../../auth/verify-token');
 
 var populateOptions = [
   {
@@ -37,7 +38,7 @@ module.exports = function(app) {
   // APIs
 
   // select all
-  app.get('/users_data', function(req, res) {
+  app.get('/users_data', VerifyToken, function(req, res) {
     User.find({}, function(err, docs) {
       if(err) return console.error(err);
       docs.forEach(doc => {
@@ -47,7 +48,7 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/users_data_populated', function(req, res) {
+  app.get('/users_data_populated', VerifyToken, function(req, res) {
     User.find({}, function(err, docs) {
       if(err) return console.error(err);
       User.populate(docs, populateOptions, function (err, docs) {
@@ -61,7 +62,7 @@ module.exports = function(app) {
   });
 
   // count all
-  app.get('/users_data/count', function(req, res) {
+  app.get('/users_data/count', VerifyToken, function(req, res) {
     User.count(function(err, count) {
       if(err) return console.error(err);
       res.json(count);
@@ -73,15 +74,16 @@ module.exports = function(app) {
     User.findOne({email: req.body.email}, function(err, user) {
       if (err) return console.error('login error', err);
       if (user) {
-        return res.status(403).json({
-          message: 'User already exists'
+        return res.status(200).json({
+          error: 'We\'re sorry, but ' + req.body.email + ' is not available. Please sign up using a different email address.'
         });
       }
       var obj = new User(req.body);
       console.log('User api: user a', obj);
       // encrypt password
       obj.password = bcrypt.hashSync(obj.password, 10);
-      // set activation token
+      // TODO: set activation token
+
       obj.save(function(err, newUser) {
         if(err) return console.error(err);
         newUser.password = null
@@ -106,6 +108,9 @@ module.exports = function(app) {
         });
       }
       // check password
+      console.log('login user',user)
+      console.log('login req.body.password',req.body.password)
+      console.log('login user.password',user.password)
       if (!bcrypt.compareSync(req.body.password, user.password)) {
         console.error('password incorrect');
         return res.status(200).json({
@@ -155,49 +160,8 @@ module.exports = function(app) {
     })
   });
 
-    // // login by email 2
-    // app.post('/user_login_2', function(req, res) {
-    //   console.log('user_login req.body.email', req.body.email);
-    //   User.findOne({email: req.body.email}, function(err, user) {
-    //     if (err) {
-    //       console.error('login err',err);
-    //       return console.error('login error', err);
-    //     }
-    //     if (!user) {
-    //       console.error('login no user found');
-    //       return res.status(200).json({
-    //         error: 'User not found'
-    //       });
-    //     }
-    //     // check password
-    //     if (!bcrypt.compareSync(req.body.password, user.password)) {
-    //       console.error('login or password incorrect');
-    //       return res.status(200).json({
-    //         error: 'Password is incorrect'
-    //       });
-    //     }
-    //     // create token
-    //     const role = user.role.name;
-    //     const { sessionExpiresIn } = config
-    //     const expiresIn = role === 'admin' || role === 'laboratory' ? sessionExpiresIn.admin : sessionExpiresIn.user;
-    //     var token = jwt.sign({user: user}, config.tokenSecret, {
-    //       expiresIn: sessionExpiresIn
-    //     });
-
-    //     User.populate(user, populateOptions, function (err, user) {
-    //       if(err) { return handleError(res, err); }
-    //       res.status(200).json({
-    //         message: 'Successfully logged in',
-    //         token: token,
-    //         user: user,
-    //         userId: user._id
-    //       });
-    //     });
-    //   })
-    // });
-
   // find by id
-  app.get('/user_data/:id', function(req, res) {
+  app.get('/user_data/:id', VerifyToken, function(req, res) {
     var userID = req.params.id;
     if (userID._id) {
       userID = userID._id
@@ -213,7 +177,7 @@ module.exports = function(app) {
   });
 
   // find user by id populated
-  app.get('/user_data_populated/:id', function(req, res) {
+  app.get('/user_data_populated/:id', VerifyToken, function(req, res) {
     console.log('user_data_populated id');
     User.findOne({_id: req.params.id}, function(err, obj) {
       if(err) return console.error(err);
@@ -226,8 +190,25 @@ module.exports = function(app) {
   });
 
   // update by id
-  app.put('/user_data/:id', function(req, res) {
-    console.log('\nuser_data', req.body);
+  app.put('/user_data/:id', VerifyToken, function(req, res) {
+    console.log('\nupdate user_data body.business_name', req.body.business_name);
+    console.log('\nupdate params.id', req.params.id);
+    User.findOneAndUpdate({_id: req.params.id}, req.body, {new: true}, function(err, doc) {
+      if(err) return console.error(err);
+      console.log('\nupdated user', doc);
+      // console.log('\nupdated user.business_name', doc.business_name);
+      doc.password = null
+      res.status(200).json(doc);
+      // User.populate(obj, populateOptions, function (err, doc) {
+      //   if(err) { return handleError(res, err); }
+      //   doc.password = null
+      //   res.status(200).json(doc);
+      // });
+    })
+  });
+  // update by id, return populated
+  app.put('/user_data_populated/:id', VerifyToken, function(req, res) {
+    console.log('\nupdate user_data', req.body);
     User.findOneAndUpdate({_id: req.params.id}, req.body, {new: true}, function(err, obj) {
       if(err) return console.error(err);
       console.log('\nobj', obj);
@@ -240,7 +221,7 @@ module.exports = function(app) {
   });
 
   // delete by id
-  app.delete('/user_data/:id', function(req, res) {
+  app.delete('/user_data/:id', VerifyToken, function(req, res) {
     User.findOneAndRemove({_id: req.params.id}, function(err) {
       if(err) return console.error(err);
       res.sendStatus(200);
@@ -266,7 +247,7 @@ module.exports = function(app) {
   });
 
   // get users by role
-  app.get('/users_data_by_role/:role', function(req, res) {
+  app.get('/users_data_by_role/:role', VerifyToken, function(req, res) {
     User.find({role: req.params.role}, function(err, obj) {
       if(err) return console.error(err);
       res.json(obj);
@@ -274,7 +255,7 @@ module.exports = function(app) {
   });
 
   // find by email
-  app.get('/user_data_by_email/:email', function(req, res) {
+  app.get('/user_data_by_email/:email', VerifyToken, function(req, res) {
     User.findOne({email: req.params.email}, function(err, doc) {
       if(err) return console.error(err);
       doc.password = null
@@ -283,7 +264,7 @@ module.exports = function(app) {
   });
 
   // find by partial email
-  app.get('/user_data_by_partial_email/:email', function(req, res) {
+  app.get('/user_data_by_partial_email/:email', VerifyToken, function(req, res) {
     User.find({email: { $regex: req.params.email } }, function(err, doc) {
       if(err) return console.error(err);
       doc.password = null
@@ -292,7 +273,7 @@ module.exports = function(app) {
   });
 
   // query for user
-  app.get('/query_for_user/:query', function(req, res) {
+  app.get('/query_for_user/:query', VerifyToken, function(req, res) {
     var queryRegex = new RegExp(req.params.query.toLowerCase(), "i");
     var searchQuery = {$or: [{email: { $regex: req.params.query, $options: 'i' }}, {'business.business_name': { $regex: req.params.query, $options: 'i' }}]}
     // User.createIndex({$or:[{email:'text'}, {'business.business_name':'text'}]})
@@ -312,7 +293,7 @@ module.exports = function(app) {
   });
 
   // find by license
-  app.get('/user_data_by_license/:license', function(req, res) {
+  app.get('/user_data_by_license/:license', VerifyToken, function(req, res) {
     User.findOne({'credentials.license': req.params.license}, function(err, doc) {
       if(err) return console.error(err);
       doc.password = null
@@ -321,7 +302,7 @@ module.exports = function(app) {
   });
 
   // reset password
-  app.put('/reset_password', function(req, res) {
+  app.put('/reset_password', VerifyToken, function(req, res) {
     var update = {
       password: bcrypt.hashSync(req.body.password, 10),
       reset_password_token: '',
@@ -337,8 +318,98 @@ module.exports = function(app) {
     });
   });
 
+
+
+
+
+  // add new profile image
+  // user user._id
+  app.put('/add_profile_image/:user', VerifyToken, function(req, res) {
+    console.log('user api: add_profile_image', req.params);
+    User.findById(req.params.user, function (err, user) {
+      if(err) return console.error(err);
+      console.log('ADD PROFILE IMAGE: req.body', req.body);
+      user.images.profile.push(req.body);
+      user.save(function(err, doc) {
+        if(err) return console.error(err);
+        doc.password = null
+        res.status(200).json(doc);
+      });
+    })
+  });
+
+  // update profile image by id
+  app.put('/update_profile_image/:image', VerifyToken, function(req, res) {
+    var updateObj = {};
+    var updateKeys = Object.keys(req.body);
+    for(var key = 0; key < updateKeys.length; key++) {
+      var thisKey = updateKeys[key];
+      updateObj['images.profile.$.'+thisKey] = req.body[thisKey];
+    }
+    User.findOneAndUpdate(
+      {'images.profile._id': req.params.image},
+      {'$set': updateObj},
+      {new: true},
+      function(err, doc) {
+        if(err) return console.error(err);
+        console.log('UPDATE PROFILE IMAGE: updated doc', doc);
+        doc.password = null
+        res.status(200).json(doc);
+      }
+    );
+  });
+
+  // delete profile image by id
+  app.put('/delete_profile_image/:user/:image', VerifyToken, function(req, res) {
+    console.log('user api: delete_profile_image params', req.params);
+    User.findOneAndUpdate(
+      {'images.profile._id': req.params.image},
+      { '$pull': { 'images.profile': { '_id': req.params.image } } },
+      {new: true},
+      function(err, doc) {
+        if(err) return console.error(err);
+        console.log('DELETE PROFILE IMAGE: updated doc', doc);
+        doc.password = null
+        res.status(200).json(doc);
+      }
+    );
+  });
+
+  // set primary profile image
+  app.put('/set_primary_profile_image/:user/:image', VerifyToken, function(req, res) {
+    User.findById(req.params.user, function (err, user) {
+      if(err) return console.error(err);
+      if (user.images && user.images.profile && user.images.profile.length) {
+        user.images.profile.forEach(function(image) {
+          console.log('image._id',image._id.toString())
+          console.log('params _id',req.params.image)
+          image.primary = image._id.toString() === req.params.image;
+        });
+        user.save(function(err, obj) {
+          if(err) return console.error(err);
+          res.status(200).json(obj);
+        });
+      } else {
+        res.status(200)
+      }
+    })
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // add new address
-  app.put('/add_address/:user/:address', function(req, res) {
+  app.put('/add_address/:user/:address', VerifyToken, function(req, res) {
     console.log('user api: add_address', req.params);
     User.findById(req.params.user, function (err, user) {
       user.addresses.push(req.body);
@@ -351,7 +422,7 @@ module.exports = function(app) {
   });
 
   // update address by address id
-  app.put('/update_address/:address', function(req, res) {
+  app.put('/update_address/:address', VerifyToken, function(req, res) {
     var updateObj = {};
     var updateKeys = Object.keys(req.body);
     for(var key = 0; key < updateKeys.length; key++) {
@@ -371,7 +442,7 @@ module.exports = function(app) {
     )
   });
 
-  app.put('/remove_address/:user/:address', function(req, res) {
+  app.put('/remove_address/:user/:address', VerifyToken, function(req, res) {
     console.log('user api: remove_address params', req.params);
     User.update(
       { '_id': req.params.user },
@@ -386,7 +457,7 @@ module.exports = function(app) {
     );
   });
 
-  app.put('/set_default_address/:user/:address', function(req, res) {
+  app.put('/set_default_address/:user/:address', VerifyToken, function(req, res) {
     User.findById(req.params.user, function (err, user) {
       if (user.addresses && user.addresses.length) {
         user.addresses.forEach(function(address) {
@@ -409,7 +480,7 @@ module.exports = function(app) {
   // products
 
   // save user preferences and settings
-  app.put('/save_settings/:id/:setting/:update', function(req, res) {
+  app.put('/save_settings/:id/:setting/:update', VerifyToken, function(req, res) {
     console.log('\nupdate settings product filters: setting ', req.params.setting);
     console.log('update settings product filters: update', req.params.update);
     var setting = req.params.setting;
