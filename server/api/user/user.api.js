@@ -79,14 +79,16 @@ module.exports = function(app) {
         });
       }
       var obj = new User(req.body);
-      console.log('User api: user a', obj);
+      console.log('User api: user a', JSON.stringify(obj));
       // encrypt password
       obj.password = bcrypt.hashSync(obj.password, 10);
-      // TODO: set activation token
+
+      // TODO: set activation token ******* ******* ******* ******* ********
 
       obj.save(function(err, newUser) {
         if(err) return console.error(err);
         newUser.password = null
+        console.log('user signup newUser',newUser)
         res.status(200).json(newUser);
       });
     })
