@@ -22,6 +22,8 @@ var userSchema = mongoose.Schema({
   // login
   email: String,
   password: String,
+
+  username: String,
   
   emails: [String],
 
@@ -35,6 +37,13 @@ var userSchema = mongoose.Schema({
       primary: {type: Boolean, default: false}
     }]
   },
+
+  location: {
+    city: String,
+    state: String,
+  },
+
+  bio: String,
 
   // cultivator, distributor, transport, manufacturer, retailer, microbusiness, laboratory, admin, sales
   role: { type: ObjectId, ref: 'UserType' },

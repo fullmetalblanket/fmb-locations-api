@@ -131,7 +131,7 @@ module.exports = function(app) {
         // create token
         const role = user.role.name;
         const { sessionExpiresIn } = config;
-        const expiresIn = role === 'admin' || role === 'laboratory' ? sessionExpiresIn.admin : sessionExpiresIn.user;
+        const expiresIn = role === 'admin' ? sessionExpiresIn.admin : sessionExpiresIn.user;
         // const expiresIn = new Date(expires * 1000).toISOString().substr(11, 8);
         // console.log('user_login: expires', expires);
         console.log('user_login expiresIn', expiresIn);
@@ -162,7 +162,7 @@ module.exports = function(app) {
     })
   });
 
-  // find by id
+  // find user by id
   app.get('/user_data/:id', VerifyToken, function(req, res) {
     var userID = req.params.id;
     if (userID._id) {
@@ -177,7 +177,6 @@ module.exports = function(app) {
       });
     })
   });
-
   // find user by id populated
   app.get('/user_data_populated/:id', VerifyToken, function(req, res) {
     console.log('user_data_populated id');
@@ -230,6 +229,25 @@ module.exports = function(app) {
     });
   });
 
+    // verify password
+    app.post('/verify_password', function(req, res) {
+      User.findOne({email: req.body.email}, function(err, user) {
+        if (err) {
+          console.error('login err',err);
+          return console.error('login error', err);
+        }
+        // check password
+        if (!bcrypt.compareSync(req.body.password, user.password)) {
+          console.error('password incorrect');
+          return res.status(200).json({
+            error: 'Password incorrect. Please check your password and try again.'
+          });
+        }
+
+        res.status(200).json({ success: 'password verified' });
+      })
+    });
+
   // generate and store reset password token
   app.put('/set_reset_password_token/:email', function(req, res) {
     // generate the token
@@ -246,6 +264,23 @@ module.exports = function(app) {
       res.status(200).json(doc);
     });
 
+  });
+
+  // reset password
+  app.put('/reset_password', VerifyToken, function(req, res) {
+    var update = {
+      password: bcrypt.hashSync(req.body.password, 10),
+      reset_password_token: '',
+      reset_password_token_expires: null
+    };
+    console.log('reset password req.body',req.body);
+    console.log('reset password update',update);
+    User.findOneAndUpdate({email: req.body.email}, update, {new: true}, function(err, doc) {
+      if(err) return console.error(err);
+      console.log('doc', doc);
+      doc.password = null
+      res.status(200).json(doc);
+    });
   });
 
   // get users by role
@@ -303,25 +338,14 @@ module.exports = function(app) {
     })
   });
 
-  // reset password
-  app.put('/reset_password', VerifyToken, function(req, res) {
-    var update = {
-      password: bcrypt.hashSync(req.body.password, 10),
-      reset_password_token: '',
-      reset_password_token_expires: null
-    };
-    console.log('reset password req.body',req.body);
-    console.log('reset password update',update);
-    User.findOneAndUpdate({email: req.body.email}, update, {new: true}, function(err, doc) {
+  // find by username
+  app.get('/get_user_by_username/:username', VerifyToken, function(req, res) {
+    User.findOne({'username': req.params.username}, function(err, doc) {
       if(err) return console.error(err);
-      console.log('doc', doc);
       doc.password = null
-      res.status(200).json(doc);
-    });
+      res.json(doc);
+    })
   });
-
-
-
 
 
   // add new profile image
