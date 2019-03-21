@@ -7,9 +7,11 @@ var config = require('./config/config');
 
 var pjson = require('../package.json');
 
-require('./api/local-api');
-
 var environment = process.env.NODE_ENV || 'development';
+
+if (environment === 'development') {
+  require('./api/local-api');
+}
 
 var app = express();
 app.set('port', (process.env.PORT || config.app.port));
