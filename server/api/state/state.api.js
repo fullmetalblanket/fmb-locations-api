@@ -57,7 +57,7 @@ module.exports = function(app) {
   app.get('/states/:idx', function(req, res) {
     console.log('req.params.idx',req.params.idx)
     console.log('typeof req.params.idx',typeof req.params.idx)
-    State.find({country_id: req.params.idx}, function(err, docs) {
+    State.find({}, function(err, docs) {
       if(err) return console.error(err);
       res.json(docs);
     });
