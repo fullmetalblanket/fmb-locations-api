@@ -53,6 +53,14 @@ module.exports = function(app) {
     });
   });
 
+  // find by country
+  app.get('/states/:idx', function(req, res) {
+    State.find({country_id: req.params.idx}, function(err, docs) {
+      if(err) return console.error(err);
+      res.json(docs);
+    })
+  });
+
   app.get('/seed_states', function(req, res) {
     console.log('seeding states')
     const statesData = require('../../../assets/json/states.json');
