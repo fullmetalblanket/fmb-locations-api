@@ -3,7 +3,7 @@ const moment = require('moment');
 // const tz = require('moment-timezone');
 // const localtunnel = require('localtunnel');
 const port = config.app.port
-const ngrok = require('ngrok')
+// const ngrok = require('ngrok')
 let tunnel = null;
 
 let apiUrl = process.env.EVERCASE_API_URL;
@@ -12,6 +12,7 @@ let apiUrl = process.env.EVERCASE_API_URL;
 console.log('* * * * apiUrl A ',apiUrl);
 
 async function createLocalTunnel() {
+  const ngrok = require('ngrok')
   // return new Promise(async (resolve, reject) => {
     console.log('port',port)
     const url = await ngrok.connect(port)
