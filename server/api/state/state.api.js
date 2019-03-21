@@ -54,10 +54,10 @@ module.exports = function(app) {
   });
 
   // find states by country
-  app.get('/states/:idx', function(req, res) {
+  app.get('/states/country/:idx', function(req, res) {
     console.log('req.params.idx',req.params.idx)
     console.log('typeof req.params.idx',typeof req.params.idx)
-    State.find({}, function(err, docs) {
+    State.find({country_id: req.params.idx}, function(err, docs) {
       if(err) return console.error(err);
       res.json(docs);
     });
