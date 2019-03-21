@@ -53,12 +53,14 @@ module.exports = function(app) {
     });
   });
 
-  // find by country
+  // find states by country
   app.get('/states/:idx', function(req, res) {
+    console.log('req.params.idx',req.params.idx)
+    console.log('typeof req.params.idx',typeof req.params.idx)
     State.find({country_id: req.params.idx}, function(err, docs) {
       if(err) return console.error(err);
       res.json(docs);
-    })
+    });
   });
 
   app.get('/seed_states', function(req, res) {
