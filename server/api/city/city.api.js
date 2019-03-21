@@ -53,6 +53,16 @@ module.exports = function(app) {
     });
   });
 
+  // find cities by state
+  app.get('/state/:idx/cities', function(req, res) {
+    console.log('req.params.idx',req.params.idx)
+    console.log('typeof req.params.idx',typeof req.params.idx)
+    State.find({state_id: req.params.idx}, function(err, docs) {
+      if(err) return console.error(err);
+      res.json(docs);
+    });
+  });
+
   app.get('/seed_cities', function(req, res) {
     console.log('seeding cities')
     const citiesData = require('../../../assets/json/cities.json');
