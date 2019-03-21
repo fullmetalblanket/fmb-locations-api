@@ -1,12 +1,12 @@
 {
   "app": {
-    "subDomain": "api",
-    "domain": "evercase",
+    "subDomain": "locations",
+    "domain": "fullmetalblanket",
     "extension": "com",
-    "email": "admin@evercase.space",
-    "siteName": "Evercase API",
-    "url": "api.evercase.space",
-    "port": 9000
+    "email": "admin@fullmetalblanket.com",
+    "siteName": "FMB Locations API",
+    "url": "locations.fullmetalblanket.com",
+    "port": 9090
   },
   "AWSConfig": {
     "accessKeyIdOld": "AKIAI5T4NH77FNNFVTUQ",
@@ -30,19 +30,15 @@
       "secret":"W2E6xrma$u"
     }
   ],
-  "weedmapsApi": {
-    "apiKey": "dec943f6e9e058b50f9018a314655bcc",
-    "apiUrl": "https://api-g.weedmaps.com/wm/web/v1/test_results"
-  },
-  "evercaseApi": {
+  "localApi": {
     "apiKey": "7xjb}3ndEv",
     "apiSecret": "W2E6xrma$u"
   },
   "mongo": {
-    "databaseName": "evercase-api",
-    "port": 29000,
+    "databaseName": "fmb-locations-api",
+    "port": 29090,
     "express": {
-      "port": 9001
+      "port": 9091
     }
   }
 }

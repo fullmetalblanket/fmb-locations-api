@@ -7,7 +7,7 @@ var config = require('./config/config');
 
 var pjson = require('../package.json');
 
-require('./api/evercase-api');
+require('./api/local-api');
 
 var environment = process.env.NODE_ENV || 'development';
 
@@ -33,23 +33,23 @@ app.engine ('html', require('ejs').renderFile );
 // http://nodesource.com/blog/nine-security-tips-to-keep-express-from-getting-pwned/
 
 // https://www.ssllabs.com/ssltest/analyze.html?d=app.evercase.space
-var forceSSL = function() {
-  return function (req, res, next) {
-    console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-    console.log('process.EVERCASE_API_URL', process.EVERCASE_API_URL);
-    if (process.env.NODE_ENV === 'production') {
-      console.log('\nPRODUCTION < - - - -');
-      if (req.headers['x-forwarded-proto'] !== 'https') {
-        return res.redirect(
-          ['https://', req.get('Host'), req.url].join('')
-        );
-      }
-    }
-    next();
-  }
-};
+// var forceSSL = function() {
+//   return function (req, res, next) {
+//     console.log('process.env.NODE_ENV', process.env.NODE_ENV);
+//     console.log('process.EVERCASE_API_URL', process.EVERCASE_API_URL);
+//     if (process.env.NODE_ENV === 'production') {
+//       console.log('\nPRODUCTION < - - - -');
+//       if (req.headers['x-forwarded-proto'] !== 'https') {
+//         return res.redirect(
+//           ['https://', req.get('Host'), req.url].join('')
+//         );
+//       }
+//     }
+//     next();
+//   }
+// };
 
-app.use(forceSSL());
+// app.use(forceSSL());
 
 //
 // cors
@@ -65,8 +65,8 @@ var allowCrossDomain = function(req, res, next) {
 app.use(allowCrossDomain);
 
 // check api user (app) credentials
-var apiAuth = require('./auth/api-auth')
-app.use(apiAuth.checkCredentials);
+// var apiAuth = require('./auth/api-auth')
+// app.use(apiAuth.checkCredentials);
 
 // run xlims cronjob
 // var xlims = require('./jobs/xlims/fetch-xlims')
